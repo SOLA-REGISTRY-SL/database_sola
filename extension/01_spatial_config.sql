@@ -8,25 +8,15 @@ visible_in_start = false,
 active = FALSE
 WHERE name='orthophoto';
 
---- This is for correctly setting up the orthophoto onto katsina land ministry server
---UPDATE system.config_map_layer 
---SET url = 'http://192.168.0.6:8085/geoserver/katsina/wms',
---wms_layers= 'katsina:katsina',
---wms_format= 'image/jpeg',
---visible_in_start = TRUE,
---active = TRUE
---WHERE name='orthophoto';
-
-
 ----- Existing Layer Updates ----
--- Remove layers from core SOLA that are not used by katsina, Nigeria
+-- Remove layers from core SOLA that are not used by sierra leone, Nigeria
 --DELETE FROM system.config_map_layer WHERE "name" IN ('place-names', 'survey-controls', 'roads'); 
 
 
 -- Configure the new Navigation Layer
  
 
--- Setup Spatial Config for katsina, Nigeria
+-- Setup Spatial Config for sierra leone, Nigeria
 -- CLEAR CADASTRE DATABASE TABLES
 DELETE FROM cadastre.spatial_value_area;
 DELETE FROM cadastre.spatial_unit;
@@ -38,7 +28,7 @@ DELETE FROM system.config_map_layer WHERE name IN ('lga', 'wards', 'sections');
 DELETE FROM cadastre.cadastre_object;
 DELETE FROM cadastre.cadastre_object_historic;
 
--- Configure the Level data for katsina, Nigeria
+-- Configure the Level data for sierra leone, Nigeria
 -- add levels
 
 INSERT INTO cadastre.level (id, name, register_type_code, structure_code, type_code, change_user)
@@ -70,11 +60,11 @@ INSERT INTO system.query(name, sql, description)
 INSERT INTO system.query(name, sql, description)
     VALUES ('SpatialResult.getDistrict', 'select gid, caption, geom as the_geom from cadastre.district where ST_Intersects(geom, ST_SetSRID(ST_MakeBox3D(ST_Point(#{minx}, #{miny}),ST_Point(#{maxx}, #{maxy})), #{srid})) and st_area(geom)> power(5 * #{pixel_res}, 2)', 'The spatial query that retrieves LGA');
 
-INSERT INTO system.query(name, sql, description)
-    VALUES ('SpatialResult.getChiefdom', 'select gid, name1_, geom as the_geom from cadastre.chiefdom where ST_Intersects(geom, ST_SetSRID(ST_MakeBox3D(ST_Point(#{minx}, #{miny}),ST_Point(#{maxx}, #{maxy})), #{srid})) and st_area(geom)> power(5 * #{pixel_res}, 2)', 'The spatial query that retrieves LGA');
+--INSERT INTO system.query(name, sql, description)
+  --  VALUES ('SpatialResult.getChiefdom', 'select gid, name1_, geom as the_geom from cadastre.chiefdom where ST_Intersects(geom, ST_SetSRID(ST_MakeBox3D(ST_Point(#{minx}, #{miny}),ST_Point(#{maxx}, #{maxy})), #{srid})) and st_area(geom)> power(5 * #{pixel_res}, 2)', 'The spatial query that retrieves LGA');
 
-INSERT INTO system.query(name, sql, description)
-    VALUES ('SpatialResult.getSection', 'select gid, first_sect, geom as the_geom from cadastre.province where ST_Intersects(geom, ST_SetSRID(ST_MakeBox3D(ST_Point(#{minx}, #{miny}),ST_Point(#{maxx}, #{maxy})), #{srid})) and st_area(geom)> power(5 * #{pixel_res}, 2)', 'The spatial query that retrieves LGA');
+--INSERT INTO system.query(name, sql, description)
+  --  VALUES ('SpatialResult.getSection', 'select gid, first_sect, geom as the_geom from cadastre.province where ST_Intersects(geom, ST_SetSRID(ST_MakeBox3D(ST_Point(#{minx}, #{miny}),ST_Point(#{maxx}, #{maxy})), #{srid})) and st_area(geom)> power(5 * #{pixel_res}, 2)', 'The spatial query that retrieves LGA');
 
 INSERT INTO system.config_map_layer (name, title, type_code, active, visible_in_start, item_order, style, pojo_structure, pojo_query_name)
 	VALUES ('sug_reg', 'Region', 'pojo', true, true, 90, 'reg.xml', 'theGeom:Polygon,label:""', 'SpatialResult.getRegion');
@@ -82,11 +72,11 @@ INSERT INTO system.config_map_layer (name, title, type_code, active, visible_in_
 INSERT INTO system.config_map_layer (name, title, type_code, active, visible_in_start, item_order, style, pojo_structure, pojo_query_name)
 	VALUES ('sug_dist', 'District', 'pojo', true, true, 90, 'dist.xml', 'theGeom:Polygon,label:""', 'SpatialResult.getDistrict');
 
-INSERT INTO system.config_map_layer (name, title, type_code, active, visible_in_start, item_order, style, pojo_structure, pojo_query_name)
-	VALUES ('sug_chief', 'Chiefdom', 'pojo', true, true, 90, 'chief.xml', 'theGeom:Polygon,label:""', 'SpatialResult.getChiefdom');
+--INSERT INTO system.config_map_layer (name, title, type_code, active, visible_in_start, item_order, style, pojo_structure, pojo_query_name)
+	--VALUES ('sug_chief', 'Chiefdom', 'pojo', true, true, 90, 'chief.xml', 'theGeom:Polygon,label:""', 'SpatialResult.getChiefdom');
 
-INSERT INTO system.config_map_layer (name, title, type_code, active, visible_in_start, item_order, style, pojo_structure, pojo_query_name)
-	VALUES ('sug_sect', 'Section', 'pojo', true, true, 90, 'sect.xml', 'theGeom:Polygon,label:""', 'SpatialResult.getSection');
+--INSERT INTO system.config_map_layer (name, title, type_code, active, visible_in_start, item_order, style, pojo_structure, pojo_query_name)
+	--VALUES ('sug_sect', 'Section', 'pojo', true, true, 90, 'sect.xml', 'theGeom:Polygon,label:""', 'SpatialResult.getSection');
 
  
 --DROP VIEW cadastre.lga;
@@ -171,7 +161,7 @@ insert into system.map_search_option(code, title, query_name, active, min_search
 
 
 -------------------------------------------- 
- --SET NEW SRID and OTHER katsina PARAMETERS
+ --SET NEW SRID and OTHER sierra leone PARAMETERS
 UPDATE public.geometry_columns SET srid = 32629; 
 UPDATE application.application set location = null;
 UPDATE system.setting SET vl = '32629' WHERE "name" = 'map-srid'; 
