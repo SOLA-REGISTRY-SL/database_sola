@@ -1,4 +1,4 @@
-
+﻿
 --- This is for correctly setting up the orthophoto onto localhost
 UPDATE system.config_map_layer 
 SET url = 'http://localhost:8085/geoserver/sola/wms',
@@ -47,24 +47,24 @@ INSERT INTO cadastre.level (id, name, register_type_code, structure_code, type_c
 --UPDATE system.config_map_layer
 
 --Changes made by Paola to add a new layer for sections - 26/06/2013
-DELETE FROM system.config_map_layer WHERE "name" IN ('lga', 'ward', 'section');
-DELETE FROM system.config_map_layer WHERE "name" IN ('lga', 'wards', 'sections');
-DELETE FROM system.config_map_layer WHERE "name" IN ('sug_lga', 'sug_ward', 'sug_section');
-DELETE FROM system.config_map_layer WHERE "name" IN ('sug_lga', 'sug_wards', 'sug_sections');
-DELETE FROM system.query WHERE name IN ('SpatialResult.getLGA', 'SpatialResult.getWard', 'SpatialResult.getSection');
-DELETE FROM system.query WHERE name IN ('SpatialResult.getLGA', 'SpatialResult.getWards', 'SpatialResult.getSections');
+DELETE FROM system.config_map_layer WHERE "name" IN ('reg', 'dist', 'chief', 'sect');
+--DELETE FROM system.config_map_layer WHERE "name" IN ('lga', 'wards', 'sections');
+DELETE FROM system.config_map_layer WHERE "name" IN ('sug_reg', 'sug_dist', 'sug_chief', 'sug_sect');
+--DELETE FROM system.config_map_layer WHERE "name" IN ('sug_lga', 'sug_wards', 'sug_sections');
+DELETE FROM system.query WHERE name IN ('SpatialResult.getRegion', 'SpatialResult.getDistrict', 'SpatialResult.getChiefdom', 'SpatialResult.getSection');
+--DELETE FROM system.query WHERE name IN ('SpatialResult.getLGA', 'SpatialResult.getWards', 'SpatialResult.getSections');
 
 INSERT INTO system.query(name, sql, description)
-    VALUES ('SpatialResult.getRegion', 'select gid, caption, geom as the_geom from cadastre.province where ST_Intersects(geom, ST_SetSRID(ST_MakeBox3D(ST_Point(#{minx}, #{miny}),ST_Point(#{maxx}, #{maxy})), #{srid})) and st_area(geom)> power(5 * #{pixel_res}, 2)', 'The spatial query that retrieves LGA');
+    VALUES ('SpatialResult.getRegion', 'select id, label, geom as the_geom from cadastre.reg where ST_Intersects(geom, ST_SetSRID(ST_MakeBox3D(ST_Point(#{minx}, #{miny}),ST_Point(#{maxx}, #{maxy})), #{srid})) and st_area(geom)> power(5 * #{pixel_res}, 2)', 'The spatial query that retrieves LGA');
 
 INSERT INTO system.query(name, sql, description)
-    VALUES ('SpatialResult.getDistrict', 'select gid, caption, geom as the_geom from cadastre.district where ST_Intersects(geom, ST_SetSRID(ST_MakeBox3D(ST_Point(#{minx}, #{miny}),ST_Point(#{maxx}, #{maxy})), #{srid})) and st_area(geom)> power(5 * #{pixel_res}, 2)', 'The spatial query that retrieves LGA');
+    VALUES ('SpatialResult.getDistrict', 'select id, label, geom as the_geom from cadastre.dist where ST_Intersects(geom, ST_SetSRID(ST_MakeBox3D(ST_Point(#{minx}, #{miny}),ST_Point(#{maxx}, #{maxy})), #{srid})) and st_area(geom)> power(5 * #{pixel_res}, 2)', 'The spatial query that retrieves LGA');
 
 --INSERT INTO system.query(name, sql, description)
-  --  VALUES ('SpatialResult.getChiefdom', 'select gid, name1_, geom as the_geom from cadastre.chiefdom where ST_Intersects(geom, ST_SetSRID(ST_MakeBox3D(ST_Point(#{minx}, #{miny}),ST_Point(#{maxx}, #{maxy})), #{srid})) and st_area(geom)> power(5 * #{pixel_res}, 2)', 'The spatial query that retrieves LGA');
+  --  VALUES ('SpatialResult.getChiefdom', 'select id, name1_, geom as the_geom from cadastre.chiefdom where ST_Intersects(geom, ST_SetSRID(ST_MakeBox3D(ST_Point(#{minx}, #{miny}),ST_Point(#{maxx}, #{maxy})), #{srid})) and st_area(geom)> power(5 * #{pixel_res}, 2)', 'The spatial query that retrieves LGA');
 
 --INSERT INTO system.query(name, sql, description)
-  --  VALUES ('SpatialResult.getSection', 'select gid, first_sect, geom as the_geom from cadastre.province where ST_Intersects(geom, ST_SetSRID(ST_MakeBox3D(ST_Point(#{minx}, #{miny}),ST_Point(#{maxx}, #{maxy})), #{srid})) and st_area(geom)> power(5 * #{pixel_res}, 2)', 'The spatial query that retrieves LGA');
+  --  VALUES ('SpatialResult.getSection', 'select id, first_sect, geom as the_geom from cadastre.province where ST_Intersects(geom, ST_SetSRID(ST_MakeBox3D(ST_Point(#{minx}, #{miny}),ST_Point(#{maxx}, #{maxy})), #{srid})) and st_area(geom)> power(5 * #{pixel_res}, 2)', 'The spatial query that retrieves LGA');
 
 INSERT INTO system.config_map_layer (name, title, type_code, active, visible_in_start, item_order, style, pojo_structure, pojo_query_name)
 	VALUES ('sug_reg', 'Region', 'pojo', true, true, 90, 'reg.xml', 'theGeom:Polygon,label:""', 'SpatialResult.getRegion');
@@ -141,8 +141,8 @@ where co.type_code= ''parcel''  and co_int.type_code= ''parcel''
   and ST_Intersects(co_int.geom_polygon, ST_SetSRID(ST_MakeBox3D(ST_Point(#{minx}, #{miny}),ST_Point(#{maxx}, #{maxy})), #{srid}))', 'The spatial query that retrieves Overlapping');
 
 -- system.config_map_layer
---INSERT INTO system.config_map_layer (name, title, type_code, active, visible_in_start, item_order, style, pojo_structure, pojo_query_name)
-	--VALUES ('overlappingparcels', 'OverlappingParcels', 'pojo', true, false, 81, 'overlappingparcels.xml', 'theGeom:Polygon,label:""', 'SpatialResult.getOverlappingParcels');
+INSERT INTO system.config_map_layer (name, title, type_code, active, visible_in_start, item_order, style, pojo_structure, pojo_query_name)
+	VALUES ('overlappingparcels', 'OverlappingParcels', 'pojo', true, false, 81, 'overlappingparcels.xml', 'theGeom:Polygon,label:""', 'SpatialResult.getOverlappingParcels');
 
 
 
@@ -170,6 +170,7 @@ UPDATE system.setting SET vl = '228878.21' WHERE "name" = 'map-south';
 UPDATE system.setting SET vl = '933293.94' WHERE "name" = 'map-east'; 
 UPDATE system.setting SET vl = '182183.37' WHERE "name" = 'map-north';
 
+delete from system.crs;
 Insert into system.crs(srid, item_order) values('32628', 1);
 Insert into system.crs(srid, item_order) values('32629', 2);
 
