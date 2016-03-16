@@ -1,4 +1,4 @@
-SET statement_timeout = 0;
+﻿SET statement_timeout = 0;
 SET client_encoding = 'UTF8';
 SET standard_conforming_strings = on;
 SET check_function_bodies = false;
@@ -6,56 +6,295 @@ SET client_min_messages = warning;
 
 SET SESSION AUTHORIZATION DEFAULT;
 
-DELETE FROM application.request_type WHERE code = 'subdivideProperty';
-INSERT INTO application.request_type (code, request_category_code, display_value, description, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, rrr_type_code, type_action_code, service_panel_code, display_group_code, display_order) VALUES ('subdivideProperty', 'registrationServices', 'SubDivision of Property (General)::::???????? ????? (?????)::::????? ?? (???)::::Varier Droit (Gꯩral)::::::::Variar Direitos (Geral)::::???? (??)', '...::::...::::...::::...::::::::...::::...', 'c', 5, 5.00, 0.00, 0.00, 1, 'Variation of <right> <reference>', NULL, 'vary', 'property', 'generalReg', 180);
+DELETE FROM application.request_type WHERE code = 'newFreehold';
+DELETE FROM application.request_type WHERE code = 'LeaseRent';
 
-DELETE FROM application.request_type_requires_source_type WHERE request_type_code = 'subdivideProperty';
-INSERT INTO application.request_type_requires_source_type (source_type_code, request_type_code) VALUES ('deed', 'subdivideProperty');
+--INSERT INTO application.request_type (code, request_category_code, display_value, description, status, nr_daysl_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, rrr_type_code, type_action_code, service_panel_code, display_group_code, display_order) VALUES ('subdivideProperty', 'registrationServices', 'SubDivision of Property (General)::::???????? ????? (?????)::::????? ?? (???)::::Varier Droit (Gꯩral)::::::::Variar Direitos (Geral)::::???? (??)', '...::::...::::...::::...::::::::...::::...', 'c', 5, 5.00, 0.00, 0.00, 1, 'Variation of <right> <reference>', NULL, 'vary', 'property', 'generalReg', 180);
+
+INSERT INTO application.request_type (code, request_category_code, display_value, description, status, nr_daysl_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, rrr_type_code, type_action_code, service_panel_code, display_group_code, display_order) VALUES ('East_West_3TL1.0', 'registrationServices', 'SubDivision of Property (General)::::???????? ????? (?????)::::????? ?? (???)::::Varier Droit (Gꯩral)::::::::Variar Direitos (Geral)::::???? (??)', '...::::...::::...::::...::::::::...::::...', 'c', 5, 5.00, 0.00, 0.00, 1, 'Variation of <right> <reference>', NULL, 'vary', 'property', 'generalReg', 180);
+INSERT INTO application.request_type (code, request_category_code, display_value, description, status, nr_daysl_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, rrr_type_code, type_action_code, service_panel_code, display_group_code, display_order) VALUES ('East_West_Greater3TL1.5', 'registrationServices', 'SubDivision of Property (General)::::???????? ????? (?????)::::????? ?? (???)::::Varier Droit (Gꯩral)::::::::Variar Direitos (Geral)::::???? (??)', '...::::...::::...::::...::::::::...::::...', 'c', 5, 5.00, 0.00, 0.00, 1, 'Variation of <right> <reference>', NULL, 'vary', 'property', 'generalReg', 180);
+INSERT INTO application.request_type (code, request_category_code, display_value, description, status, nr_daysl_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, rrr_type_code, type_action_code, service_panel_code, display_group_code, display_order) VALUES ('East_West_Greater3TL2.0', 'registrationServices', 'SubDivision of Property (General)::::???????? ????? (?????)::::????? ?? (???)::::Varier Droit (Gꯩral)::::::::Variar Direitos (Geral)::::???? (??)', '...::::...::::...::::...::::::::...::::...', 'c', 5, 5.00, 0.00, 0.00, 1, 'Variation of <right> <reference>', NULL, 'vary', 'property', 'generalReg', 180);
+INSERT INTO application.request_type (code, request_category_code, display_value, description, status, nr_daysl_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, rrr_type_code, type_action_code, service_panel_code, display_group_code, display_order) VALUES ('East_West_Greater3TL2.5', 'registrationServices', 'SubDivision of Property (General)::::???????? ????? (?????)::::????? ?? (???)::::Varier Droit (Gꯩral)::::::::Variar Direitos (Geral)::::???? (??)', '...::::...::::...::::...::::::::...::::...', 'c', 5, 5.00, 0.00, 0.00, 1, 'Variation of <right> <reference>', NULL, 'vary', 'property', 'generalReg', 180);
+INSERT INTO application.request_type (code, request_category_code, display_value, description, status, nr_daysl_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, rrr_type_code, type_action_code, service_panel_code, display_group_code, display_order) VALUES ('East_West_Greater3TL3.0', 'registrationServices', 'SubDivision of Property (General)::::???????? ????? (?????)::::????? ?? (???)::::Varier Droit (Gꯩral)::::::::Variar Direitos (Geral)::::???? (??)', '...::::...::::...::::...::::::::...::::...', 'c', 5, 5.00, 0.00, 0.00, 1, 'Variation of <right> <reference>', NULL, 'vary', 'property', 'generalReg', 180);
+
+INSERT INTO application.request_type (code, request_category_code, display_value, description, status, nr_daysl_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, rrr_type_code, type_action_code, service_panel_code, display_group_code, display_order) VALUES ('Residential3Mil', 'registrationServices', 'SubDivision of Property (Residential)::::???????? ????? (?????)::::????? ?? (???)::::Varier Droit (Gꯩral)::::::::Variar Direitos (Geral)::::???? (??)', '...::::...::::...::::...::::::::...::::...', 'c', 5, 5.00, 0.00, 0.00, 1, 'Variation of <right> <reference>', NULL, 'vary', 'property', 'generalReg', 180);
+INSERT INTO application.request_type (code, request_category_code, display_value, description, status, nr_daysl_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, rrr_type_code, type_action_code, service_panel_code, display_group_code, display_order) VALUES ('Residential4Mil', 'registrationServices', 'SubDivision of Property (Residential)::::???????? ????? (?????)::::????? ?? (???)::::Varier Droit (Gꯩral)::::::::Variar Direitos (Geral)::::???? (??)', '...::::...::::...::::...::::::::...::::...', 'c', 5, 5.00, 0.00, 0.00, 1, 'Variation of <right> <reference>', NULL, 'vary', 'property', 'generalReg', 180);
+INSERT INTO application.request_type (code, request_category_code, display_value, description, status, nr_daysl_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, rrr_type_code, type_action_code, service_panel_code, display_group_code, display_order) VALUES ('Residential5Mil', 'registrationServices', 'SubDivision of Property (Residential)::::???????? ????? (?????)::::????? ?? (???)::::Varier Droit (Gꯩral)::::::::Variar Direitos (Geral)::::???? (??)', '...::::...::::...::::...::::::::...::::...', 'c', 5, 5.00, 0.00, 0.00, 1, 'Variation of <right> <reference>', NULL, 'vary', 'property', 'generalReg', 180);
+INSERT INTO application.request_type (code, request_category_code, display_value, description, status, nr_daysl_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, rrr_type_code, type_action_code, service_panel_code, display_group_code, display_order) VALUES ('Residential6Mil', 'registrationServices', 'SubDivision of Property (Residential)::::???????? ????? (?????)::::????? ?? (???)::::Varier Droit (Gꯩral)::::::::Variar Direitos (Geral)::::???? (??)', '...::::...::::...::::...::::::::...::::...', 'c', 5, 5.00, 0.00, 0.00, 1, 'Variation of <right> <reference>', NULL, 'vary', 'property', 'generalReg', 180);
+INSERT INTO application.request_type (code, request_category_code, display_value, description, status, nr_daysl_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, rrr_type_code, type_action_code, service_panel_code, display_group_code, display_order) VALUES ('Residential7Mil', 'registrationServices', 'SubDivision of Property (Residential)::::???????? ????? (?????)::::????? ?? (???)::::Varier Droit (Gꯩral)::::::::Variar Direitos (Geral)::::???? (??)', '...::::...::::...::::...::::::::...::::...', 'c', 5, 5.00, 0.00, 0.00, 1, 'Variation of <right> <reference>', NULL, 'vary', 'property', 'generalReg', 180);
+INSERT INTO application.request_type (code, request_category_code, display_value, description, status, nr_daysl_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, rrr_type_code, type_action_code, service_panel_code, display_group_code, display_order) VALUES ('Residential8Mil', 'registrationServices', 'SubDivision of Property (Residential)::::???????? ????? (?????)::::????? ?? (???)::::Varier Droit (Gꯩral)::::::::Variar Direitos (Geral)::::???? (??)', '...::::...::::...::::...::::::::...::::...', 'c', 5, 5.00, 0.00, 0.00, 1, 'Variation of <right> <reference>', NULL, 'vary', 'property', 'generalReg', 180);
+INSERT INTO application.request_type (code, request_category_code, display_value, description, status, nr_daysl_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, rrr_type_code, type_action_code, service_panel_code, display_group_code, display_order) VALUES ('Residential9Mil', 'registrationServices', 'SubDivision of Property (Residential)::::???????? ????? (?????)::::????? ?? (???)::::Varier Droit (Gꯩral)::::::::Variar Direitos (Geral)::::???? (??)', '...::::...::::...::::...::::::::...::::...', 'c', 5, 5.00, 0.00, 0.00, 1, 'Variation of <right> <reference>', NULL, 'vary', 'property', 'generalReg', 180);
+INSERT INTO application.request_type (code, request_category_code, display_value, description, status, nr_daysl_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, rrr_type_code, type_action_code, service_panel_code, display_group_code, display_order) VALUES ('Residential10Mil', 'registrationServices', 'SubDivision of Property (Residential)::::???????? ????? (?????)::::????? ?? (???)::::Varier Droit (Gꯩral)::::::::Variar Direitos (Geral)::::???? (??)', '...::::...::::...::::...::::::::...::::...', 'c', 5, 5.00, 0.00, 0.00, 1, 'Variation of <right> <reference>', NULL, 'vary', 'property', 'generalReg', 180);
+
+INSERT INTO application.request_type (code, request_category_code, display_value, description, status, nr_daysl_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, rrr_type_code, type_action_code, service_panel_code, display_group_code, display_order) VALUES ('Commercial10Mil', 'registrationServices', 'SubDivision of Property (Commercial)::::???????? ????? (?????)::::????? ?? (???)::::Varier Droit (Gꯩral)::::::::Variar Direitos (Geral)::::???? (??)', '...::::...::::...::::...::::::::...::::...', 'c', 5, 5.00, 0.00, 0.00, 1, 'Variation of <right> <reference>', NULL, 'vary', 'property', 'generalReg', 180);
+INSERT INTO application.request_type (code, request_category_code, display_value, description, status, nr_daysl_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, rrr_type_code, type_action_code, service_panel_code, display_group_code, display_order) VALUES ('Commercial15Mil', 'registrationServices', 'SubDivision of Property (Commercial)::::???????? ????? (?????)::::????? ?? (???)::::Varier Droit (Gꯩral)::::::::Variar Direitos (Geral)::::???? (??)', '...::::...::::...::::...::::::::...::::...', 'c', 5, 5.00, 0.00, 0.00, 1, 'Variation of <right> <reference>', NULL, 'vary', 'property', 'generalReg', 180);
+INSERT INTO application.request_type (code, request_category_code, display_value, description, status, nr_daysl_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, rrr_type_code, type_action_code, service_panel_code, display_group_code, display_order) VALUES ('Commercial20Mil', 'registrationServices', 'SubDivision of Property (Commercial)::::???????? ????? (?????)::::????? ?? (???)::::Varier Droit (Gꯩral)::::::::Variar Direitos (Geral)::::???? (??)', '...::::...::::...::::...::::::::...::::...', 'c', 5, 5.00, 0.00, 0.00, 1, 'Variation of <right> <reference>', NULL, 'vary', 'property', 'generalReg', 180);
+INSERT INTO application.request_type (code, request_category_code, display_value, description, status, nr_daysl_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, rrr_type_code, type_action_code, service_panel_code, display_group_code, display_order) VALUES ('Commercial25Mil', 'registrationServices', 'SubDivision of Property (Commercial)::::???????? ????? (?????)::::????? ?? (???)::::Varier Droit (Gꯩral)::::::::Variar Direitos (Geral)::::???? (??)', '...::::...::::...::::...::::::::...::::...', 'c', 5, 5.00, 0.00, 0.00, 1, 'Variation of <right> <reference>', NULL, 'vary', 'property', 'generalReg', 180);
+INSERT INTO application.request_type (code, request_category_code, display_value, description, status, nr_daysl_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, rrr_type_code, type_action_code, service_panel_code, display_group_code, display_order) VALUES ('Commercial30Mil', 'registrationServices', 'SubDivision of Property (Commercial)::::???????? ????? (?????)::::????? ?? (???)::::Varier Droit (Gꯩral)::::::::Variar Direitos (Geral)::::???? (??)', '...::::...::::...::::...::::::::...::::...', 'c', 5, 5.00, 0.00, 0.00, 1, 'Variation of <right> <reference>', NULL, 'vary', 'property', 'generalReg', 180);
+INSERT INTO application.request_type (code, request_category_code, display_value, description, status, nr_daysl_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, rrr_type_code, type_action_code, service_panel_code, display_group_code, display_order) VALUES ('Commercial35Mil', 'registrationServices', 'SubDivision of Property (Commercial)::::???????? ????? (?????)::::????? ?? (???)::::Varier Droit (Gꯩral)::::::::Variar Direitos (Geral)::::???? (??)', '...::::...::::...::::...::::::::...::::...', 'c', 5, 5.00, 0.00, 0.00, 1, 'Variation of <right> <reference>', NULL, 'vary', 'property', 'generalReg', 180);
+INSERT INTO application.request_type (code, request_category_code, display_value, description, status, nr_daysl_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, rrr_type_code, type_action_code, service_panel_code, display_group_code, display_order) VALUES ('Commercial40Mil', 'registrationServices', 'SubDivision of Property (Commercial)::::???????? ????? (?????)::::????? ?? (???)::::Varier Droit (Gꯩral)::::::::Variar Direitos (Geral)::::???? (??)', '...::::...::::...::::...::::::::...::::...', 'c', 5, 5.00, 0.00, 0.00, 1, 'Variation of <right> <reference>', NULL, 'vary', 'property', 'generalReg', 180);
+INSERT INTO application.request_type (code, request_category_code, display_value, description, status, nr_daysl_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, rrr_type_code, type_action_code, service_panel_code, display_group_code, display_order) VALUES ('Commercial45Mil', 'registrationServices', 'SubDivision of Property (Commercial)::::???????? ????? (?????)::::????? ?? (???)::::Varier Droit (Gꯩral)::::::::Variar Direitos (Geral)::::???? (??)', '...::::...::::...::::...::::::::...::::...', 'c', 5, 5.00, 0.00, 0.00, 1, 'Variation of <right> <reference>', NULL, 'vary', 'property', 'generalReg', 180);
+INSERT INTO application.request_type (code, request_category_code, display_value, description, status, nr_daysl_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, rrr_type_code, type_action_code, service_panel_code, display_group_code, display_order) VALUES ('Commercial50Mil', 'registrationServices', 'SubDivision of Property (Commercial)::::???????? ????? (?????)::::????? ?? (???)::::Varier Droit (Gꯩral)::::::::Variar Direitos (Geral)::::???? (??)', '...::::...::::...::::...::::::::...::::...', 'c', 5, 5.00, 0.00, 0.00, 1, 'Variation of <right> <reference>', NULL, 'vary', 'property', 'generalReg', 180);
+INSERT INTO application.request_type (code, request_category_code, display_value, description, status, nr_daysl_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, rrr_type_code, type_action_code, service_panel_code, display_group_code, display_order) VALUES ('Commercial55Mil', 'registrationServices', 'SubDivision of Property (Commercial)::::???????? ????? (?????)::::????? ?? (???)::::Varier Droit (Gꯩral)::::::::Variar Direitos (Geral)::::???? (??)', '...::::...::::...::::...::::::::...::::...', 'c', 5, 5.00, 0.00, 0.00, 1, 'Variation of <right> <reference>', NULL, 'vary', 'property', 'generalReg', 180);
+INSERT INTO application.request_type (code, request_category_code, display_value, description, status, nr_daysl_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, rrr_type_code, type_action_code, service_panel_code, display_group_code, display_order) VALUES ('Commercial60Mil', 'registrationServices', 'SubDivision of Property (Commercial)::::???????? ????? (?????)::::????? ?? (???)::::Varier Droit (Gꯩral)::::::::Variar Direitos (Geral)::::???? (??)', '...::::...::::...::::...::::::::...::::...', 'c', 5, 5.00, 0.00, 0.00, 1, 'Variation of <right> <reference>', NULL, 'vary', 'property', 'generalReg', 180);
+INSERT INTO application.request_type (code, request_category_code, display_value, description, status, nr_daysl_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, rrr_type_code, type_action_code, service_panel_code, display_group_code, display_order) VALUES ('Commercial65Mil', 'registrationServices', 'SubDivision of Property (Commercial)::::???????? ????? (?????)::::????? ?? (???)::::Varier Droit (Gꯩral)::::::::Variar Direitos (Geral)::::???? (??)', '...::::...::::...::::...::::::::...::::...', 'c', 5, 5.00, 0.00, 0.00, 1, 'Variation of <right> <reference>', NULL, 'vary', 'property', 'generalReg', 180);
+INSERT INTO application.request_type (code, request_category_code, display_value, description, status, nr_daysl_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, rrr_type_code, type_action_code, service_panel_code, display_group_code, display_order) VALUES ('Commercial70Mil', 'registrationServices', 'SubDivision of Property (Commercial)::::???????? ????? (?????)::::????? ?? (???)::::Varier Droit (Gꯩral)::::::::Variar Direitos (Geral)::::???? (??)', '...::::...::::...::::...::::::::...::::...', 'c', 5, 5.00, 0.00, 0.00, 1, 'Variation of <right> <reference>', NULL, 'vary', 'property', 'generalReg', 180);
+INSERT INTO application.request_type (code, request_category_code, display_value, description, status, nr_daysl_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, rrr_type_code, type_action_code, service_panel_code, display_group_code, display_order) VALUES ('Commercial75Mil', 'registrationServices', 'SubDivision of Property (Commercial)::::???????? ????? (?????)::::????? ?? (???)::::Varier Droit (Gꯩral)::::::::Variar Direitos (Geral)::::???? (??)', '...::::...::::...::::...::::::::...::::...', 'c', 5, 5.00, 0.00, 0.00, 1, 'Variation of <right> <reference>', NULL, 'vary', 'property', 'generalReg', 180);
+INSERT INTO application.request_type (code, request_category_code, display_value, description, status, nr_daysl_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, rrr_type_code, type_action_code, service_panel_code, display_group_code, display_order) VALUES ('Commercial80Mil', 'registrationServices', 'SubDivision of Property (Commercial)::::???????? ????? (?????)::::????? ?? (???)::::Varier Droit (Gꯩral)::::::::Variar Direitos (Geral)::::???? (??)', '...::::...::::...::::...::::::::...::::...', 'c', 5, 5.00, 0.00, 0.00, 1, 'Variation of <right> <reference>', NULL, 'vary', 'property', 'generalReg', 180);
+INSERT INTO application.request_type (code, request_category_code, display_value, description, status, nr_daysl_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, rrr_type_code, type_action_code, service_panel_code, display_group_code, display_order) VALUES ('Commercial85Mil', 'registrationServices', 'SubDivision of Property (Commercial)::::???????? ????? (?????)::::????? ?? (???)::::Varier Droit (Gꯩral)::::::::Variar Direitos (Geral)::::???? (??)', '...::::...::::...::::...::::::::...::::...', 'c', 5, 5.00, 0.00, 0.00, 1, 'Variation of <right> <reference>', NULL, 'vary', 'property', 'generalReg', 180);
+INSERT INTO application.request_type (code, request_category_code, display_value, description, status, nr_daysl_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, rrr_type_code, type_action_code, service_panel_code, display_group_code, display_order) VALUES ('Commercial90Mil', 'registrationServices', 'SubDivision of Property (Commercial)::::???????? ????? (?????)::::????? ?? (???)::::Varier Droit (Gꯩral)::::::::Variar Direitos (Geral)::::???? (??)', '...::::...::::...::::...::::::::...::::...', 'c', 5, 5.00, 0.00, 0.00, 1, 'Variation of <right> <reference>', NULL, 'vary', 'property', 'generalReg', 180);
+INSERT INTO application.request_type (code, request_category_code, display_value, description, status, nr_daysl_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, rrr_type_code, type_action_code, service_panel_code, display_group_code, display_order) VALUES ('Commercial95Mil', 'registrationServices', 'SubDivision of Property (Commercial)::::???????? ????? (?????)::::????? ?? (???)::::Varier Droit (Gꯩral)::::::::Variar Direitos (Geral)::::???? (??)', '...::::...::::...::::...::::::::...::::...', 'c', 5, 5.00, 0.00, 0.00, 1, 'Variation of <right> <reference>', NULL, 'vary', 'property', 'generalReg', 180);
+INSERT INTO application.request_type (code, request_category_code, display_value, description, status, nr_daysl_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, rrr_type_code, type_action_code, service_panel_code, display_group_code, display_order) VALUES ('Commercial100Mil', 'registrationServices', 'SubDivision of Property (Commercial)::::???????? ????? (?????)::::????? ?? (???)::::Varier Droit (Gꯩral)::::::::Variar Direitos (Geral)::::???? (??)', '...::::...::::...::::...::::::::...::::...', 'c', 5, 5.00, 0.00, 0.00, 1, 'Variation of <right> <reference>', NULL, 'vary', 'property', 'generalReg', 180);
+
+
+DELETE FROM application.request_type_requires_source_type WHERE source_type_code = 'LeaseRent';
+DELETE FROM application.request_type_requires_source_type WHERE source_type_code = 'newFreeHold';
+
+INSERT INTO application.request_type_requires_source_type (source_type_code, request_type_code) VALUES ('LeaseRent', 'East_West_3TL1.0');
+INSERT INTO application.request_type_requires_source_type (source_type_code, request_type_code) VALUES ('LeaseRent', 'East_West_Greater3TL1.5');
+INSERT INTO application.request_type_requires_source_type (source_type_code, request_type_code) VALUES ('LeaseRent', 'East_West_Greater3TL2.0');
+INSERT INTO application.request_type_requires_source_type (source_type_code, request_type_code) VALUES ('LeaseRent', 'East_West_Greater3TL2.5');
+INSERT INTO application.request_type_requires_source_type (source_type_code, request_type_code) VALUES ('LeaseRent', 'East_West_Greater3TL3.0');
+INSERT INTO application.request_type_requires_source_type (source_type_code, request_type_code) VALUES ('newFreehold', 'Residential3Mil');
+INSERT INTO application.request_type_requires_source_type (source_type_code, request_type_code) VALUES ('newFreehold', 'Residential4Mil');
+INSERT INTO application.request_type_requires_source_type (source_type_code, request_type_code) VALUES ('newFreehold', 'Residential5Mil');
+INSERT INTO application.request_type_requires_source_type (source_type_code, request_type_code) VALUES ('newFreehold', 'Residential6Mil');
+INSERT INTO application.request_type_requires_source_type (source_type_code, request_type_code) VALUES ('newFreehold', 'Residential7Mil');
+INSERT INTO application.request_type_requires_source_type (source_type_code, request_type_code) VALUES ('newFreehold', 'Residential8Mil');
+INSERT INTO application.request_type_requires_source_type (source_type_code, request_type_code) VALUES ('newFreehold', 'Residential9Mil');
+INSERT INTO application.request_type_requires_source_type (source_type_code, request_type_code) VALUES ('newFreehold', 'Residential10Mil');
+
+INSERT INTO application.request_type_requires_source_type (source_type_code, request_type_code) VALUES ('newFreehold', 'Commercial10Mil');
+INSERT INTO application.request_type_requires_source_type (source_type_code, request_type_code) VALUES ('newFreehold', 'Commercial15Mil');
+INSERT INTO application.request_type_requires_source_type (source_type_code, request_type_code) VALUES ('newFreehold', 'Commercial20Mil');
+INSERT INTO application.request_type_requires_source_type (source_type_code, request_type_code) VALUES ('newFreehold', 'Commercial25Mil');
+INSERT INTO application.request_type_requires_source_type (source_type_code, request_type_code) VALUES ('newFreehold', 'Commercial30Mil');
+INSERT INTO application.request_type_requires_source_type (source_type_code, request_type_code) VALUES ('newFreehold', 'Commercial35Mil');
+INSERT INTO application.request_type_requires_source_type (source_type_code, request_type_code) VALUES ('newFreehold', 'Commercial40Mil');
+INSERT INTO application.request_type_requires_source_type (source_type_code, request_type_code) VALUES ('newFreehold', 'Commercial45Mil');
+INSERT INTO application.request_type_requires_source_type (source_type_code, request_type_code) VALUES ('newFreehold', 'Commercial50Mil');
+INSERT INTO application.request_type_requires_source_type (source_type_code, request_type_code) VALUES ('newFreehold', 'Commercial55Mil');
+INSERT INTO application.request_type_requires_source_type (source_type_code, request_type_code) VALUES ('newFreehold', 'Commercial60Mil');
+INSERT INTO application.request_type_requires_source_type (source_type_code, request_type_code) VALUES ('newFreehold', 'Commercial65Mil');
+INSERT INTO application.request_type_requires_source_type (source_type_code, request_type_code) VALUES ('newFreehold', 'Commercial70Mil');
+INSERT INTO application.request_type_requires_source_type (source_type_code, request_type_code) VALUES ('newFreehold', 'Commercial75Mil');
+INSERT INTO application.request_type_requires_source_type (source_type_code, request_type_code) VALUES ('newFreehold', 'Commercial80Mil');
+INSERT INTO application.request_type_requires_source_type (source_type_code, request_type_code) VALUES ('newFreehold', 'Commercial85Mil');
+INSERT INTO application.request_type_requires_source_type (source_type_code, request_type_code) VALUES ('newFreehold', 'Commercial90Mil');
+INSERT INTO application.request_type_requires_source_type (source_type_code, request_type_code) VALUES ('newFreehold', 'Commercial95Mil');
+INSERT INTO application.request_type_requires_source_type (source_type_code, request_type_code) VALUES ('newFreehold', 'Commercial100Mil');
 
 UPDATE source.administrative_source_type
    SET display_value='Diagram'
  WHERE code='cadastralSurvey';
 
-UPDATE application.request_type
-SET		base_fee= '2000',
+DELETE From application.request_type WHERE code = 'newFreehold'
+DELETE From application.request_type WHERE code = 'LeaseRent'
+
+---UPDATE VALUES FOR LeaseRent
+UPDATE application.request_type_code
+SET		base_fee= '1000000',
 		area_base_fee= '0',
 		value_base_fee='0'
-WHERE code = 'newFreehold';
+WHERE code = 'East_West_3TL1.0';
 
-UPDATE application.request_type
-SET		base_fee= '3000',
-		area_base_fee='0',
+UPDATE application.request_type_code
+SET		base_fee= '1500000',
+		area_base_fee= '0',
 		value_base_fee='0'
-WHERE code = 'titleSearch';
-
-UPDATE application.request_type
-SET		base_fee= '0',
-		area_base_fee='0',
-		value_base_fee='0.045'
-WHERE code = 'mortgage';
-
-UPDATE application.request_type
-SET		base_fee= '0',
-		area_base_fee='0',
-		value_base_fee='0.06'
-WHERE code = 'newOwnership';
-
-UPDATE application.request_type
-SET		base_fee= '20000',
-		area_base_fee='0',
+WHERE code = 'East_West_Greater3TL1.5';
+ 
+UPDATE application.request_type_code
+SET		base_fee= '2000000',
+		area_base_fee= '0',
 		value_base_fee='0'
-WHERE code = 'varyRight';
+WHERE code = 'East_West_Greater3TL2.0';
 
-UPDATE application.request_type
-SET		base_fee= '20000',
-		area_base_fee='0',
+UPDATE application.request_type_code
+SET		base_fee= '2500000',
+		area_base_fee= '0',
 		value_base_fee='0'
-WHERE code = 'subdivideProperty';
+WHERE code = 'East_West_Greater3TL2.5';
 
+UPDATE application.request_type_code
+SET		base_fee= '3000000',
+		area_base_fee= '0',
+		value_base_fee='0'
+WHERE code = 'East_West_Greater3TL3.0';
+--------------------------------------------------------------------------------------------------------
+
+---UPDATE VALUES FOR Freehold (RESIDENTIAL)-------------------------------------------------------------
+UPDATE application.request_type_code
+SET		base_fee= '3000000',
+		area_base_fee= '0',
+		value_base_fee='0'
+WHERE code = 'Residential3Mil';
+
+UPDATE application.request_type_code
+SET		base_fee= '4000000',
+		area_base_fee= '0',
+		value_base_fee='0'
+WHERE code = 'Residential4Mil';
+
+UPDATE application.request_type_code
+SET		base_fee= '5000000',
+		area_base_fee= '0',
+		value_base_fee='0'
+WHERE code = 'Residential5Mil';
+
+UPDATE application.request_type_code
+SET		base_fee= '6000000',
+		area_base_fee= '0',
+		value_base_fee='0'
+WHERE code = 'Residential6Mil';
+
+UPDATE application.request_type_code
+SET		base_fee= '7000000',
+		area_base_fee= '0',
+		value_base_fee='0'
+WHERE code = 'Residential7Mil';
+
+UPDATE application.request_type_code
+SET		base_fee= '8000000',
+		area_base_fee= '0',
+		value_base_fee='0'
+WHERE code = 'Residential8Mil';
+
+UPDATE application.request_type_code
+SET		base_fee= '9000000',
+		area_base_fee= '0',
+		value_base_fee='0'
+WHERE code = 'Residential9Mil';
+
+UPDATE application.request_type_code
+SET		base_fee= '10000000',
+		area_base_fee= '0',
+		value_base_fee='0'
+WHERE code = 'Residential10Mil';
+
+
+---UPDATE VALUES FOR Freehold (COMMERCIAL)------------------------------------------------------
+
+UPDATE application.request_type_code
+SET		base_fee= '10000000',
+		area_base_fee= '0',
+		value_base_fee='0'
+WHERE code = 'Commercial10Mil';
+
+UPDATE application.request_type_code
+SET		base_fee= '15000000',
+		area_base_fee= '0',
+		value_base_fee='0'
+WHERE code = 'Commercial15Mil';
+
+UPDATE application.request_type_code
+SET		base_fee= '20000000',
+		area_base_fee= '0',
+		value_base_fee='0'
+WHERE code = 'Commercial20Mil';
+
+UPDATE application.request_type_code
+SET		base_fee= '25000000',
+		area_base_fee= '0',
+		value_base_fee='0'
+WHERE code = 'Commercial25Mil';
+
+UPDATE application.request_type_code
+SET		base_fee= '30000000',
+		area_base_fee= '0',
+		value_base_fee='0'
+WHERE code = 'Commercial30Mil';
+
+UPDATE application.request_type_code
+SET		base_fee= '35000000',
+		area_base_fee= '0',
+		value_base_fee='0'
+WHERE code = 'Commercial35Mil';
+
+UPDATE application.request_type_code
+SET		base_fee= '40000000',
+		area_base_fee= '0',
+		value_base_fee='0'
+WHERE code = 'Commercial40Mil';
+
+UPDATE application.request_type_code
+SET		base_fee= '45000000',
+		area_base_fee= '0',
+		value_base_fee='0'
+WHERE code = 'Commercial45Mil';
+
+UPDATE application.request_type_code
+SET		base_fee= '50000000',
+		area_base_fee= '0',
+		value_base_fee='0'
+WHERE code = 'Commercial50Mil';
+
+UPDATE application.request_type_code
+SET		base_fee= '55000000',
+		area_base_fee= '0',
+		value_base_fee='0'
+WHERE code = 'Commercial55Mil';
+
+UPDATE application.request_type_code
+SET		base_fee= '60000000',
+		area_base_fee= '0',
+		value_base_fee='0'
+WHERE code = 'Commercial60Mil';
+
+UPDATE application.request_type_code
+SET		base_fee= '65000000',
+		area_base_fee= '0',
+		value_base_fee='0'
+WHERE code = 'Commercial65Mil';
+
+UPDATE application.request_type_code
+SET		base_fee= '70000000',
+		area_base_fee= '0',
+		value_base_fee='0'
+WHERE code = 'Commercial70Mil';
+
+UPDATE application.request_type_code
+SET		base_fee= '75000000',
+		area_base_fee= '0',
+		value_base_fee='0'
+WHERE code = 'Commercial75Mil';
+
+UPDATE application.request_type_code
+SET		base_fee= '80000000',
+		area_base_fee= '0',
+		value_base_fee='0'
+WHERE code = 'Commercial80Mil';
+
+UPDATE application.request_type_code
+SET		base_fee= '85000000',
+		area_base_fee= '0',
+		value_base_fee='0'
+WHERE code = 'Commercial85Mil';
+
+UPDATE application.request_type_code
+SET		base_fee= '90000000',
+		area_base_fee= '0',
+		value_base_fee='0'
+WHERE code = 'Commercial90Mil';
+
+UPDATE application.request_type_code
+SET		base_fee= '95000000',
+		area_base_fee= '0',
+		value_base_fee='0'
+WHERE code = 'Commercial95Mil';
+
+UPDATE application.request_type_code
+SET		base_fee= '100000000',
+		area_base_fee= '0',
+		value_base_fee='0'
+WHERE code = 'Commercial100Mil';
+
+---------------------------------------------------------------------------
+ 
 --
--- Nigeria SOLA Registry Reference List Customisation
--- 28 October 2015
--- Correction to administrative_source_type 29 October
+-- Sierra Leone SOLA Registry Reference List Customisation
+-- 16 March 2016
+-- Correction to administrative_source_type 16 March
 
 
 -- Data for Name: administrative_source_type; Type: TABLE DATA; Schema: source; Owner: postgres
@@ -65,7 +304,7 @@ UPDATE source.administrative_source_type SET status = 'x' WHERE code IN ( 'perso
  'agriLease', 'tif', 'publicNotification', 'restrictionOrder', 'parcelPlan', 'standardDocument', 'surveyDataFile', 'systematicRegn', 'objection', 'agriNotaryStatement');
 
 UPDATE source.administrative_source_type SET status = 'c' WHERE code IN ('courtOrder', 'mortgage', 'powerOfAttorney', 'proclamation', 'will', 'caveat',   'lease', 'deed', 'officeNote', 'agreement', 'contractForSale', 
-'requisition', 'idVerification', 'title', 'cadastralSurvey' );
+'requisition', 'idVerification', 'title', 'cadastralSurvey', 'LeaseRent', 'newFreehold' );
 
 
 UPDATE administrative.ba_unit_rel_type  SET display_value = 'Sub-lease::::Договор Аренды::::إيجار::::Bail::::Arrendar::::Arrendamento::::租赁' WHERE code = 'lease';

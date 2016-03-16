@@ -26,19 +26,19 @@ WHERE name='orthophoto';
 -- Configure the new Navigation Layer
  
 
--- Setup Spatial Config for katsina, Nigeria
+-- Setup Spatial Config for Sierra Leone
 -- CLEAR CADASTRE DATABASE TABLES
 DELETE FROM cadastre.spatial_value_area;
 DELETE FROM cadastre.spatial_unit;
 DELETE FROM cadastre.spatial_unit_historic;
-DELETE FROM cadastre.level WHERE "name" IN ('LGA', 'Ward', 'Section');
-DELETE FROM cadastre.level WHERE "name" IN ('LGA', 'Wards', 'Sections');
-DELETE FROM system.config_map_layer WHERE name IN ('lga', 'ward', 'section');
-DELETE FROM system.config_map_layer WHERE name IN ('lga', 'wards', 'sections');
+DELETE FROM cadastre.level WHERE "name" IN ('Region', 'District');
+DELETE FROM cadastre.level WHERE "name" IN ('Regions', 'Districts');
+DELETE FROM system.config_map_layer WHERE name IN ('region', 'district');
+DELETE FROM system.config_map_layer WHERE name IN ('regions', 'districts');
 DELETE FROM cadastre.cadastre_object;
 DELETE FROM cadastre.cadastre_object_historic;
 
--- Configure the Level data for katsina, Nigeria
+-- Configure the Level data for Sierra Leone
 -- add levels
 
 INSERT INTO cadastre.level (id, name, register_type_code, structure_code, type_code, change_user)
@@ -56,25 +56,25 @@ INSERT INTO cadastre.level (id, name, register_type_code, structure_code, type_c
 
 --UPDATE system.config_map_layer
 
---Changes made by Paola to add a new layer for sections - 26/06/2013
-DELETE FROM system.config_map_layer WHERE "name" IN ('lga', 'ward', 'section');
-DELETE FROM system.config_map_layer WHERE "name" IN ('lga', 'wards', 'sections');
-DELETE FROM system.config_map_layer WHERE "name" IN ('sug_lga', 'sug_ward', 'sug_section');
+--Changes made by Momodu and Moses to add a new layer for sections - 10/03/2016
+DELETE FROM system.config_map_layer WHERE name IN ('sug_reg', 'sug_dist', 'sug_chief', 'sug_sect');
+DELETE FROM system.config_map_layer WHERE name IN ('sug_regs', 'sug_dists', 'sug_chiefs', 'sug_sects');
+DELETE FROM system.config_map_layer WHERE name IN ('sug_lga', 'sug_ward', 'sug_section');
 DELETE FROM system.config_map_layer WHERE "name" IN ('sug_lga', 'sug_wards', 'sug_sections');
-DELETE FROM system.query WHERE name IN ('SpatialResult.getLGA', 'SpatialResult.getWard', 'SpatialResult.getSection');
-DELETE FROM system.query WHERE name IN ('SpatialResult.getLGA', 'SpatialResult.getWards', 'SpatialResult.getSections');
+DELETE FROM system.query WHERE name IN ('SpatialResult.getRegion', 'SpatialResult.getDistrict', 'SpatialResult.getChiefdom', 'SpatialResult.getSection');
+DELETE FROM system.query WHERE name IN ('SpatialResult.getRegions', 'SpatialResult.getDistricts', 'SpatialResult.getChiefdoms', 'SpatialResult.getSections');
 
 INSERT INTO system.query(name, sql, description)
-    VALUES ('SpatialResult.getRegion', 'select gid, caption, geom as the_geom from cadastre.province where ST_Intersects(geom, ST_SetSRID(ST_MakeBox3D(ST_Point(#{minx}, #{miny}),ST_Point(#{maxx}, #{maxy})), #{srid})) and st_area(geom)> power(5 * #{pixel_res}, 2)', 'The spatial query that retrieves LGA');
+    VALUES ('SpatialResult.getRegion', 'select id, label, geom as the_geom from cadastre.reg where ST_Intersects(geom, ST_SetSRID(ST_MakeBox3D(ST_Point(#{minx}, #{miny}),ST_Point(#{maxx}, #{maxy})), #{srid})) and st_area(geom)> power(5 * #{pixel_res}, 2)', 'The spatial query that retrieves LGA');
 
 INSERT INTO system.query(name, sql, description)
-    VALUES ('SpatialResult.getDistrict', 'select gid, caption, geom as the_geom from cadastre.district where ST_Intersects(geom, ST_SetSRID(ST_MakeBox3D(ST_Point(#{minx}, #{miny}),ST_Point(#{maxx}, #{maxy})), #{srid})) and st_area(geom)> power(5 * #{pixel_res}, 2)', 'The spatial query that retrieves LGA');
+    VALUES ('SpatialResult.getDistrict', 'select id, label, geom as the_geom from cadastre.dist where ST_Intersects(geom, ST_SetSRID(ST_MakeBox3D(ST_Point(#{minx}, #{miny}),ST_Point(#{maxx}, #{maxy})), #{srid})) and st_area(geom)> power(5 * #{pixel_res}, 2)', 'The spatial query that retrieves LGA');
 
 INSERT INTO system.query(name, sql, description)
-    VALUES ('SpatialResult.getChiefdom', 'select gid, name1_, geom as the_geom from cadastre.chiefdom where ST_Intersects(geom, ST_SetSRID(ST_MakeBox3D(ST_Point(#{minx}, #{miny}),ST_Point(#{maxx}, #{maxy})), #{srid})) and st_area(geom)> power(5 * #{pixel_res}, 2)', 'The spatial query that retrieves LGA');
+    VALUES ('SpatialResult.getChiefdom', 'select id, label, geom as the_geom from cadastre.chief where ST_Intersects(geom, ST_SetSRID(ST_MakeBox3D(ST_Point(#{minx}, #{miny}),ST_Point(#{maxx}, #{maxy})), #{srid})) and st_area(geom)> power(5 * #{pixel_res}, 2)', 'The spatial query that retrieves LGA');
 
 INSERT INTO system.query(name, sql, description)
-    VALUES ('SpatialResult.getSection', 'select gid, first_sect, geom as the_geom from cadastre.province where ST_Intersects(geom, ST_SetSRID(ST_MakeBox3D(ST_Point(#{minx}, #{miny}),ST_Point(#{maxx}, #{maxy})), #{srid})) and st_area(geom)> power(5 * #{pixel_res}, 2)', 'The spatial query that retrieves LGA');
+    VALUES ('SpatialResult.getSection', 'select id, label, geom as the_geom from cadastre.sect where ST_Intersects(geom, ST_SetSRID(ST_MakeBox3D(ST_Point(#{minx}, #{miny}),ST_Point(#{maxx}, #{maxy})), #{srid})) and st_area(geom)> power(5 * #{pixel_res}, 2)', 'The spatial query that retrieves LGA');
 
 INSERT INTO system.config_map_layer (name, title, type_code, active, visible_in_start, item_order, style, pojo_structure, pojo_query_name)
 	VALUES ('sug_reg', 'Region', 'pojo', true, true, 90, 'reg.xml', 'theGeom:Polygon,label:""', 'SpatialResult.getRegion');
@@ -172,7 +172,7 @@ insert into system.map_search_option(code, title, query_name, active, min_search
 
 -------------------------------------------- 
  --SET NEW SRID and OTHER katsina PARAMETERS
-UPDATE public.geometry_columns SET srid = 32629; 
+UPDATE public.geometry_columns SET srid = 32628; 
 UPDATE application.application set location = null;
 UPDATE system.setting SET vl = '32629' WHERE "name" = 'map-srid'; 
 UPDATE system.setting SET vl = '932994.67' WHERE "name" = 'map-west'; 
@@ -180,6 +180,8 @@ UPDATE system.setting SET vl = '228878.21' WHERE "name" = 'map-south';
 UPDATE system.setting SET vl = '933293.94' WHERE "name" = 'map-east'; 
 UPDATE system.setting SET vl = '182183.37' WHERE "name" = 'map-north';
 
+--DELETING THE ALREADY INSERTED SPATIAL REFERENCES for SIERRA LEONE and Inserting the New Values
+DELETE FROM system.crs WHERE srid IN ('32628', '32629');
 Insert into system.crs(srid, item_order) values('32628', 1);
 Insert into system.crs(srid, item_order) values('32629', 2);
 
@@ -195,59 +197,66 @@ update cadastre.hierarchy_level set status = 'c' where code = '3'; -- enable spa
 
 -- Reset the SRID check constraints
 ALTER TABLE cadastre.spatial_unit DROP CONSTRAINT IF EXISTS enforce_srid_geom;
-ALTER TABLE cadastre.spatial_unit ADD CONSTRAINT enforce_srid_geom CHECK (st_srid(geom) = 32629);
+ALTER TABLE cadastre.spatial_unit ADD CONSTRAINT enforce_srid_geom CHECK (st_srid(geom) IN (32628, 32629));
 ALTER TABLE cadastre.spatial_unit_historic DROP CONSTRAINT IF EXISTS enforce_srid_geom;
-ALTER TABLE cadastre.spatial_unit_historic ADD CONSTRAINT enforce_srid_geom CHECK (st_srid(geom) = 32629);
+ALTER TABLE cadastre.spatial_unit_historic ADD CONSTRAINT enforce_srid_geom CHECK (st_srid(geom) IN (32628, 32629));
 
 ALTER TABLE cadastre.spatial_unit DROP CONSTRAINT IF EXISTS enforce_srid_reference_point;
-ALTER TABLE cadastre.spatial_unit ADD CONSTRAINT enforce_srid_reference_point CHECK (st_srid(reference_point) = 32629);
+ALTER TABLE cadastre.spatial_unit ADD CONSTRAINT enforce_srid_reference_point CHECK (st_srid(reference_point) IN (32628, 32629));
 ALTER TABLE cadastre.spatial_unit_historic DROP CONSTRAINT IF EXISTS enforce_srid_reference_point;
-ALTER TABLE cadastre.spatial_unit_historic ADD CONSTRAINT enforce_srid_reference_point CHECK (st_srid(reference_point) = 32629);
+ALTER TABLE cadastre.spatial_unit_historic ADD CONSTRAINT enforce_srid_reference_point CHECK (st_srid(reference_point) IN (32628, 32629));
 
 
 ALTER TABLE cadastre.spatial_unit_group DROP CONSTRAINT IF EXISTS enforce_srid_geom;
-ALTER TABLE cadastre.spatial_unit_group ADD CONSTRAINT enforce_srid_geom CHECK (st_srid(geom) = 32629);
+ALTER TABLE cadastre.spatial_unit_group ADD CONSTRAINT enforce_srid_geom CHECK (st_srid(geom) IN (32628, 32629));
 ALTER TABLE cadastre.spatial_unit_group_historic DROP CONSTRAINT IF EXISTS enforce_srid_geom;
-ALTER TABLE cadastre.spatial_unit_group_historic ADD CONSTRAINT enforce_srid_geom CHECK (st_srid(geom) = 32629);
+ALTER TABLE cadastre.spatial_unit_group_historic ADD CONSTRAINT enforce_srid_geom CHECK (st_srid(geom) IN (32628, 32629));
 
 ALTER TABLE cadastre.spatial_unit_group DROP CONSTRAINT IF EXISTS enforce_srid_reference_point;
-ALTER TABLE cadastre.spatial_unit_group ADD CONSTRAINT enforce_srid_reference_point CHECK (st_srid(reference_point) = 32629);
+ALTER TABLE cadastre.spatial_unit_group ADD CONSTRAINT enforce_srid_reference_point CHECK (st_srid(reference_point) IN (32628, 32629));
 ALTER TABLE cadastre.spatial_unit_group_historic DROP CONSTRAINT IF EXISTS enforce_srid_reference_point;
-ALTER TABLE cadastre.spatial_unit_group_historic ADD CONSTRAINT enforce_srid_reference_point CHECK (st_srid(reference_point) = 32629);
+ALTER TABLE cadastre.spatial_unit_group_historic ADD CONSTRAINT enforce_srid_reference_point CHECK (st_srid(reference_point) IN (32628, 32629));
  
 
+
 ALTER TABLE cadastre.cadastre_object DROP CONSTRAINT IF EXISTS enforce_srid_geom_polygon;
-ALTER TABLE cadastre.cadastre_object ADD CONSTRAINT enforce_srid_geom_polygon CHECK (st_srid(geom_polygon) = 32629);
+ALTER TABLE cadastre.cadastre_object ADD CONSTRAINT enforce_srid_geom_polygon CHECK (st_srid(geom_polygon) IN (32628, 32629));
 ALTER TABLE cadastre.cadastre_object_historic DROP CONSTRAINT IF EXISTS enforce_srid_geom_polygon;
-ALTER TABLE cadastre.cadastre_object_historic ADD CONSTRAINT enforce_srid_geom_polygon CHECK (st_srid(geom) = 32629);
+
+--THE geom column does not exist in cadastre_object so we have COMMENTED IT.
+--ALTER TABLE cadastre.cadastre_object_historic ADD CONSTRAINT enforce_srid_geom_polygon CHECK (st_srid(geom) IN (32628, 32629));
 
 ALTER TABLE cadastre.cadastre_object_target DROP CONSTRAINT IF EXISTS enforce_srid_geom_polygon;
-ALTER TABLE cadastre.cadastre_object_target ADD CONSTRAINT enforce_srid_geom_polygon CHECK (st_srid(geom_polygon) = 32629);
+ALTER TABLE cadastre.cadastre_object_target ADD CONSTRAINT enforce_srid_geom_polygon CHECK (st_srid(geom_polygon) IN (32628, 32629));
 ALTER TABLE cadastre.cadastre_object_target_historic DROP CONSTRAINT IF EXISTS enforce_srid_geom_polygon;
-ALTER TABLE cadastre.cadastre_object_target_historic ADD CONSTRAINT enforce_srid_geom_polygon CHECK (st_srid(geom) = 32629);
+
+--THE geom column does not exist in cadastre_object_historic so we have COMMENTED It too.
+--ALTER TABLE cadastre.cadastre_object_target_historic ADD CONSTRAINT enforce_srid_geom_polygon CHECK (st_srid(geom) IN (32628, 32629));
+
+
 
 ALTER TABLE cadastre.cadastre_object_node_target DROP CONSTRAINT IF EXISTS enforce_srid_geom;
-ALTER TABLE cadastre.cadastre_object_node_target ADD CONSTRAINT enforce_srid_geom CHECK (st_srid(geom) = 32629);
+ALTER TABLE cadastre.cadastre_object_node_target ADD CONSTRAINT enforce_srid_geom CHECK (st_srid(geom) IN (32628, 32629));
 ALTER TABLE cadastre.cadastre_object_node_target_historic DROP CONSTRAINT IF EXISTS enforce_srid_geom;
-ALTER TABLE cadastre.cadastre_object_node_target_historic ADD CONSTRAINT enforce_srid_geom CHECK (st_srid(geom) = 32629);
+ALTER TABLE cadastre.cadastre_object_node_target_historic ADD CONSTRAINT enforce_srid_geom CHECK (st_srid(geom) IN (32628, 32629));
 
 ALTER TABLE application.application DROP CONSTRAINT IF EXISTS enforce_srid_location;
-ALTER TABLE application.application ADD CONSTRAINT enforce_srid_location CHECK (st_srid(location) = 32629);
+ALTER TABLE application.application ADD CONSTRAINT enforce_srid_location CHECK (st_srid(location) IN (32628, 32629));
 ALTER TABLE application.application_historic DROP CONSTRAINT IF EXISTS enforce_srid_location;
-ALTER TABLE application.application_historic ADD CONSTRAINT enforce_srid_location CHECK (st_srid(location) = 32629);
+ALTER TABLE application.application_historic ADD CONSTRAINT enforce_srid_location CHECK (st_srid(location) IN (32628, 32629));
 
 ALTER TABLE cadastre.survey_point DROP CONSTRAINT IF EXISTS enforce_srid_geom;
-ALTER TABLE cadastre.survey_point ADD CONSTRAINT enforce_srid_geom CHECK (st_srid(geom) = 32629);
+ALTER TABLE cadastre.survey_point ADD CONSTRAINT enforce_srid_geom CHECK (st_srid(geom) IN (32628, 32629));
 ALTER TABLE cadastre.survey_point_historic DROP CONSTRAINT IF EXISTS enforce_srid_geom;
-ALTER TABLE cadastre.survey_point_historic ADD CONSTRAINT enforce_srid_geom CHECK (st_srid(geom) = 32629);
+ALTER TABLE cadastre.survey_point_historic ADD CONSTRAINT enforce_srid_geom CHECK (st_srid(geom) IN (32628, 32629));
 
 ALTER TABLE cadastre.survey_point DROP CONSTRAINT IF EXISTS enforce_srid_original_geom;
-ALTER TABLE cadastre.survey_point ADD CONSTRAINT enforce_srid_original_geom CHECK (st_srid(original_geom) = 32629);
+ALTER TABLE cadastre.survey_point ADD CONSTRAINT enforce_srid_original_geom CHECK (st_srid(original_geom) IN (32628, 32629));
 ALTER TABLE cadastre.survey_point_historic DROP CONSTRAINT IF EXISTS enforce_srid_original_geom;
-ALTER TABLE cadastre.survey_point_historic ADD CONSTRAINT enforce_srid_original_geom CHECK (st_srid(original_geom) = 32629);
+ALTER TABLE cadastre.survey_point_historic ADD CONSTRAINT enforce_srid_original_geom CHECK (st_srid(original_geom) IN (32628, 32629));
 
 ALTER TABLE bulk_operation.spatial_unit_temporary DROP CONSTRAINT IF EXISTS enforce_srid_geom;
-ALTER TABLE bulk_operation.spatial_unit_temporary ADD CONSTRAINT enforce_srid_geom CHECK (st_srid(geom) = 32629);
+ALTER TABLE bulk_operation.spatial_unit_temporary ADD CONSTRAINT enforce_srid_geom CHECK (st_srid(geom) IN (32628, 32629));
 
 
 -- Creates wrapper functions for those PostGIS 1.5 
