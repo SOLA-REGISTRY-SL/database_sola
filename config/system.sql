@@ -64,6 +64,18 @@ INSERT INTO query (name, sql, description) VALUES ('map_search.locality', 'SELEC
   AND compare_strings(#{search_string}, a.description)
   AND co.geom_polygon IS NOT NULL
   ORDER BY a.description', NULL);
+INSERT INTO query (name, sql, description) VALUES ('SpatialResult.getRegion', 'select id, label, st_asewkb(geom) as the_geom from cadastre.reg 
+    where ST_Intersects(geom, ST_SetSRID(ST_MakeBox3D(ST_Point(#{minx}, #{miny}),ST_Point(#{maxx}, #{maxy})), #{srid})) and st_area(geom)> power(5 * #{pixel_res}, 2)', 'The spatial query that retrieves region');
+INSERT INTO query (name, sql, description) VALUES ('SpatialResult.getDistrict', 'select id, label, st_asewkb(geom) as the_geom from cadastre.dist 
+    where ST_Intersects(geom, ST_SetSRID(ST_MakeBox3D(ST_Point(#{minx}, #{miny}),ST_Point(#{maxx}, #{maxy})), #{srid})) and st_area(geom)> power(5 * #{pixel_res}, 2)', 'The spatial query that retrieves districts');
+INSERT INTO query (name, sql, description) VALUES ('SpatialResult.getOverlappingParcels', 'SELECT co.id, co.name_firstpart as label,  st_asewkb(co.geom_polygon) as the_geom  
+from cadastre.cadastre_object co, cadastre.cadastre_object co_int 
+where co.type_code= ''parcel''  and co_int.type_code= ''parcel'' 
+  and co.id > co_int.id
+  and ST_Intersects(co.geom_polygon, st_buffer(co_int.geom_polygon, -0.03))
+  and ST_Intersects(co.geom_polygon, ST_SetSRID(ST_MakeBox3D(ST_Point(#{minx}, #{miny}),ST_Point(#{maxx}, #{maxy})), #{srid}))
+  and ST_Intersects(co_int.geom_polygon, ST_SetSRID(ST_MakeBox3D(ST_Point(#{minx}, #{miny}),ST_Point(#{maxx}, #{maxy})), #{srid}))', 'The spatial query that retrieves Overlapping');
+INSERT INTO query (name, sql, description) VALUES ('map_search.cadastre_object_by_title', 'select distinct co.id,  ba_unit.name || '' > '' || co.name_firstpart || ''/ '' || co.name_lastpart as label,  st_asewkb(st_transform(geom_polygon, #{srid})) as the_geom from cadastre.cadastre_object  co    inner join administrative.ba_unit_contains_spatial_unit bas on co.id = bas.spatial_unit_id     inner join administrative.ba_unit on ba_unit.id = bas.ba_unit_id  where (co.status_code= ''current'' or ba_unit.status_code= ''current'') and ba_unit.name is not null   and compare_strings(#{search_string}, ba_unit.name) limit 30', NULL);
 
 
 ALTER TABLE query ENABLE TRIGGER ALL;
@@ -77,17 +89,20 @@ ALTER TABLE config_map_layer DISABLE TRIGGER ALL;
 INSERT INTO config_map_layer (name, title, type_code, active, visible_in_start, item_order, style, url, wms_layers, wms_version, wms_format, wms_data_source, pojo_structure, pojo_query_name, pojo_query_name_for_select, shape_location, security_user, security_password, added_from_bulk_operation, use_in_public_display, use_for_ot) VALUES ('parcels', 'Parcels::::Particelle', 'pojo', true, true, 25, 'parcel.xml', NULL, NULL, NULL, NULL, NULL, 'theGeom:Polygon,label:""', 'SpatialResult.getParcels', 'dynamic.informationtool.get_parcel', NULL, NULL, NULL, false, false, false);
 INSERT INTO config_map_layer (name, title, type_code, active, visible_in_start, item_order, style, url, wms_layers, wms_version, wms_format, wms_data_source, pojo_structure, pojo_query_name, pojo_query_name_for_select, shape_location, security_user, security_password, added_from_bulk_operation, use_in_public_display, use_for_ot) VALUES ('place-names', 'Places names::::Nomi di luoghi', 'pojo', true, true, 60, 'place_name.xml', NULL, NULL, NULL, NULL, NULL, 'theGeom:Point,label:""', 'SpatialResult.getPlaceNames', 'dynamic.informationtool.get_place_name', NULL, NULL, NULL, false, false, false);
 INSERT INTO config_map_layer (name, title, type_code, active, visible_in_start, item_order, style, url, wms_layers, wms_version, wms_format, wms_data_source, pojo_structure, pojo_query_name, pojo_query_name_for_select, shape_location, security_user, security_password, added_from_bulk_operation, use_in_public_display, use_for_ot) VALUES ('public-display-parcels', 'Public display parcels', 'pojo_public_display', true, true, 35, 'public_display_parcel.xml', NULL, NULL, NULL, NULL, NULL, 'theGeom:Polygon,label:""', 'public_display.parcels', NULL, NULL, NULL, NULL, false, true, false);
-INSERT INTO config_map_layer (name, title, type_code, active, visible_in_start, item_order, style, url, wms_layers, wms_version, wms_format, wms_data_source, pojo_structure, pojo_query_name, pojo_query_name_for_select, shape_location, security_user, security_password, added_from_bulk_operation, use_in_public_display, use_for_ot) VALUES ('sug_hierarchy', 'Hierarchy', 'pojo', true, false, 9, 'sug-hierarchy.xml', NULL, NULL, NULL, NULL, NULL, 'theGeom:Polygon,label:"",filter_category', 'SpatialResult.getHierarchy', NULL, NULL, NULL, NULL, false, true, false);
 INSERT INTO config_map_layer (name, title, type_code, active, visible_in_start, item_order, style, url, wms_layers, wms_version, wms_format, wms_data_source, pojo_structure, pojo_query_name, pojo_query_name_for_select, shape_location, security_user, security_password, added_from_bulk_operation, use_in_public_display, use_for_ot) VALUES ('public-display-parcels-next', 'Other Systematic Registration Parcels', 'pojo_public_display', true, true, 30, 'public_display_parcel_next.xml', NULL, NULL, NULL, NULL, NULL, 'theGeom:Polygon,label:""', 'public_display.parcels_next', NULL, NULL, NULL, NULL, false, true, false);
-INSERT INTO config_map_layer (name, title, type_code, active, visible_in_start, item_order, style, url, wms_layers, wms_version, wms_format, wms_data_source, pojo_structure, pojo_query_name, pojo_query_name_for_select, shape_location, security_user, security_password, added_from_bulk_operation, use_in_public_display, use_for_ot) VALUES ('orthophoto', 'Orthophoto', 'wms', true, false, 10, NULL, 'http://demo.flossola.org/geoserver/sola/wms', 'sola:nz_orthophoto', '1.1.1', 'image/jpeg', NULL, NULL, NULL, NULL, NULL, NULL, NULL, false, false, false);
 INSERT INTO config_map_layer (name, title, type_code, active, visible_in_start, item_order, style, url, wms_layers, wms_version, wms_format, wms_data_source, pojo_structure, pojo_query_name, pojo_query_name_for_select, shape_location, security_user, security_password, added_from_bulk_operation, use_in_public_display, use_for_ot) VALUES ('house_num', 'House number', 'pojo', true, false, 43, 'house_num.xml', NULL, NULL, NULL, NULL, NULL, 'theGeom:Point,label:""', 'SpatialResult.getHouseNum', NULL, NULL, NULL, NULL, false, false, false);
 INSERT INTO config_map_layer (name, title, type_code, active, visible_in_start, item_order, style, url, wms_layers, wms_version, wms_format, wms_data_source, pojo_structure, pojo_query_name, pojo_query_name_for_select, shape_location, security_user, security_password, added_from_bulk_operation, use_in_public_display, use_for_ot) VALUES ('road-centerlines', 'Road centerlines', 'pojo', true, true, 45, 'road_centerline.xml', NULL, NULL, NULL, NULL, NULL, 'theGeom:MultiLineString,label:""', 'SpatialResult.getRoadCenterlines', NULL, NULL, NULL, NULL, false, false, false);
 INSERT INTO config_map_layer (name, title, type_code, active, visible_in_start, item_order, style, url, wms_layers, wms_version, wms_format, wms_data_source, pojo_structure, pojo_query_name, pojo_query_name_for_select, shape_location, security_user, security_password, added_from_bulk_operation, use_in_public_display, use_for_ot) VALUES ('pending-parcels', 'Pending parcels::::Particelle pendenti', 'pojo', true, false, 30, 'pending_parcels.xml', NULL, NULL, NULL, NULL, NULL, 'theGeom:Polygon,label:""', 'SpatialResult.getParcelsPending', 'dynamic.informationtool.get_parcel_pending', NULL, NULL, NULL, false, false, false);
 INSERT INTO config_map_layer (name, title, type_code, active, visible_in_start, item_order, style, url, wms_layers, wms_version, wms_format, wms_data_source, pojo_structure, pojo_query_name, pojo_query_name_for_select, shape_location, security_user, security_password, added_from_bulk_operation, use_in_public_display, use_for_ot) VALUES ('roads', 'Roads::::Strade', 'pojo', true, false, 40, 'road.xml', NULL, NULL, NULL, NULL, NULL, 'theGeom:MultiPolygon,label:""', 'SpatialResult.getRoads', 'dynamic.informationtool.get_road', NULL, NULL, NULL, false, true, false);
 INSERT INTO config_map_layer (name, title, type_code, active, visible_in_start, item_order, style, url, wms_layers, wms_version, wms_format, wms_data_source, pojo_structure, pojo_query_name, pojo_query_name_for_select, shape_location, security_user, security_password, added_from_bulk_operation, use_in_public_display, use_for_ot) VALUES ('survey-controls', 'Survey controls::::Piani di controllo', 'pojo', true, false, 50, 'survey_control.xml', NULL, NULL, NULL, NULL, NULL, 'theGeom:Point,label:""', 'SpatialResult.getSurveyControls', 'dynamic.informationtool.get_survey_control', NULL, NULL, NULL, false, false, false);
 INSERT INTO config_map_layer (name, title, type_code, active, visible_in_start, item_order, style, url, wms_layers, wms_version, wms_format, wms_data_source, pojo_structure, pojo_query_name, pojo_query_name_for_select, shape_location, security_user, security_password, added_from_bulk_operation, use_in_public_display, use_for_ot) VALUES ('applications', 'Applications::::Pratiche', 'pojo', true, false, 70, 'application.xml', NULL, NULL, NULL, NULL, NULL, 'theGeom:MultiPoint,label:""', 'SpatialResult.getApplications', 'dynamic.informationtool.get_application', NULL, NULL, NULL, false, false, false);
-INSERT INTO config_map_layer (name, title, type_code, active, visible_in_start, item_order, style, url, wms_layers, wms_version, wms_format, wms_data_source, pojo_structure, pojo_query_name, pojo_query_name_for_select, shape_location, security_user, security_password, added_from_bulk_operation, use_in_public_display, use_for_ot) VALUES ('parcels-historic-current-ba', 'Historic parcels with current titles', 'pojo', true, false, 20, 'parcel_historic_current_ba.xml', NULL, NULL, NULL, NULL, NULL, 'theGeom:Polygon,label:""', 'SpatialResult.getParcelsHistoricWithCurrentBA', 'dynamic.informationtool.get_parcel_historic_current_ba', NULL, NULL, NULL, false, false, false);
 INSERT INTO config_map_layer (name, title, type_code, active, visible_in_start, item_order, style, url, wms_layers, wms_version, wms_format, wms_data_source, pojo_structure, pojo_query_name, pojo_query_name_for_select, shape_location, security_user, security_password, added_from_bulk_operation, use_in_public_display, use_for_ot) VALUES ('parcel-nodes', 'Parcel nodes', 'pojo', true, false, 15, 'parcel_node.xml', NULL, NULL, NULL, NULL, NULL, 'theGeom:Polygon,label:""', 'SpatialResult.getParcelNodes', NULL, NULL, NULL, NULL, false, false, false);
+INSERT INTO config_map_layer (name, title, type_code, active, visible_in_start, item_order, style, url, wms_layers, wms_version, wms_format, wms_data_source, pojo_structure, pojo_query_name, pojo_query_name_for_select, shape_location, security_user, security_password, added_from_bulk_operation, use_in_public_display, use_for_ot) VALUES ('sug_hierarchy', 'Hierarchy', 'pojo', false, false, 9, 'sug-hierarchy.xml', NULL, NULL, NULL, NULL, NULL, 'theGeom:Polygon,label:"",filter_category', 'SpatialResult.getHierarchy', NULL, NULL, NULL, NULL, false, true, false);
+INSERT INTO config_map_layer (name, title, type_code, active, visible_in_start, item_order, style, url, wms_layers, wms_version, wms_format, wms_data_source, pojo_structure, pojo_query_name, pojo_query_name_for_select, shape_location, security_user, security_password, added_from_bulk_operation, use_in_public_display, use_for_ot) VALUES ('orthophoto', 'Orthophoto', 'wms', false, false, 10, NULL, 'http://localhost:8085/geoserver/sola/wms', 'sierraleone:sierraleone', '1.1.1', 'image/jpeg', NULL, NULL, NULL, NULL, NULL, NULL, NULL, false, false, false);
+INSERT INTO config_map_layer (name, title, type_code, active, visible_in_start, item_order, style, url, wms_layers, wms_version, wms_format, wms_data_source, pojo_structure, pojo_query_name, pojo_query_name_for_select, shape_location, security_user, security_password, added_from_bulk_operation, use_in_public_display, use_for_ot) VALUES ('sug_reg', 'Region', 'pojo', true, true, 90, 'reg.xml', NULL, NULL, NULL, NULL, NULL, 'theGeom:Polygon,label:""', 'SpatialResult.getRegion', NULL, NULL, NULL, NULL, false, false, false);
+INSERT INTO config_map_layer (name, title, type_code, active, visible_in_start, item_order, style, url, wms_layers, wms_version, wms_format, wms_data_source, pojo_structure, pojo_query_name, pojo_query_name_for_select, shape_location, security_user, security_password, added_from_bulk_operation, use_in_public_display, use_for_ot) VALUES ('sug_dist', 'District', 'pojo', true, true, 90, 'dist.xml', NULL, NULL, NULL, NULL, NULL, 'theGeom:Polygon,label:""', 'SpatialResult.getDistrict', NULL, NULL, NULL, NULL, false, false, false);
+INSERT INTO config_map_layer (name, title, type_code, active, visible_in_start, item_order, style, url, wms_layers, wms_version, wms_format, wms_data_source, pojo_structure, pojo_query_name, pojo_query_name_for_select, shape_location, security_user, security_password, added_from_bulk_operation, use_in_public_display, use_for_ot) VALUES ('overlappingparcels', 'OverlappingParcels', 'pojo', true, false, 81, 'overlappingparcels.xml', NULL, NULL, NULL, NULL, NULL, 'theGeom:Polygon,label:""', 'SpatialResult.getOverlappingParcels', NULL, NULL, NULL, NULL, false, false, false);
+INSERT INTO config_map_layer (name, title, type_code, active, visible_in_start, item_order, style, url, wms_layers, wms_version, wms_format, wms_data_source, pojo_structure, pojo_query_name, pojo_query_name_for_select, shape_location, security_user, security_password, added_from_bulk_operation, use_in_public_display, use_for_ot) VALUES ('parcels-historic-current-ba', 'Historic parcels with current titles', 'pojo', false, false, 20, 'parcel_historic_current_ba.xml', NULL, NULL, NULL, NULL, NULL, 'theGeom:Polygon,label:""', 'SpatialResult.getParcelsHistoricWithCurrentBA', 'dynamic.informationtool.get_parcel_historic_current_ba', NULL, NULL, NULL, false, false, false);
 
 
 ALTER TABLE config_map_layer ENABLE TRIGGER ALL;
@@ -255,7 +270,8 @@ ALTER TABLE consolidation_config ENABLE TRIGGER ALL;
 
 ALTER TABLE crs DISABLE TRIGGER ALL;
 
-INSERT INTO crs (srid, from_long, to_long, item_order) VALUES (2193, 0, 171805.08555444199, 1);
+INSERT INTO crs (srid, from_long, to_long, item_order) VALUES (32629, 0, 171805.08555444199, 1);
+INSERT INTO crs (srid, from_long, to_long, item_order) VALUES (32628, 0, 171805.08555444199, 2);
 
 
 ALTER TABLE crs ENABLE TRIGGER ALL;
@@ -266,10 +282,11 @@ ALTER TABLE crs ENABLE TRIGGER ALL;
 
 ALTER TABLE map_search_option DISABLE TRIGGER ALL;
 
-INSERT INTO map_search_option (code, title, query_name, active, min_search_str_len, zoom_in_buffer, description) VALUES ('NUMBER', 'Number', 'map_search.cadastre_object_by_number', true, 3, 50.00, NULL);
-INSERT INTO map_search_option (code, title, query_name, active, min_search_str_len, zoom_in_buffer, description) VALUES ('BAUNIT', 'Property number', 'map_search.cadastre_object_by_baunit', true, 3, 50.00, NULL);
-INSERT INTO map_search_option (code, title, query_name, active, min_search_str_len, zoom_in_buffer, description) VALUES ('OWNER_OF_BAUNIT', 'Property owner', 'map_search.cadastre_object_by_baunit_owner', true, 3, 50.00, NULL);
 INSERT INTO map_search_option (code, title, query_name, active, min_search_str_len, zoom_in_buffer, description) VALUES ('LOCALITY', 'Locality', 'map_search.locality', true, 3, 100.00, NULL);
+INSERT INTO map_search_option (code, title, query_name, active, min_search_str_len, zoom_in_buffer, description) VALUES ('BAUNIT', 'Property number', 'map_search.cadastre_object_by_baunit', true, 3, 50.00, NULL);
+INSERT INTO map_search_option (code, title, query_name, active, min_search_str_len, zoom_in_buffer, description) VALUES ('OWNER_OF_BAUNIT', 'Property owner', 'map_search.cadastre_object_by_baunit_owner', false, 3, 50.00, NULL);
+INSERT INTO map_search_option (code, title, query_name, active, min_search_str_len, zoom_in_buffer, description) VALUES ('NUMBER', 'Parcel', 'map_search.cadastre_object_by_number', true, 3, 50.00, NULL);
+INSERT INTO map_search_option (code, title, query_name, active, min_search_str_len, zoom_in_buffer, description) VALUES ('TITLE', 'Title', 'map_search.cadastre_object_by_title', true, 3, 50.00, NULL);
 
 
 ALTER TABLE map_search_option ENABLE TRIGGER ALL;
@@ -316,10 +333,6 @@ ALTER TABLE query_field ENABLE TRIGGER ALL;
 
 ALTER TABLE setting DISABLE TRIGGER ALL;
 
-INSERT INTO setting (name, vl, active, description) VALUES ('map-west', '1776400', true, 'The most west coordinate. It is used in the map control.');
-INSERT INTO setting (name, vl, active, description) VALUES ('map-south', '5919888', true, 'The most south coordinate. It is used in the map control.');
-INSERT INTO setting (name, vl, active, description) VALUES ('map-east', '1795771', true, 'The most east coordinate. It is used in the map control.');
-INSERT INTO setting (name, vl, active, description) VALUES ('map-north', '5932259', true, 'The most north coordinate. It is used in the map control.');
 INSERT INTO setting (name, vl, active, description) VALUES ('map-tolerance', '0.01', true, 'The tolerance that is used while snapping geometries to each other. If two points are within this distance are considered being in the same location.');
 INSERT INTO setting (name, vl, active, description) VALUES ('map-shift-tolerance-rural', '20', true, 'The shift tolerance of boundary points used in cadastre change in rural areas.');
 INSERT INTO setting (name, vl, active, description) VALUES ('map-shift-tolerance-urban', '5', true, 'The shift tolerance of boundary points used in cadastre change in urban areas.');
@@ -357,6 +370,11 @@ INSERT INTO setting (name, vl, active, description) VALUES ('email-mailer-jndi-n
 INSERT INTO setting (name, vl, active, description) VALUES ('network-scan-folder', '', false, 'Scan folder path, used by digital archive service. This setting is disabled by default. It has to be specified only if specific folder path is required (e.g. network drive). By default, system will use user''s home folder + /sola/scan');
 INSERT INTO setting (name, vl, active, description) VALUES ('product-name', 'SOLA Registry', true, 'SOLA product name');
 INSERT INTO setting (name, vl, active, description) VALUES ('product-code', 'sr', true, 'SOLA product code. sr - SOLA Registry, ssr - SOLA Systematic Registration, ssl - SOLA State Land, scs - SOLA Community Server');
+INSERT INTO setting (name, vl, active, description) VALUES ('map-east', '611734', true, 'The most east coordinate. It is used in the map control.');
+INSERT INTO setting (name, vl, active, description) VALUES ('map-north', '1109199', true, 'The most north coordinate. It is used in the map control.');
+INSERT INTO setting (name, vl, active, description) VALUES ('map-srid', '32629', true, 'srid for the map');
+INSERT INTO setting (name, vl, active, description) VALUES ('map-south', '763134', true, 'The most south coordinate. It is used in the map control.');
+INSERT INTO setting (name, vl, active, description) VALUES ('map-west', '22660', true, 'The most west coordinate. It is used in the map control.');
 
 
 ALTER TABLE setting ENABLE TRIGGER ALL;
@@ -402,7 +420,6 @@ INSERT INTO version (version_num) VALUES ('1504b');
 INSERT INTO version (version_num) VALUES ('1505a');
 INSERT INTO version (version_num) VALUES ('1505b');
 INSERT INTO version (version_num) VALUES ('1505d');
-
 
 
 ALTER TABLE version ENABLE TRIGGER ALL;
