@@ -1,7 +1,7 @@
 --
 -- PostgreSQL database dump
 --
- 
+
 SET statement_timeout = 0;
 SET client_encoding = 'UTF8';
 SET standard_conforming_strings = on;
@@ -55,21 +55,6 @@ ALTER SCHEMA application OWNER TO postgres;
 
 COMMENT ON SCHEMA application IS 'Extension to the LADM used by SOLA to implement Case Management functionality.';
 
-
---
--- Name: bulk_operation; Type: SCHEMA; Schema: -; Owner: postgres
---
-
-CREATE SCHEMA bulk_operation;
-
-
-ALTER SCHEMA bulk_operation OWNER TO postgres;
-
---
--- Name: SCHEMA bulk_operation; Type: COMMENT; Schema: -; Owner: postgres
---
-
-COMMENT ON SCHEMA bulk_operation IS 'Extension to the LADM used by SOLA to implement Bulk Operation functionality such as loading of shapefiles and documents.';
 
 --
 -- Name: cadastre; Type: SCHEMA; Schema: -; Owner: postgres
@@ -2946,254 +2931,6 @@ ALTER FUNCTION application.getlodgetiming(fromdate date, todate date) OWNER TO p
 COMMENT ON FUNCTION getlodgetiming(fromdate date, todate date) IS 'Not used. Replaced by get_work_summary.';
 
 
-
-SET search_path = bulk_operation, pg_catalog;
-
---
--- Name: clean_after_rollback(); Type: FUNCTION; Schema: bulk_operation; Owner: postgres
---
-
-CREATE FUNCTION clean_after_rollback() RETURNS void
-    LANGUAGE plpgsql
-    AS $$
-declare
-  rec record;
-begin
-  for rec in select id from cadastre.level 
-    where id != 'cadastreObject' and id not in (select level_id from cadastre.spatial_unit) loop
-    delete from cadastre.level where id = rec.id;
-    delete from system.config_map_layer where added_from_bulk_operation and name = rec.id;
-  end loop;
-end;
-$$;
-
-
-ALTER FUNCTION bulk_operation.clean_after_rollback() OWNER TO postgres;
-
---
--- Name: FUNCTION clean_after_rollback(); Type: COMMENT; Schema: bulk_operation; Owner: postgres
---
-
-COMMENT ON FUNCTION clean_after_rollback() IS 'Runs clean up tasks after the transaction of bulk operation is rolled back.';
-
-
---
--- Name: move_cadastre_objects(character varying, character varying); Type: FUNCTION; Schema: bulk_operation; Owner: postgres
---
-
-CREATE FUNCTION move_cadastre_objects(transaction_id_v character varying, change_user_v character varying) RETURNS void
-    LANGUAGE plpgsql
-    AS $_$
-declare
-  generate_name_first_part boolean;
-  rec record;
-  rec2 record;
-  last_part varchar;
-  first_part_counter integer;
-  first_part  varchar;
-  tmp_value integer;
-  duplicate_seperator varchar;
-  status varchar;
-  geom_v geometry;
-  tolerance double precision;
-  survey_point_counter integer;
-  transaction_has_pending boolean;
-begin
-  transaction_has_pending = false;
-  duplicate_seperator = ' / ';
-  tolerance = system.get_setting('map-tolerance')::double precision;
-  generate_name_first_part = (select bulk_generate_first_part 
-    from transaction.transaction 
-    where id = transaction_id_v);
-  first_part_counter = 1;
-  for rec in select id, transaction_id, cadastre_object_type_code, name_firstpart, name_lastpart, geom, official_area
-    from bulk_operation.spatial_unit_temporary where transaction_id = transaction_id_v loop
-      status = 'current';
-      if last_part is null then
-        last_part = rec.name_lastpart;
-        if generate_name_first_part then
-          first_part_counter = (select coalesce(max(name_firstpart::integer), 0) 
-            from cadastre.cadastre_object 
-            where name_firstpart ~ '^[0-9]+$' and name_lastpart = last_part);
-          first_part_counter = first_part_counter + 1;
-        end if;
-      end if;
-      if not generate_name_first_part then
-        first_part = rec.name_firstpart;
-        -- It means the unicity of the cadastre object name is not garanteed so it has to be checked.
-        -- Check first if the combination first_part, last_part is found in the cadastre_object table
-        tmp_value = (select count(1)
-          from cadastre.cadastre_object 
-          where name_lastpart = last_part 
-            and (name_firstpart = first_part
-              or name_firstpart like first_part || duplicate_seperator || '%'));
-        if tmp_value > 0 then
-          tmp_value = tmp_value + 1;
-          first_part = first_part || duplicate_seperator || tmp_value::varchar;
-          status = 'pending';
-        end if;
-      else
-        first_part = first_part_counter::varchar;
-        first_part_counter = first_part_counter + 1;
-      end if;
-      geom_v = rec.geom;
-      if st_isvalid(geom_v) and st_geometrytype(geom_v) = 'ST_Polygon' then
-        if (select count(1) 
-          from cadastre.cadastre_object 
-          where geom_polygon && geom_v 
-            and st_intersects(geom_polygon, st_buffer(geom_v, - tolerance))) > 0 then
-          status = 'pending';
-        end if;
-        insert into cadastre.cadastre_object(id, type_code, status_code, transaction_id, name_firstpart, name_lastpart, geom_polygon, change_user)
-        values(rec.id, rec.cadastre_object_type_code, status, transaction_id_v, first_part, last_part, geom_v, change_user_v);
-        insert into cadastre.spatial_value_area(spatial_unit_id, type_code, size, change_user)
-        values(rec.id, 'officialArea', coalesce(rec.official_area, st_area(geom_v)), change_user_v);
-        insert into cadastre.spatial_value_area(spatial_unit_id, type_code, size, change_user)
-        values(rec.id, 'calculatedArea', st_area(geom_v), change_user_v);
-      else
-        status = 'pending'; 
-      end if;
-      if status = 'pending' then
-        transaction_has_pending = true;
-        survey_point_counter = (select count(1) + 1 from cadastre.survey_point where transaction_id = transaction_id_v);
-        for rec2 in select distinct geom from st_dumppoints(geom_v) loop
-          insert into cadastre.survey_point(transaction_id, id, geom, original_geom, change_user)
-          values(transaction_id_v, survey_point_counter::varchar, rec2.geom, rec2.geom, change_user_v);
-          survey_point_counter = survey_point_counter + 1;
-        end loop;
-      end if;
-    end loop;
-    if not transaction_has_pending then
-      update transaction.transaction set status_code = 'approved', change_user = change_user_v where id = transaction_id_v;
-    end if;
-    delete from bulk_operation.spatial_unit_temporary where transaction_id = transaction_id_v;
-end;
-$_$;
-
-
-ALTER FUNCTION bulk_operation.move_cadastre_objects(transaction_id_v character varying, change_user_v character varying) OWNER TO postgres;
-
---
--- Name: FUNCTION move_cadastre_objects(transaction_id_v character varying, change_user_v character varying); Type: COMMENT; Schema: bulk_operation; Owner: postgres
---
-
-COMMENT ON FUNCTION move_cadastre_objects(transaction_id_v character varying, change_user_v character varying) IS 'Moves cadastre objects from the Bulk Operation schema to the Cadastre schema.';
-
-
---
--- Name: move_other_objects(character varying, character varying); Type: FUNCTION; Schema: bulk_operation; Owner: postgres
---
-
-CREATE FUNCTION move_other_objects(transaction_id_v character varying, change_user_v character varying) RETURNS void
-    LANGUAGE plpgsql
-    AS $$
-declare
-  other_object_type varchar;
-  level_id_v varchar;
-  geometry_type varchar;
-  geometry_type_for_structure varchar;
-  query_name_v varchar;
-  query_sql_template varchar;
-begin
-  query_sql_template = 'select id, label, st_asewkb(st_transform(geom, #{srid})) as the_geom from cadastre.spatial_unit 
-where level_id = ''level_id_v'' and ST_Intersects(st_transform(geom, #{srid}), ST_SetSRID(ST_3DMakeBox(ST_Point(#{minx}, #{miny}),ST_Point(#{maxx}, #{maxy})), #{srid}))';
-  other_object_type = (select type_code 
-    from bulk_operation.spatial_unit_temporary 
-    where transaction_id = transaction_id_v limit 1);
-  geometry_type = (select st_geometrytype(geom) 
-    from bulk_operation.spatial_unit_temporary 
-    where transaction_id = transaction_id_v limit 1);
-  geometry_type = lower(substring(geometry_type from 4));
-  if (select count(*) from cadastre.structure_type where code = geometry_type) = 0 then
-    insert into cadastre.structure_type(code, display_value, status)
-    values(geometry_type, geometry_type, 'c');
-  end if;
-  level_id_v = (select id from cadastre.level where name = other_object_type or id = lower(other_object_type));
-  if level_id_v is null then
-    level_id_v = lower(other_object_type);
-    insert into cadastre.level(id, type_code, name, structure_code, editable) 
-    values(level_id_v, 'geographicLocator', other_object_type, geometry_type, true);
-    if (select count(*) from system.config_map_layer where name = level_id_v) = 0 then
-      -- A map layer is added here. For the symbology an sld file already predefined in gis component must be used.
-      -- The sld file must be named after the geometry type + the word generic. 
-      query_name_v = 'SpatialResult.get' || level_id_v;
-      if (select count(*) from system.query where name = query_name_v) = 0 then
-        -- A query is added here
-        insert into system.query(name, sql) values(query_name_v, replace(query_sql_template, 'level_id_v', level_id_v));
-      end if;
-      if geometry_type like '%point' then
-        geometry_type_for_structure = replace(geometry_type, 'point', 'Point');
-      elseif geometry_type like '%linestring' then
-        geometry_type_for_structure = replace(geometry_type, 'linestring', 'LineString');
-      elseif geometry_type like '%polygon' then
-        geometry_type_for_structure = replace(geometry_type, 'polygon', 'Polygon');
-      else
-        geometry_type_for_structure = 'Geometry';
-      end if;
-      geometry_type_for_structure  = replace(geometry_type_for_structure, 'multi', 'Multi');
-      
-      insert into system.config_map_layer(name, title, type_code, active, visible_in_start, item_order, style, pojo_structure, pojo_query_name, added_from_bulk_operation) 
-      values(level_id_v, other_object_type, 'pojo', true, true, 1, 'generic-' || geometry_type || '.xml', 'theGeom:' || geometry_type_for_structure || ',label:""', query_name_v, true);
-    end if;
-  end if;
-  insert into cadastre.spatial_unit(id, label, level_id, geom, transaction_id, change_user)
-  select id, label, level_id_v, geom, transaction_id, change_user_v
-  from bulk_operation.spatial_unit_temporary where transaction_id = transaction_id_v;
-  update transaction.transaction set status_code = 'approved', change_user = change_user_v where id = transaction_id_v;
-  delete from bulk_operation.spatial_unit_temporary where transaction_id = transaction_id_v;
-end;
-$$;
-
-
-ALTER FUNCTION bulk_operation.move_other_objects(transaction_id_v character varying, change_user_v character varying) OWNER TO postgres;
-
---
--- Name: FUNCTION move_other_objects(transaction_id_v character varying, change_user_v character varying); Type: COMMENT; Schema: bulk_operation; Owner: postgres
---
-
-COMMENT ON FUNCTION move_other_objects(transaction_id_v character varying, change_user_v character varying) IS 'Moves general spatial objects other than cadastre objects from the Bulk Operation schema to the Cadastre schema. If an appropriate level and/or structure type do not exist in the Cadastre schema, this function will add them.';
-
-
---
--- Name: move_spatial_units(character varying, character varying); Type: FUNCTION; Schema: bulk_operation; Owner: postgres
---
-
-CREATE FUNCTION move_spatial_units(transaction_id_v character varying, change_user_v character varying) RETURNS void
-    LANGUAGE plpgsql
-    AS $$
-declare
-  spatial_unit_type varchar;
-begin
-  spatial_unit_type = (select type_code 
-    from bulk_operation.spatial_unit_temporary 
-    where transaction_id = transaction_id_v limit 1);
-  if spatial_unit_type is null then
-    return;
-  end if;
-  if spatial_unit_type = 'cadastre_object' then
-    execute bulk_operation.move_cadastre_objects(transaction_id_v, change_user_v);
-  else
-    execute bulk_operation.move_other_objects(transaction_id_v, change_user_v);
-  end if;
-end;
-$$;
-
-
-ALTER FUNCTION bulk_operation.move_spatial_units(transaction_id_v character varying, change_user_v character varying) OWNER TO postgres;
-
---
--- Name: FUNCTION move_spatial_units(transaction_id_v character varying, change_user_v character varying); Type: COMMENT; Schema: bulk_operation; Owner: postgres
---
-
-COMMENT ON FUNCTION move_spatial_units(transaction_id_v character varying, change_user_v character varying) IS 'Moves all spatial data from teh Bulk Operation schema to the Cadastre schema using the move_cadastre_objects and move_other_objects functions. This function is called after the bulk opearation transaction is created by the Bulk Operation application';
-
-
-
-
-
-
-
-
 SET search_path = cadastre, pg_catalog;
 
 --
@@ -3256,8 +2993,8 @@ CREATE FUNCTION cadastre_object_name_is_valid(name_firstpart character varying, 
 begin
   if name_firstpart is null then return false; end if;
   if name_lastpart is null then return false; end if;
-  if not (name_firstpart similar to 'Lot [0-9]+' or name_firstpart similar to '[0-9]+') then return false;  end if;
-  if name_lastpart not similar to '(D|S)P [0-9 ]+' then return false;  end if;
+ -- if not (name_firstpart similar to 'Lot [0-9]+' or name_firstpart similar to '[0-9]+') then return false;  end if;
+ -- if name_lastpart not similar to '(D|S)P [0-9 ]+' then return false;  end if;
   return true;
 end;
 $$;
@@ -6407,7 +6144,7 @@ CREATE TABLE application (
     CONSTRAINT application_check_assigned CHECK ((((assignee_id IS NULL) AND (assigned_datetime IS NULL)) OR ((assignee_id IS NOT NULL) AND (assigned_datetime IS NOT NULL)))),
     CONSTRAINT enforce_dims_location CHECK ((public.st_ndims(location) = 2)),
     CONSTRAINT enforce_geotype_location CHECK (((public.geometrytype(location) = 'MULTIPOINT'::text) OR (location IS NULL))),
-    CONSTRAINT enforce_srid_location CHECK ((public.st_srid(location) = 2193)),
+    CONSTRAINT enforce_srid_location CHECK ((public.st_srid(location) = ANY (ARRAY[32628, 32629]))),
     CONSTRAINT enforce_valid_location CHECK (public.st_isvalid(location))
 );
 
@@ -6744,7 +6481,7 @@ CREATE TABLE cadastre_object (
     redact_code character varying(20),
     CONSTRAINT enforce_dims_geom_polygon CHECK ((public.st_ndims(geom_polygon) = 2)),
     CONSTRAINT enforce_geotype_geom_polygon CHECK (((public.geometrytype(geom_polygon) = 'POLYGON'::text) OR (geom_polygon IS NULL))),
-    CONSTRAINT enforce_srid_geom_polygon CHECK ((public.st_srid(geom_polygon) = 2193)),
+    CONSTRAINT enforce_srid_geom_polygon CHECK ((public.st_srid(geom_polygon) = ANY (ARRAY[32628, 32629]))),
     CONSTRAINT enforce_valid_geom_polygon CHECK (public.st_isvalid(geom_polygon))
 );
 
@@ -7493,7 +7230,7 @@ CREATE TABLE application_historic (
     redact_code character varying(20),
     CONSTRAINT enforce_dims_location CHECK ((public.st_ndims(location) = 2)),
     CONSTRAINT enforce_geotype_location CHECK (((public.geometrytype(location) = 'MULTIPOINT'::text) OR (location IS NULL))),
-    CONSTRAINT enforce_srid_location CHECK ((public.st_srid(location) = 2193)),
+    CONSTRAINT enforce_srid_location CHECK ((public.st_srid(location) = ANY (ARRAY[32628, 32629]))),
     CONSTRAINT enforce_valid_location CHECK (public.st_isvalid(location))
 );
 
@@ -7920,90 +7657,327 @@ CREATE TABLE application_uses_source_historic (
 
 ALTER TABLE application.application_uses_source_historic OWNER TO postgres;
 
-SET search_path = party, pg_catalog;
-
 --
--- Name: group_party; Type: TABLE; Schema: party; Owner: postgres; Tablespace: 
+-- Name: notify; Type: TABLE; Schema: application; Owner: postgres; Tablespace: 
 --
 
-CREATE TABLE group_party (
+CREATE TABLE notify (
     id character varying(40) NOT NULL,
-    type_code character varying(20) NOT NULL,
-    rowidentifier character varying(40) DEFAULT public.uuid_generate_v1() NOT NULL,
-    rowversion integer DEFAULT 0 NOT NULL,
-    change_action character(1) DEFAULT 'i'::bpchar NOT NULL,
-    change_user character varying(50),
-    change_time timestamp without time zone DEFAULT now() NOT NULL
-);
-
-
-ALTER TABLE party.group_party OWNER TO postgres;
-
---
--- Name: TABLE group_party; Type: COMMENT; Schema: party; Owner: postgres
---
-
-COMMENT ON TABLE group_party IS 'Groups any number of parties into a distinct entity. Implementation of the LADM LA_GroupParty class. Not used by SOLA
-Tags: LADM Reference Object, Change History, Not Used';
-
-
---
--- Name: COLUMN group_party.id; Type: COMMENT; Schema: party; Owner: postgres
---
-
-COMMENT ON COLUMN group_party.id IS 'LADM Definition: Identifier for the group party.';
-
-
---
--- Name: COLUMN group_party.type_code; Type: COMMENT; Schema: party; Owner: postgres
---
-
-COMMENT ON COLUMN group_party.type_code IS 'LADM Definition: The type of the group party. E.g. family, tribe, association, etc.';
-
-
---
--- Name: COLUMN group_party.rowidentifier; Type: COMMENT; Schema: party; Owner: postgres
---
-
-COMMENT ON COLUMN group_party.rowidentifier IS 'SOLA Extension: Identifies the all change records for the row in the group_party_historic table';
-
-
---
--- Name: COLUMN group_party.rowversion; Type: COMMENT; Schema: party; Owner: postgres
---
-
-COMMENT ON COLUMN group_party.rowversion IS 'SOLA Extension: Sequential value indicating the number of times this row has been modified.';
-
-
---
--- Name: COLUMN group_party.change_action; Type: COMMENT; Schema: party; Owner: postgres
---
-
-COMMENT ON COLUMN group_party.change_action IS 'SOLA Extension: Indicates if the last data modification action that occurred to the row was insert (i), update (u) or delete (d).';
-
-
---
--- Name: COLUMN group_party.change_user; Type: COMMENT; Schema: party; Owner: postgres
---
-
-COMMENT ON COLUMN group_party.change_user IS 'SOLA Extension: The user id of the last person to modify the row.';
-
-
---
--- Name: COLUMN group_party.change_time; Type: COMMENT; Schema: party; Owner: postgres
---
-
-COMMENT ON COLUMN group_party.change_time IS 'SOLA Extension: The date and time the row was last modified.';
-
-
---
--- Name: party_member; Type: TABLE; Schema: party; Owner: postgres; Tablespace: 
---
-
-CREATE TABLE party_member (
+    service_id character varying(40) NOT NULL,
     party_id character varying(40) NOT NULL,
-    group_id character varying(40) NOT NULL,
-    share double precision,
+    relationship_type_code character varying(20) DEFAULT 'owner'::character varying NOT NULL,
+    description text,
+    classification_code character varying(20),
+    redact_code character varying(20),
+    rowidentifier character varying(40) DEFAULT public.uuid_generate_v1() NOT NULL,
+    rowversion integer DEFAULT 0 NOT NULL,
+    change_action character(1) DEFAULT 'i'::bpchar NOT NULL,
+    change_user character varying(50),
+    change_time timestamp without time zone DEFAULT now() NOT NULL,
+    cancel_service_id character varying(40),
+    status character varying(40) DEFAULT 'c'::character varying NOT NULL
+);
+
+
+ALTER TABLE application.notify OWNER TO postgres;
+
+--
+-- Name: TABLE notify; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON TABLE notify IS 'Identifies parties to be notified in bulk as well as the relationship the party has with the land affected by the job.
+Tags: SOLA State Land Extension, Change History';
+
+
+--
+-- Name: COLUMN notify.id; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN notify.id IS 'Identifier for the notification.';
+
+
+--
+-- Name: COLUMN notify.service_id; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN notify.service_id IS 'Identifier for the service.';
+
+
+--
+-- Name: COLUMN notify.party_id; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN notify.party_id IS 'Identifier for the party.';
+
+
+--
+-- Name: COLUMN notify.relationship_type_code; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN notify.relationship_type_code IS 'The type of relationship between the party and the land affected by the job. One of Owner, Adjoining Owner, Occupier, Adjoining Occupier, Rightholder, Other, etc.';
+
+
+--
+-- Name: COLUMN notify.description; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN notify.description IS 'The description of the party to notify.';
+
+
+--
+-- Name: COLUMN notify.classification_code; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN notify.classification_code IS 'SOLA State Land Extension: The security classification for this Notification Party. Only users with the security classification (or a higher classification) will be able to view the record. If null, the record is considered unrestricted.';
+
+
+--
+-- Name: COLUMN notify.redact_code; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN notify.redact_code IS 'SOLA State Land Extension: The redact classification for this Notification Party. Only users with the redact classification (or a higher classification) will be able to view the record with un-redacted fields. If null, the record is considered unrestricted and no redaction to the record will occur unless bulk redaction classifications have been set for fields of the record.';
+
+
+--
+-- Name: COLUMN notify.rowidentifier; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN notify.rowidentifier IS 'Identifies the all change records for the row in the notify_historic table';
+
+
+--
+-- Name: COLUMN notify.rowversion; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN notify.rowversion IS 'Sequential value indicating the number of times this row has been modified.';
+
+
+--
+-- Name: COLUMN notify.change_action; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN notify.change_action IS 'Indicates if the last data modification action that occurred to the row was insert (i), update (u) or delete (d).';
+
+
+--
+-- Name: COLUMN notify.change_user; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN notify.change_user IS 'The user id of the last person to modify the row.';
+
+
+--
+-- Name: COLUMN notify.change_time; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN notify.change_time IS 'The date and time the row was last modified.';
+
+
+--
+-- Name: notify_property; Type: TABLE; Schema: application; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE notify_property (
+    notify_id character varying(40) NOT NULL,
+    ba_unit_id character varying(40) NOT NULL,
+    rowidentifier character varying(40) DEFAULT public.uuid_generate_v1() NOT NULL,
+    rowversion integer DEFAULT 0 NOT NULL,
+    change_action character(1) DEFAULT 'i'::bpchar NOT NULL,
+    change_user character varying(50),
+    change_time timestamp without time zone DEFAULT now() NOT NULL,
+    cancel_service_id character varying(40),
+    status character varying(40) DEFAULT 'c'::character varying NOT NULL
+);
+
+
+ALTER TABLE application.notify_property OWNER TO postgres;
+
+--
+-- Name: TABLE notify_property; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON TABLE notify_property IS 'Identifies the properties (a.k.a. Ba Units) this notification party is related to. 
+Tags: FLOSS SOLA Extension, Change History';
+
+
+--
+-- Name: COLUMN notify_property.notify_id; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN notify_property.notify_id IS 'Identifier for the notification party the record is associated to.';
+
+
+--
+-- Name: COLUMN notify_property.ba_unit_id; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN notify_property.ba_unit_id IS 'Identifier of the property associated to the objection.';
+
+
+--
+-- Name: COLUMN notify_property.rowidentifier; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN notify_property.rowidentifier IS 'Identifies the all change records for the row in the notify_property_historic table';
+
+
+--
+-- Name: COLUMN notify_property.rowversion; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN notify_property.rowversion IS 'Sequential value indicating the number of times this row has been modified.';
+
+
+--
+-- Name: COLUMN notify_property.change_action; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN notify_property.change_action IS 'Indicates if the last data modification action that occurred to the row was insert (i), update (u) or delete (d).';
+
+
+--
+-- Name: COLUMN notify_property.change_user; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN notify_property.change_user IS 'The user id of the last person to modify the row.';
+
+
+--
+-- Name: COLUMN notify_property.change_time; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN notify_property.change_time IS 'The date and time the row was last modified.';
+
+
+--
+-- Name: notifiable_party_for_baunit; Type: VIEW; Schema: application; Owner: postgres
+--
+
+CREATE VIEW notifiable_party_for_baunit AS
+    SELECT n.party_id, nt.party_id AS target_party_id, n.service_id, s.application_id, np.cancel_service_id, n.status, (((bu.name_firstpart)::text || '/'::text) || (bu.name_lastpart)::text) AS baunit_name, n.rowidentifier, n.rowversion, n.change_action, n.change_user, n.change_time, n.id AS notifyid, nt.id AS notifytargetid FROM service s, administrative.ba_unit bu, notify n, notify nt, notify_property np, administrative.party_for_rrr pr, administrative.rrr rrr WHERE ((((((((((n.service_id)::text = (s.id)::text) AND ((bu.id)::text = (np.ba_unit_id)::text)) AND ((np.notify_id)::text = (n.id)::text)) AND ((n.relationship_type_code)::text = 'safeguard'::text)) AND ((nt.service_id)::text = (s.id)::text)) AND ((nt.relationship_type_code)::text = 'owner'::text)) AND ((nt.party_id)::text = (pr.party_id)::text)) AND ((pr.rrr_id)::text = (rrr.id)::text)) AND ((rrr.ba_unit_id)::text = (bu.id)::text));
+
+
+ALTER TABLE application.notifiable_party_for_baunit OWNER TO postgres;
+
+--
+-- Name: cancel_notification; Type: VIEW; Schema: application; Owner: postgres
+--
+
+CREATE VIEW cancel_notification AS
+    SELECT pp.name AS partyname, pp.last_name AS partylastname, tpp.name AS targetpartyname, tpp.last_name AS targetpartylastname, npbu.party_id, npbu.target_party_id, npbu.baunit_name, npbu.service_id, npbu.cancel_service_id FROM party.party pp, party.party tpp, notifiable_party_for_baunit npbu, application aa, service s WHERE ((((((s.application_id)::text = (aa.id)::text) AND ((s.id)::text = (npbu.cancel_service_id)::text)) AND ((pp.id)::text = (npbu.party_id)::text)) AND ((tpp.id)::text = (npbu.target_party_id)::text)) AND ((s.request_type_code)::text = 'cancelRelationship'::text));
+
+
+ALTER TABLE application.cancel_notification OWNER TO postgres;
+
+--
+-- Name: notify_historic; Type: TABLE; Schema: application; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE notify_historic (
+    id character varying(40),
+    service_id character varying(40),
+    party_id character varying(40),
+    relationship_type_code character varying(20),
+    description text,
+    classification_code character varying(20),
+    redact_code character varying(20),
+    cancel_service_id character varying(40),
+    status character varying(40) DEFAULT 'c'::character varying NOT NULL,
+    rowidentifier character varying(40),
+    rowversion integer DEFAULT 0 NOT NULL,
+    change_action character(1),
+    change_user character varying(50),
+    change_time timestamp without time zone,
+    change_time_valid_until timestamp without time zone DEFAULT now() NOT NULL
+);
+
+
+ALTER TABLE application.notify_historic OWNER TO postgres;
+
+--
+-- Name: TABLE notify_historic; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON TABLE notify_historic IS 'History table for the application.notify table';
+
+
+--
+-- Name: notify_property_historic; Type: TABLE; Schema: application; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE notify_property_historic (
+    notify_id character varying(40),
+    ba_unit_id character varying(40),
+    rowidentifier character varying(40),
+    rowversion integer,
+    change_action character(1),
+    change_user character varying(50),
+    change_time timestamp without time zone,
+    change_time_valid_until timestamp without time zone DEFAULT now() NOT NULL,
+    cancel_service_id character varying(40),
+    status character varying(40) DEFAULT 'c'::character varying NOT NULL
+);
+
+
+ALTER TABLE application.notify_property_historic OWNER TO postgres;
+
+--
+-- Name: notify_relationship_type; Type: TABLE; Schema: application; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE notify_relationship_type (
+    code character varying(20) NOT NULL,
+    display_value character varying(250) NOT NULL,
+    description text,
+    status character(1) NOT NULL
+);
+
+
+ALTER TABLE application.notify_relationship_type OWNER TO postgres;
+
+--
+-- Name: TABLE notify_relationship_type; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON TABLE notify_relationship_type IS 'Code list identifying the type of relationship a party has with land affected by a job. Used for bulk notification purposes. 
+Tags: SOLA State Land Extension, Reference Table';
+
+
+--
+-- Name: COLUMN notify_relationship_type.code; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN notify_relationship_type.code IS 'The code for the relationship type.';
+
+
+--
+-- Name: COLUMN notify_relationship_type.display_value; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN notify_relationship_type.display_value IS 'Displayed value of the relationship type.';
+
+
+--
+-- Name: COLUMN notify_relationship_type.description; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN notify_relationship_type.description IS 'Description of the relationship type.';
+
+
+--
+-- Name: COLUMN notify_relationship_type.status; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN notify_relationship_type.status IS 'Status of the relationship type (c - current, x - no longer valid).';
+
+
+--
+-- Name: notify_uses_source; Type: TABLE; Schema: application; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE notify_uses_source (
+    notify_id character varying(40) NOT NULL,
+    source_id character varying(40) NOT NULL,
     rowidentifier character varying(40) DEFAULT public.uuid_generate_v1() NOT NULL,
     rowversion integer DEFAULT 0 NOT NULL,
     change_action character(1) DEFAULT 'i'::bpchar NOT NULL,
@@ -8012,73 +7986,82 @@ CREATE TABLE party_member (
 );
 
 
-ALTER TABLE party.party_member OWNER TO postgres;
+ALTER TABLE application.notify_uses_source OWNER TO postgres;
 
 --
--- Name: TABLE party_member; Type: COMMENT; Schema: party; Owner: postgres
+-- Name: TABLE notify_uses_source; Type: COMMENT; Schema: application; Owner: postgres
 --
 
-COMMENT ON TABLE party_member IS 'Identifies the parties belonging to a group party. Implementation of the LADM LA_PartyMember class. Not used by SOLA.
-Tags: LADM Reference Object, Change History, Not Used';
-
-
---
--- Name: COLUMN party_member.party_id; Type: COMMENT; Schema: party; Owner: postgres
---
-
-COMMENT ON COLUMN party_member.party_id IS 'LADM Definition: Identifier for the party.';
+COMMENT ON TABLE notify_uses_source IS 'Links the notification parties to the sources (a.k.a. documents) genreated for the bulk notification. 
+Tags: FLOSS SOLA Extension, Change History';
 
 
 --
--- Name: COLUMN party_member.group_id; Type: COMMENT; Schema: party; Owner: postgres
+-- Name: COLUMN notify_uses_source.notify_id; Type: COMMENT; Schema: application; Owner: postgres
 --
 
-COMMENT ON COLUMN party_member.group_id IS 'LADM Definition: Identifier of the group party';
-
-
---
--- Name: COLUMN party_member.share; Type: COMMENT; Schema: party; Owner: postgres
---
-
-COMMENT ON COLUMN party_member.share IS 'LADM Definition: The share of a RRR held by a party member expressed as a fraction with a numerator and a denominator.';
+COMMENT ON COLUMN notify_uses_source.notify_id IS 'Identifier for the notification party the record is associated to.';
 
 
 --
--- Name: COLUMN party_member.rowidentifier; Type: COMMENT; Schema: party; Owner: postgres
+-- Name: COLUMN notify_uses_source.source_id; Type: COMMENT; Schema: application; Owner: postgres
 --
 
-COMMENT ON COLUMN party_member.rowidentifier IS 'SOLA Extension: Identifies the all change records for the row in the party_member_historic table';
-
-
---
--- Name: COLUMN party_member.rowversion; Type: COMMENT; Schema: party; Owner: postgres
---
-
-COMMENT ON COLUMN party_member.rowversion IS 'SOLA Extension: Sequential value indicating the number of times this row has been modified.';
+COMMENT ON COLUMN notify_uses_source.source_id IS 'Identifier of the source associated to the application.';
 
 
 --
--- Name: COLUMN party_member.change_action; Type: COMMENT; Schema: party; Owner: postgres
+-- Name: COLUMN notify_uses_source.rowidentifier; Type: COMMENT; Schema: application; Owner: postgres
 --
 
-COMMENT ON COLUMN party_member.change_action IS 'SOLA Extension: Indicates if the last data modification action that occurred to the row was insert (i), update (u) or delete (d).';
-
-
---
--- Name: COLUMN party_member.change_user; Type: COMMENT; Schema: party; Owner: postgres
---
-
-COMMENT ON COLUMN party_member.change_user IS 'SOLA Extension: The user id of the last person to modify the row.';
+COMMENT ON COLUMN notify_uses_source.rowidentifier IS 'Identifies the all change records for the row in the objection_uses_source_historic table';
 
 
 --
--- Name: COLUMN party_member.change_time; Type: COMMENT; Schema: party; Owner: postgres
+-- Name: COLUMN notify_uses_source.rowversion; Type: COMMENT; Schema: application; Owner: postgres
 --
 
-COMMENT ON COLUMN party_member.change_time IS 'SOLA Extension: The date and time the row was last modified.';
+COMMENT ON COLUMN notify_uses_source.rowversion IS 'Sequential value indicating the number of times this row has been modified.';
 
 
-SET search_path = application, pg_catalog;
+--
+-- Name: COLUMN notify_uses_source.change_action; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN notify_uses_source.change_action IS 'Indicates if the last data modification action that occurred to the row was insert (i), update (u) or delete (d).';
+
+
+--
+-- Name: COLUMN notify_uses_source.change_user; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN notify_uses_source.change_user IS 'The user id of the last person to modify the row.';
+
+
+--
+-- Name: COLUMN notify_uses_source.change_time; Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON COLUMN notify_uses_source.change_time IS 'The date and time the row was last modified.';
+
+
+--
+-- Name: notify_uses_source_historic; Type: TABLE; Schema: application; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE notify_uses_source_historic (
+    notify_id character varying(40),
+    source_id character varying(40),
+    rowidentifier character varying(40),
+    rowversion integer,
+    change_action character(1),
+    change_user character varying(50),
+    change_time timestamp without time zone,
+    change_time_valid_until timestamp without time zone DEFAULT now() NOT NULL
+);
+
+
+ALTER TABLE application.notify_uses_source_historic OWNER TO postgres;
 
 --
 -- Name: request_category_type; Type: TABLE; Schema: application; Owner: postgres; Tablespace: 
@@ -8563,107 +8546,6 @@ COMMENT ON COLUMN type_action.description IS 'Description of the request type ac
 COMMENT ON COLUMN type_action.status IS 'Status of the request type action.';
 
 
-SET search_path = bulk_operation, pg_catalog;
-
---
--- Name: spatial_unit_temporary; Type: TABLE; Schema: bulk_operation; Owner: postgres; Tablespace: 
---
-
-CREATE TABLE spatial_unit_temporary (
-    id character varying(40) NOT NULL,
-    transaction_id character varying(40) NOT NULL,
-    type_code character varying(20) NOT NULL,
-    cadastre_object_type_code character varying(20),
-    name_firstpart character varying(20),
-    name_lastpart character varying(50),
-    geom public.geometry NOT NULL,
-    official_area numeric(29,2),
-    label character varying(100),
-    rowidentifier character varying(40) DEFAULT public.uuid_generate_v1() NOT NULL,
-    rowversion integer DEFAULT 0 NOT NULL,
-    change_action character(1) DEFAULT 'i'::bpchar NOT NULL,
-    change_user character varying(50),
-    change_time timestamp without time zone DEFAULT now() NOT NULL,
-    CONSTRAINT enforce_dims_geom CHECK ((public.st_ndims(geom) = 2)),
-    CONSTRAINT enforce_srid_geom CHECK ((public.st_srid(geom) = 2193)),
-    CONSTRAINT enforce_valid_geom CHECK (public.st_isvalid(geom))
-);
-
-
-ALTER TABLE bulk_operation.spatial_unit_temporary OWNER TO postgres;
-
---
--- Name: TABLE spatial_unit_temporary; Type: COMMENT; Schema: bulk_operation; Owner: postgres
---
-
-COMMENT ON TABLE spatial_unit_temporary IS 'Used as a staging area when loading spatial objects with the bulk operations functionality. Data in this table is validated and any field values generated (e.g. name_firstpart) prior to transferring the data into the cadastre object table.  
-Tags: FLOSS SOLA Extension';
-
-
---
--- Name: COLUMN spatial_unit_temporary.id; Type: COMMENT; Schema: bulk_operation; Owner: postgres
---
-
-COMMENT ON COLUMN spatial_unit_temporary.id IS 'Identifier for the record.';
-
-
---
--- Name: COLUMN spatial_unit_temporary.transaction_id; Type: COMMENT; Schema: bulk_operation; Owner: postgres
---
-
-COMMENT ON COLUMN spatial_unit_temporary.transaction_id IS 'The identifier of the transation associated to the bulk operation.';
-
-
---
--- Name: COLUMN spatial_unit_temporary.type_code; Type: COMMENT; Schema: bulk_operation; Owner: postgres
---
-
-COMMENT ON COLUMN spatial_unit_temporary.type_code IS 'The type of object that will be uploaded.';
-
-
---
--- Name: COLUMN spatial_unit_temporary.cadastre_object_type_code; Type: COMMENT; Schema: bulk_operation; Owner: postgres
---
-
-COMMENT ON COLUMN spatial_unit_temporary.cadastre_object_type_code IS 'The type of the cadastre object. Only applicable if the type_code is cadastre_object.';
-
-
---
--- Name: COLUMN spatial_unit_temporary.name_firstpart; Type: COMMENT; Schema: bulk_operation; Owner: postgres
---
-
-COMMENT ON COLUMN spatial_unit_temporary.name_firstpart IS 'The first part of the name for the cadastre object. Only applicable if the type_code is cadastre_object.';
-
-
---
--- Name: COLUMN spatial_unit_temporary.name_lastpart; Type: COMMENT; Schema: bulk_operation; Owner: postgres
---
-
-COMMENT ON COLUMN spatial_unit_temporary.name_lastpart IS 'The last or remaining part of the name for the cadastre object. Only applicable if the type_code is cadastre_object.';
-
-
---
--- Name: COLUMN spatial_unit_temporary.geom; Type: COMMENT; Schema: bulk_operation; Owner: postgres
---
-
-COMMENT ON COLUMN spatial_unit_temporary.geom IS 'The geometry for the spaital unit.';
-
-
---
--- Name: COLUMN spatial_unit_temporary.official_area; Type: COMMENT; Schema: bulk_operation; Owner: postgres
---
-
-COMMENT ON COLUMN spatial_unit_temporary.official_area IS 'The official area for the cadastre object. Only applicable if the type_code is cadastre_object.';
-
-
---
--- Name: COLUMN spatial_unit_temporary.label; Type: COMMENT; Schema: bulk_operation; Owner: postgres
---
-
-COMMENT ON COLUMN spatial_unit_temporary.label IS 'The label to use for the spatial unit. Only applicable if the type_code IS NOT cadastre_object.';
-
-
-
 SET search_path = cadastre, pg_catalog;
 
 --
@@ -8793,7 +8675,7 @@ CREATE TABLE cadastre_object_historic (
     redact_code character varying(20),
     CONSTRAINT enforce_dims_geom_polygon CHECK ((public.st_ndims(geom_polygon) = 2)),
     CONSTRAINT enforce_geotype_geom_polygon CHECK (((public.geometrytype(geom_polygon) = 'POLYGON'::text) OR (geom_polygon IS NULL))),
-    CONSTRAINT enforce_srid_geom_polygon CHECK ((public.st_srid(geom_polygon) = 2193)),
+    CONSTRAINT enforce_srid_geom_polygon CHECK ((public.st_srid(geom_polygon) = ANY (ARRAY[32628, 32629]))),
     CONSTRAINT enforce_valid_geom_polygon CHECK (public.st_isvalid(geom_polygon))
 );
 
@@ -8815,7 +8697,7 @@ CREATE TABLE cadastre_object_node_target (
     change_time timestamp without time zone DEFAULT now() NOT NULL,
     CONSTRAINT enforce_dims_geom CHECK ((public.st_ndims(geom) = 2)),
     CONSTRAINT enforce_geotype_geom CHECK (((public.geometrytype(geom) = 'POINT'::text) OR (geom IS NULL))),
-    CONSTRAINT enforce_srid_geom CHECK ((public.st_srid(geom) = 2193)),
+    CONSTRAINT enforce_srid_geom CHECK ((public.st_srid(geom) = ANY (ARRAY[32628, 32629]))),
     CONSTRAINT enforce_valid_geom CHECK (public.st_isvalid(geom))
 );
 
@@ -8902,7 +8784,7 @@ CREATE TABLE cadastre_object_node_target_historic (
     change_time_valid_until timestamp without time zone DEFAULT now() NOT NULL,
     CONSTRAINT enforce_dims_geom CHECK ((public.st_ndims(geom) = 2)),
     CONSTRAINT enforce_geotype_geom CHECK (((public.geometrytype(geom) = 'POINT'::text) OR (geom IS NULL))),
-    CONSTRAINT enforce_srid_geom CHECK ((public.st_srid(geom) = 2193)),
+    CONSTRAINT enforce_srid_geom CHECK ((public.st_srid(geom) = ANY (ARRAY[32628, 32629]))),
     CONSTRAINT enforce_valid_geom CHECK (public.st_isvalid(geom))
 );
 
@@ -8924,7 +8806,7 @@ CREATE TABLE cadastre_object_target (
     change_time timestamp without time zone DEFAULT now() NOT NULL,
     CONSTRAINT enforce_dims_geom_polygon CHECK ((public.st_ndims(geom_polygon) = 2)),
     CONSTRAINT enforce_geotype_geom_polygon CHECK (((public.geometrytype(geom_polygon) = 'POLYGON'::text) OR (geom_polygon IS NULL))),
-    CONSTRAINT enforce_srid_geom_polygon CHECK ((public.st_srid(geom_polygon) = 2193)),
+    CONSTRAINT enforce_srid_geom_polygon CHECK ((public.st_srid(geom_polygon) = ANY (ARRAY[32628, 32629]))),
     CONSTRAINT enforce_valid_geom_polygon CHECK (public.st_isvalid(geom_polygon))
 );
 
@@ -9011,7 +8893,6 @@ CREATE TABLE cadastre_object_target_historic (
     change_time_valid_until timestamp without time zone DEFAULT now() NOT NULL,
     CONSTRAINT enforce_dims_geom_polygon CHECK ((public.st_ndims(geom_polygon) = 2)),
     CONSTRAINT enforce_geotype_geom_polygon CHECK (((public.geometrytype(geom_polygon) = 'POLYGON'::text) OR (geom_polygon IS NULL))),
-    CONSTRAINT enforce_srid_geom_polygon CHECK ((public.st_srid(geom_polygon) = 2193)),
     CONSTRAINT enforce_valid_geom_polygon CHECK (public.st_isvalid(geom_polygon))
 );
 
@@ -9077,56 +8958,6 @@ COMMENT ON COLUMN cadastre_object_type.in_topology IS 'Flag to indicate that all
 
 
 --
--- Name: dimension_type; Type: TABLE; Schema: cadastre; Owner: postgres; Tablespace: 
---
-
-CREATE TABLE dimension_type (
-    code character varying(20) NOT NULL,
-    display_value character varying(500) NOT NULL,
-    description character varying(1000),
-    status character(1) DEFAULT 't'::bpchar NOT NULL
-);
-
-
-ALTER TABLE cadastre.dimension_type OWNER TO postgres;
-
---
--- Name: TABLE dimension_type; Type: COMMENT; Schema: cadastre; Owner: postgres
---
-
-COMMENT ON TABLE dimension_type IS 'Code list of dimension types. Identifies the number of dimensions used to define a spatial unit. E.g. 1D, 2D, etc. Implementation of the LADM LA_DimensionType class. SOLA assumes all spatial units are 2D. 
-Tags: Reference Table, LADM Reference Object';
-
-
---
--- Name: COLUMN dimension_type.code; Type: COMMENT; Schema: cadastre; Owner: postgres
---
-
-COMMENT ON COLUMN dimension_type.code IS 'LADM Definition: The code for the dimension type.';
-
-
---
--- Name: COLUMN dimension_type.display_value; Type: COMMENT; Schema: cadastre; Owner: postgres
---
-
-COMMENT ON COLUMN dimension_type.display_value IS 'LADM Definition: Displayed value of the dimension type.';
-
-
---
--- Name: COLUMN dimension_type.description; Type: COMMENT; Schema: cadastre; Owner: postgres
---
-
-COMMENT ON COLUMN dimension_type.description IS 'LADM Definition: Description of the dimension type.';
-
-
---
--- Name: COLUMN dimension_type.status; Type: COMMENT; Schema: cadastre; Owner: postgres
---
-
-COMMENT ON COLUMN dimension_type.status IS 'SOLA Extension: Status of the dimension type';
-
-
---
 -- Name: spatial_unit_group; Type: TABLE; Schema: cadastre; Owner: postgres; Tablespace: 
 --
 
@@ -9148,8 +8979,8 @@ CREATE TABLE spatial_unit_group (
     CONSTRAINT enforce_dims_reference_point CHECK ((public.st_ndims(reference_point) = 2)),
     CONSTRAINT enforce_geotype_geom CHECK (((public.geometrytype(geom) = 'POLYGON'::text) OR (geom IS NULL))),
     CONSTRAINT enforce_geotype_reference_point CHECK (((public.geometrytype(reference_point) = 'POINT'::text) OR (reference_point IS NULL))),
-    CONSTRAINT enforce_srid_geom CHECK ((public.st_srid(geom) = 2193)),
-    CONSTRAINT enforce_srid_reference_point CHECK ((public.st_srid(reference_point) = 2193)),
+    CONSTRAINT enforce_srid_geom CHECK ((public.st_srid(geom) = ANY (ARRAY[32628, 32629]))),
+    CONSTRAINT enforce_srid_reference_point CHECK ((public.st_srid(reference_point) = ANY (ARRAY[32628, 32629]))),
     CONSTRAINT enforce_valid_geom CHECK (public.st_isvalid(geom)),
     CONSTRAINT enforce_valid_reference_point CHECK (public.st_isvalid(reference_point))
 );
@@ -9256,6 +9087,76 @@ COMMENT ON COLUMN spatial_unit_group.change_user IS 'SOLA Extension: The user id
 
 COMMENT ON COLUMN spatial_unit_group.change_time IS 'SOLA Extension: The date and time the row was last modified.';
 
+
+--
+-- Name: chief; Type: VIEW; Schema: cadastre; Owner: postgres
+--
+
+CREATE VIEW chief AS
+    SELECT s.id, s.label, s.geom FROM spatial_unit_group s WHERE (s.hierarchy_level = 3);
+
+
+ALTER TABLE cadastre.chief OWNER TO postgres;
+
+--
+-- Name: dimension_type; Type: TABLE; Schema: cadastre; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE dimension_type (
+    code character varying(20) NOT NULL,
+    display_value character varying(500) NOT NULL,
+    description character varying(1000),
+    status character(1) DEFAULT 't'::bpchar NOT NULL
+);
+
+
+ALTER TABLE cadastre.dimension_type OWNER TO postgres;
+
+--
+-- Name: TABLE dimension_type; Type: COMMENT; Schema: cadastre; Owner: postgres
+--
+
+COMMENT ON TABLE dimension_type IS 'Code list of dimension types. Identifies the number of dimensions used to define a spatial unit. E.g. 1D, 2D, etc. Implementation of the LADM LA_DimensionType class. SOLA assumes all spatial units are 2D. 
+Tags: Reference Table, LADM Reference Object';
+
+
+--
+-- Name: COLUMN dimension_type.code; Type: COMMENT; Schema: cadastre; Owner: postgres
+--
+
+COMMENT ON COLUMN dimension_type.code IS 'LADM Definition: The code for the dimension type.';
+
+
+--
+-- Name: COLUMN dimension_type.display_value; Type: COMMENT; Schema: cadastre; Owner: postgres
+--
+
+COMMENT ON COLUMN dimension_type.display_value IS 'LADM Definition: Displayed value of the dimension type.';
+
+
+--
+-- Name: COLUMN dimension_type.description; Type: COMMENT; Schema: cadastre; Owner: postgres
+--
+
+COMMENT ON COLUMN dimension_type.description IS 'LADM Definition: Description of the dimension type.';
+
+
+--
+-- Name: COLUMN dimension_type.status; Type: COMMENT; Schema: cadastre; Owner: postgres
+--
+
+COMMENT ON COLUMN dimension_type.status IS 'SOLA Extension: Status of the dimension type';
+
+
+--
+-- Name: dist; Type: VIEW; Schema: cadastre; Owner: postgres
+--
+
+CREATE VIEW dist AS
+    SELECT s.id, s.label, s.geom FROM spatial_unit_group s WHERE (s.hierarchy_level = 2);
+
+
+ALTER TABLE cadastre.dist OWNER TO postgres;
 
 --
 -- Name: hierarchy; Type: VIEW; Schema: cadastre; Owner: postgres
@@ -9680,8 +9581,8 @@ CREATE TABLE spatial_unit (
     CONSTRAINT enforce_dims_geom CHECK ((public.st_ndims(geom) = 2)),
     CONSTRAINT enforce_dims_reference_point CHECK ((public.st_ndims(reference_point) = 2)),
     CONSTRAINT enforce_geotype_reference_point CHECK (((public.geometrytype(reference_point) = 'POINT'::text) OR (reference_point IS NULL))),
-    CONSTRAINT enforce_srid_geom CHECK ((public.st_srid(geom) = 2193)),
-    CONSTRAINT enforce_srid_reference_point CHECK ((public.st_srid(reference_point) = 2193)),
+    CONSTRAINT enforce_srid_geom CHECK ((public.st_srid(geom) = ANY (ARRAY[32628, 32629]))),
+    CONSTRAINT enforce_srid_reference_point CHECK ((public.st_srid(reference_point) = ANY (ARRAY[32628, 32629]))),
     CONSTRAINT enforce_valid_geom CHECK (public.st_isvalid(geom)),
     CONSTRAINT enforce_valid_reference_point CHECK (public.st_isvalid(reference_point))
 );
@@ -9814,6 +9715,16 @@ COMMENT ON VIEW place_name IS 'View for retrieving place name features for displ
 
 
 --
+-- Name: reg; Type: VIEW; Schema: cadastre; Owner: postgres
+--
+
+CREATE VIEW reg AS
+    SELECT s.id, s.label, s.geom FROM spatial_unit_group s WHERE (s.hierarchy_level = 1);
+
+
+ALTER TABLE cadastre.reg OWNER TO postgres;
+
+--
 -- Name: register_type; Type: TABLE; Schema: cadastre; Owner: postgres; Tablespace: 
 --
 
@@ -9879,6 +9790,16 @@ ALTER TABLE cadastre.road OWNER TO postgres;
 
 COMMENT ON VIEW road IS 'View for retrieving road and road centreline features for display in the Map Viewer. Not used by SOLA. Layer queries (defined in system.query) are used instead.';
 
+
+--
+-- Name: sect; Type: VIEW; Schema: cadastre; Owner: postgres
+--
+
+CREATE VIEW sect AS
+    SELECT s.id, s.label, s.geom FROM spatial_unit_group s WHERE (s.hierarchy_level = 4);
+
+
+ALTER TABLE cadastre.sect OWNER TO postgres;
 
 --
 -- Name: spatial_unit_address; Type: TABLE; Schema: cadastre; Owner: postgres; Tablespace: 
@@ -9995,8 +9916,8 @@ CREATE TABLE spatial_unit_group_historic (
     CONSTRAINT enforce_dims_reference_point CHECK ((public.st_ndims(reference_point) = 2)),
     CONSTRAINT enforce_geotype_geom CHECK (((public.geometrytype(geom) = 'POLYGON'::text) OR (geom IS NULL))),
     CONSTRAINT enforce_geotype_reference_point CHECK (((public.geometrytype(reference_point) = 'POINT'::text) OR (reference_point IS NULL))),
-    CONSTRAINT enforce_srid_geom CHECK ((public.st_srid(geom) = 2193)),
-    CONSTRAINT enforce_srid_reference_point CHECK ((public.st_srid(reference_point) = 2193)),
+    CONSTRAINT enforce_srid_geom CHECK ((public.st_srid(geom) = ANY (ARRAY[32628, 32629]))),
+    CONSTRAINT enforce_srid_reference_point CHECK ((public.st_srid(reference_point) = ANY (ARRAY[32628, 32629]))),
     CONSTRAINT enforce_valid_geom CHECK (public.st_isvalid(geom)),
     CONSTRAINT enforce_valid_reference_point CHECK (public.st_isvalid(reference_point))
 );
@@ -10027,8 +9948,8 @@ CREATE TABLE spatial_unit_historic (
     CONSTRAINT enforce_dims_geom CHECK ((public.st_ndims(geom) = 2)),
     CONSTRAINT enforce_dims_reference_point CHECK ((public.st_ndims(reference_point) = 2)),
     CONSTRAINT enforce_geotype_reference_point CHECK (((public.geometrytype(reference_point) = 'POINT'::text) OR (reference_point IS NULL))),
-    CONSTRAINT enforce_srid_geom CHECK ((public.st_srid(geom) = 2193)),
-    CONSTRAINT enforce_srid_reference_point CHECK ((public.st_srid(reference_point) = 2193)),
+    CONSTRAINT enforce_srid_geom CHECK ((public.st_srid(geom) = ANY (ARRAY[32628, 32629]))),
+    CONSTRAINT enforce_srid_reference_point CHECK ((public.st_srid(reference_point) = ANY (ARRAY[32628, 32629]))),
     CONSTRAINT enforce_valid_geom CHECK (public.st_isvalid(geom)),
     CONSTRAINT enforce_valid_reference_point CHECK (public.st_isvalid(reference_point))
 );
@@ -10285,8 +10206,8 @@ CREATE TABLE survey_point (
     CONSTRAINT enforce_dims_original_geom CHECK ((public.st_ndims(original_geom) = 2)),
     CONSTRAINT enforce_geotype_geom CHECK (((public.geometrytype(geom) = 'POINT'::text) OR (geom IS NULL))),
     CONSTRAINT enforce_geotype_original_geom CHECK (((public.geometrytype(original_geom) = 'POINT'::text) OR (original_geom IS NULL))),
-    CONSTRAINT enforce_srid_geom CHECK ((public.st_srid(geom) = 2193)),
-    CONSTRAINT enforce_srid_original_geom CHECK ((public.st_srid(original_geom) = 2193)),
+    CONSTRAINT enforce_srid_geom CHECK ((public.st_srid(geom) = ANY (ARRAY[32628, 32629]))),
+    CONSTRAINT enforce_srid_original_geom CHECK ((public.st_srid(original_geom) = ANY (ARRAY[32628, 32629]))),
     CONSTRAINT enforce_valid_geom CHECK (public.st_isvalid(geom)),
     CONSTRAINT enforce_valid_original_geom CHECK (public.st_isvalid(original_geom))
 );
@@ -10400,8 +10321,8 @@ CREATE TABLE survey_point_historic (
     CONSTRAINT enforce_dims_original_geom CHECK ((public.st_ndims(original_geom) = 2)),
     CONSTRAINT enforce_geotype_geom CHECK (((public.geometrytype(geom) = 'POINT'::text) OR (geom IS NULL))),
     CONSTRAINT enforce_geotype_original_geom CHECK (((public.geometrytype(original_geom) = 'POINT'::text) OR (original_geom IS NULL))),
-    CONSTRAINT enforce_srid_geom CHECK ((public.st_srid(geom) = 2193)),
-    CONSTRAINT enforce_srid_original_geom CHECK ((public.st_srid(original_geom) = 2193)),
+    CONSTRAINT enforce_srid_geom CHECK ((public.st_srid(geom) = ANY (ARRAY[32628, 32629]))),
+    CONSTRAINT enforce_srid_original_geom CHECK ((public.st_srid(original_geom) = ANY (ARRAY[32628, 32629]))),
     CONSTRAINT enforce_valid_geom CHECK (public.st_isvalid(geom)),
     CONSTRAINT enforce_valid_original_geom CHECK (public.st_isvalid(original_geom))
 );
@@ -10855,6 +10776,80 @@ COMMENT ON COLUMN gender_type.description IS 'Description of the gender type.';
 
 
 --
+-- Name: group_party; Type: TABLE; Schema: party; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE group_party (
+    id character varying(40) NOT NULL,
+    type_code character varying(20) NOT NULL,
+    rowidentifier character varying(40) DEFAULT public.uuid_generate_v1() NOT NULL,
+    rowversion integer DEFAULT 0 NOT NULL,
+    change_action character(1) DEFAULT 'i'::bpchar NOT NULL,
+    change_user character varying(50),
+    change_time timestamp without time zone DEFAULT now() NOT NULL
+);
+
+
+ALTER TABLE party.group_party OWNER TO postgres;
+
+--
+-- Name: TABLE group_party; Type: COMMENT; Schema: party; Owner: postgres
+--
+
+COMMENT ON TABLE group_party IS 'Groups any number of parties into a distinct entity. Implementation of the LADM LA_GroupParty class. Not used by SOLA
+Tags: LADM Reference Object, Change History, Not Used';
+
+
+--
+-- Name: COLUMN group_party.id; Type: COMMENT; Schema: party; Owner: postgres
+--
+
+COMMENT ON COLUMN group_party.id IS 'LADM Definition: Identifier for the group party.';
+
+
+--
+-- Name: COLUMN group_party.type_code; Type: COMMENT; Schema: party; Owner: postgres
+--
+
+COMMENT ON COLUMN group_party.type_code IS 'LADM Definition: The type of the group party. E.g. family, tribe, association, etc.';
+
+
+--
+-- Name: COLUMN group_party.rowidentifier; Type: COMMENT; Schema: party; Owner: postgres
+--
+
+COMMENT ON COLUMN group_party.rowidentifier IS 'SOLA Extension: Identifies the all change records for the row in the group_party_historic table';
+
+
+--
+-- Name: COLUMN group_party.rowversion; Type: COMMENT; Schema: party; Owner: postgres
+--
+
+COMMENT ON COLUMN group_party.rowversion IS 'SOLA Extension: Sequential value indicating the number of times this row has been modified.';
+
+
+--
+-- Name: COLUMN group_party.change_action; Type: COMMENT; Schema: party; Owner: postgres
+--
+
+COMMENT ON COLUMN group_party.change_action IS 'SOLA Extension: Indicates if the last data modification action that occurred to the row was insert (i), update (u) or delete (d).';
+
+
+--
+-- Name: COLUMN group_party.change_user; Type: COMMENT; Schema: party; Owner: postgres
+--
+
+COMMENT ON COLUMN group_party.change_user IS 'SOLA Extension: The user id of the last person to modify the row.';
+
+
+--
+-- Name: COLUMN group_party.change_time; Type: COMMENT; Schema: party; Owner: postgres
+--
+
+COMMENT ON COLUMN group_party.change_time IS 'SOLA Extension: The date and time the row was last modified.';
+
+
+--
 -- Name: group_party_historic; Type: TABLE; Schema: party; Owner: postgres; Tablespace: 
 --
 
@@ -11007,6 +11002,88 @@ CREATE TABLE party_historic (
 
 
 ALTER TABLE party.party_historic OWNER TO postgres;
+
+--
+-- Name: party_member; Type: TABLE; Schema: party; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE party_member (
+    party_id character varying(40) NOT NULL,
+    group_id character varying(40) NOT NULL,
+    share double precision,
+    rowidentifier character varying(40) DEFAULT public.uuid_generate_v1() NOT NULL,
+    rowversion integer DEFAULT 0 NOT NULL,
+    change_action character(1) DEFAULT 'i'::bpchar NOT NULL,
+    change_user character varying(50),
+    change_time timestamp without time zone DEFAULT now() NOT NULL
+);
+
+
+ALTER TABLE party.party_member OWNER TO postgres;
+
+--
+-- Name: TABLE party_member; Type: COMMENT; Schema: party; Owner: postgres
+--
+
+COMMENT ON TABLE party_member IS 'Identifies the parties belonging to a group party. Implementation of the LADM LA_PartyMember class. Not used by SOLA.
+Tags: LADM Reference Object, Change History, Not Used';
+
+
+--
+-- Name: COLUMN party_member.party_id; Type: COMMENT; Schema: party; Owner: postgres
+--
+
+COMMENT ON COLUMN party_member.party_id IS 'LADM Definition: Identifier for the party.';
+
+
+--
+-- Name: COLUMN party_member.group_id; Type: COMMENT; Schema: party; Owner: postgres
+--
+
+COMMENT ON COLUMN party_member.group_id IS 'LADM Definition: Identifier of the group party';
+
+
+--
+-- Name: COLUMN party_member.share; Type: COMMENT; Schema: party; Owner: postgres
+--
+
+COMMENT ON COLUMN party_member.share IS 'LADM Definition: The share of a RRR held by a party member expressed as a fraction with a numerator and a denominator.';
+
+
+--
+-- Name: COLUMN party_member.rowidentifier; Type: COMMENT; Schema: party; Owner: postgres
+--
+
+COMMENT ON COLUMN party_member.rowidentifier IS 'SOLA Extension: Identifies the all change records for the row in the party_member_historic table';
+
+
+--
+-- Name: COLUMN party_member.rowversion; Type: COMMENT; Schema: party; Owner: postgres
+--
+
+COMMENT ON COLUMN party_member.rowversion IS 'SOLA Extension: Sequential value indicating the number of times this row has been modified.';
+
+
+--
+-- Name: COLUMN party_member.change_action; Type: COMMENT; Schema: party; Owner: postgres
+--
+
+COMMENT ON COLUMN party_member.change_action IS 'SOLA Extension: Indicates if the last data modification action that occurred to the row was insert (i), update (u) or delete (d).';
+
+
+--
+-- Name: COLUMN party_member.change_user; Type: COMMENT; Schema: party; Owner: postgres
+--
+
+COMMENT ON COLUMN party_member.change_user IS 'SOLA Extension: The user id of the last person to modify the row.';
+
+
+--
+-- Name: COLUMN party_member.change_time; Type: COMMENT; Schema: party; Owner: postgres
+--
+
+COMMENT ON COLUMN party_member.change_time IS 'SOLA Extension: The date and time the row was last modified.';
+
 
 --
 -- Name: party_member_historic; Type: TABLE; Schema: party; Owner: postgres; Tablespace: 
@@ -14371,7 +14448,6 @@ ALTER TABLE ONLY notation
     ADD CONSTRAINT notation_pkey PRIMARY KEY (id);
 
 
-
 --
 -- Name: party_for_rrr_pkey; Type: CONSTRAINT; Schema: administrative; Owner: postgres; Tablespace: 
 --
@@ -14527,6 +14603,46 @@ ALTER TABLE ONLY application_uses_source
 
 
 --
+-- Name: notifiy_property_pkey; Type: CONSTRAINT; Schema: application; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY notify_property
+    ADD CONSTRAINT notifiy_property_pkey PRIMARY KEY (notify_id, ba_unit_id);
+
+
+--
+-- Name: notify_pkey; Type: CONSTRAINT; Schema: application; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY notify
+    ADD CONSTRAINT notify_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: notify_relationship_type_display_value_unique; Type: CONSTRAINT; Schema: application; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY notify_relationship_type
+    ADD CONSTRAINT notify_relationship_type_display_value_unique UNIQUE (display_value);
+
+
+--
+-- Name: notify_relationship_type_pkey; Type: CONSTRAINT; Schema: application; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY notify_relationship_type
+    ADD CONSTRAINT notify_relationship_type_pkey PRIMARY KEY (code);
+
+
+--
+-- Name: notify_uses_source_pkey; Type: CONSTRAINT; Schema: application; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY notify_uses_source
+    ADD CONSTRAINT notify_uses_source_pkey PRIMARY KEY (notify_id, source_id);
+
+
+--
 -- Name: request_category_type_display_value_unique; Type: CONSTRAINT; Schema: application; Owner: postgres; Tablespace: 
 --
 
@@ -14636,19 +14752,6 @@ ALTER TABLE ONLY type_action
 
 ALTER TABLE ONLY type_action
     ADD CONSTRAINT type_action_pkey PRIMARY KEY (code);
-
-
-
-SET search_path = bulk_operation, pg_catalog;
-
---
--- Name: spatial_unit_temporary_pkey; Type: CONSTRAINT; Schema: bulk_operation; Owner: postgres; Tablespace: 
---
-
-ALTER TABLE ONLY spatial_unit_temporary
-    ADD CONSTRAINT spatial_unit_temporary_pkey PRIMARY KEY (id);
-
-
 
 
 SET search_path = cadastre, pg_catalog;
@@ -16307,6 +16410,90 @@ CREATE INDEX application_uses_source_source_id_fk127_ind ON application_uses_sou
 
 
 --
+-- Name: notify_historic_index_on_rowidentifier; Type: INDEX; Schema: application; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX notify_historic_index_on_rowidentifier ON notify_historic USING btree (rowidentifier);
+
+
+--
+-- Name: notify_index_on_party_id; Type: INDEX; Schema: application; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX notify_index_on_party_id ON notify USING btree (party_id);
+
+
+--
+-- Name: notify_index_on_rowidentifier; Type: INDEX; Schema: application; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX notify_index_on_rowidentifier ON notify USING btree (rowidentifier);
+
+
+--
+-- Name: notify_index_on_service_id; Type: INDEX; Schema: application; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX notify_index_on_service_id ON notify USING btree (service_id);
+
+
+--
+-- Name: notify_property_ba_unit_id_fk_ind; Type: INDEX; Schema: application; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX notify_property_ba_unit_id_fk_ind ON notify_property USING btree (ba_unit_id);
+
+
+--
+-- Name: notify_property_historic_index_on_rowidentifier; Type: INDEX; Schema: application; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX notify_property_historic_index_on_rowidentifier ON notify_property_historic USING btree (rowidentifier);
+
+
+--
+-- Name: notify_property_index_on_rowidentifier; Type: INDEX; Schema: application; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX notify_property_index_on_rowidentifier ON notify_property USING btree (rowidentifier);
+
+
+--
+-- Name: notify_property_notify_id_fk_ind; Type: INDEX; Schema: application; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX notify_property_notify_id_fk_ind ON notify_property USING btree (notify_id);
+
+
+--
+-- Name: notify_uses_source_historic_index_on_rowidentifier; Type: INDEX; Schema: application; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX notify_uses_source_historic_index_on_rowidentifier ON notify_uses_source_historic USING btree (rowidentifier);
+
+
+--
+-- Name: notify_uses_source_index_on_rowidentifier; Type: INDEX; Schema: application; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX notify_uses_source_index_on_rowidentifier ON notify_uses_source USING btree (rowidentifier);
+
+
+--
+-- Name: notify_uses_source_notify_id_fk_ind; Type: INDEX; Schema: application; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX notify_uses_source_notify_id_fk_ind ON notify_uses_source USING btree (notify_id);
+
+
+--
+-- Name: notify_uses_source_source_id_fk_ind; Type: INDEX; Schema: application; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX notify_uses_source_source_id_fk_ind ON notify_uses_source USING btree (source_id);
+
+
+--
 -- Name: request_type_config_panel_launcher_fkey_ind; Type: INDEX; Schema: application; Owner: postgres; Tablespace: 
 --
 
@@ -16409,38 +16596,6 @@ CREATE INDEX service_request_type_code_fk19_ind ON service USING btree (request_
 --
 
 CREATE INDEX service_status_code_fk24_ind ON service USING btree (status_code);
-
-
-SET search_path = bulk_operation, pg_catalog;
-
---
--- Name: spatial_unit_temporary_cadastre_object_type_code_fk133_ind; Type: INDEX; Schema: bulk_operation; Owner: postgres; Tablespace: 
---
-
-CREATE INDEX spatial_unit_temporary_cadastre_object_type_code_fk133_ind ON spatial_unit_temporary USING btree (cadastre_object_type_code);
-
-
---
--- Name: spatial_unit_temporary_index_on_geom; Type: INDEX; Schema: bulk_operation; Owner: postgres; Tablespace: 
---
-
-CREATE INDEX spatial_unit_temporary_index_on_geom ON spatial_unit_temporary USING gist (geom);
-
-
---
--- Name: spatial_unit_temporary_index_on_rowidentifier; Type: INDEX; Schema: bulk_operation; Owner: postgres; Tablespace: 
---
-
-CREATE INDEX spatial_unit_temporary_index_on_rowidentifier ON spatial_unit_temporary USING btree (rowidentifier);
-
-
---
--- Name: spatial_unit_temporary_transaction_id_fk132_ind; Type: INDEX; Schema: bulk_operation; Owner: postgres; Tablespace: 
---
-
-CREATE INDEX spatial_unit_temporary_transaction_id_fk132_ind ON spatial_unit_temporary USING btree (transaction_id);
-
-
 
 
 SET search_path = cadastre, pg_catalog;
@@ -17600,7 +17755,6 @@ CREATE TRIGGER __track_changes BEFORE INSERT OR UPDATE ON source_describes_ba_un
 CREATE TRIGGER __track_changes BEFORE INSERT OR UPDATE ON source_describes_rrr FOR EACH ROW EXECUTE PROCEDURE public.f_for_trg_track_changes();
 
 
-
 --
 -- Name: __track_history; Type: TRIGGER; Schema: administrative; Owner: postgres
 --
@@ -17737,6 +17891,27 @@ CREATE TRIGGER __track_changes BEFORE INSERT OR UPDATE ON service FOR EACH ROW E
 
 
 --
+-- Name: __track_changes; Type: TRIGGER; Schema: application; Owner: postgres
+--
+
+CREATE TRIGGER __track_changes BEFORE INSERT OR UPDATE ON notify FOR EACH ROW EXECUTE PROCEDURE public.f_for_trg_track_changes();
+
+
+--
+-- Name: __track_changes; Type: TRIGGER; Schema: application; Owner: postgres
+--
+
+CREATE TRIGGER __track_changes BEFORE INSERT OR UPDATE ON notify_property FOR EACH ROW EXECUTE PROCEDURE public.f_for_trg_track_changes();
+
+
+--
+-- Name: __track_changes; Type: TRIGGER; Schema: application; Owner: postgres
+--
+
+CREATE TRIGGER __track_changes BEFORE INSERT OR UPDATE ON notify_uses_source FOR EACH ROW EXECUTE PROCEDURE public.f_for_trg_track_changes();
+
+
+--
 -- Name: __track_history; Type: TRIGGER; Schema: application; Owner: postgres
 --
 
@@ -17771,15 +17946,25 @@ CREATE TRIGGER __track_history AFTER DELETE OR UPDATE ON application_uses_source
 CREATE TRIGGER __track_history AFTER DELETE OR UPDATE ON service FOR EACH ROW EXECUTE PROCEDURE public.f_for_trg_track_history();
 
 
-SET search_path = bulk_operation, pg_catalog;
-
 --
--- Name: __track_changes; Type: TRIGGER; Schema: bulk_operation; Owner: postgres
+-- Name: __track_history; Type: TRIGGER; Schema: application; Owner: postgres
 --
 
-CREATE TRIGGER __track_changes BEFORE INSERT OR UPDATE ON spatial_unit_temporary FOR EACH ROW EXECUTE PROCEDURE public.f_for_trg_track_changes();
+CREATE TRIGGER __track_history AFTER DELETE OR UPDATE ON notify FOR EACH ROW EXECUTE PROCEDURE public.f_for_trg_track_history();
 
 
+--
+-- Name: __track_history; Type: TRIGGER; Schema: application; Owner: postgres
+--
+
+CREATE TRIGGER __track_history AFTER DELETE OR UPDATE ON notify_property FOR EACH ROW EXECUTE PROCEDURE public.f_for_trg_track_history();
+
+
+--
+-- Name: __track_history; Type: TRIGGER; Schema: application; Owner: postgres
+--
+
+CREATE TRIGGER __track_history AFTER DELETE OR UPDATE ON notify_uses_source FOR EACH ROW EXECUTE PROCEDURE public.f_for_trg_track_history();
 
 
 SET search_path = cadastre, pg_catalog;
@@ -18613,6 +18798,62 @@ ALTER TABLE ONLY application_uses_source
 
 
 --
+-- Name: notify_party_id_fk; Type: FK CONSTRAINT; Schema: application; Owner: postgres
+--
+
+ALTER TABLE ONLY notify
+    ADD CONSTRAINT notify_party_id_fk FOREIGN KEY (party_id) REFERENCES party.party(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: notify_property_ba_unit_id_fk; Type: FK CONSTRAINT; Schema: application; Owner: postgres
+--
+
+ALTER TABLE ONLY notify_property
+    ADD CONSTRAINT notify_property_ba_unit_id_fk FOREIGN KEY (ba_unit_id) REFERENCES administrative.ba_unit(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: notify_property_notify_id_fk; Type: FK CONSTRAINT; Schema: application; Owner: postgres
+--
+
+ALTER TABLE ONLY notify_property
+    ADD CONSTRAINT notify_property_notify_id_fk FOREIGN KEY (notify_id) REFERENCES notify(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: notify_service_id_fk; Type: FK CONSTRAINT; Schema: application; Owner: postgres
+--
+
+ALTER TABLE ONLY notify
+    ADD CONSTRAINT notify_service_id_fk FOREIGN KEY (service_id) REFERENCES service(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: notify_type_code_fk; Type: FK CONSTRAINT; Schema: application; Owner: postgres
+--
+
+ALTER TABLE ONLY notify
+    ADD CONSTRAINT notify_type_code_fk FOREIGN KEY (relationship_type_code) REFERENCES notify_relationship_type(code);
+
+
+--
+-- Name: notify_uses_source_notify_id_fk; Type: FK CONSTRAINT; Schema: application; Owner: postgres
+--
+
+ALTER TABLE ONLY notify_uses_source
+    ADD CONSTRAINT notify_uses_source_notify_id_fk FOREIGN KEY (notify_id) REFERENCES notify(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: notify_uses_source_source_id_fk; Type: FK CONSTRAINT; Schema: application; Owner: postgres
+--
+
+ALTER TABLE ONLY notify_uses_source
+    ADD CONSTRAINT notify_uses_source_source_id_fk FOREIGN KEY (source_id) REFERENCES source.source(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
 -- Name: request_type_config_panel_launcher_fkey; Type: FK CONSTRAINT; Schema: application; Owner: postgres
 --
 
@@ -18706,27 +18947,6 @@ ALTER TABLE ONLY service
 
 ALTER TABLE ONLY service
     ADD CONSTRAINT service_status_code_fk24 FOREIGN KEY (status_code) REFERENCES service_status_type(code) ON UPDATE CASCADE ON DELETE RESTRICT;
-
-
-
-
-SET search_path = bulk_operation, pg_catalog;
-
---
--- Name: spatial_unit_temporary_cadastre_object_type_code_fk133; Type: FK CONSTRAINT; Schema: bulk_operation; Owner: postgres
---
-
-ALTER TABLE ONLY spatial_unit_temporary
-    ADD CONSTRAINT spatial_unit_temporary_cadastre_object_type_code_fk133 FOREIGN KEY (cadastre_object_type_code) REFERENCES cadastre.cadastre_object_type(code) ON UPDATE CASCADE ON DELETE RESTRICT;
-
-
---
--- Name: spatial_unit_temporary_transaction_id_fk132; Type: FK CONSTRAINT; Schema: bulk_operation; Owner: postgres
---
-
-ALTER TABLE ONLY spatial_unit_temporary
-    ADD CONSTRAINT spatial_unit_temporary_transaction_id_fk132 FOREIGN KEY (transaction_id) REFERENCES transaction.transaction(id) ON UPDATE CASCADE ON DELETE CASCADE;
-
 
 
 SET search_path = cadastre, pg_catalog;
@@ -19361,464 +19581,6 @@ ALTER TABLE ONLY transaction_source
 
 ALTER TABLE ONLY transaction
     ADD CONSTRAINT transaction_status_code_fk27 FOREIGN KEY (status_code) REFERENCES transaction_status_type(code) ON UPDATE CASCADE ON DELETE RESTRICT;
-
-SET search_path = application, pg_catalog;
-
-
--- TABLES  -------------------------------------------------------------------------------------
-
--- Table: application.notify_relationship_type
-
--- DROP TABLE application.notify_relationship_type;
-
-CREATE TABLE application.notify_relationship_type
-(
-  code character varying(20) NOT NULL, -- The code for the relationship type.
-  display_value character varying(250) NOT NULL, -- Displayed value of the relationship type.
-  description text, -- Description of the relationship type.
-  status character(1) NOT NULL, -- Status of the relationship type (c - current, x - no longer valid).
-  CONSTRAINT notify_relationship_type_pkey PRIMARY KEY (code),
-  CONSTRAINT notify_relationship_type_display_value_unique UNIQUE (display_value)
-);
-ALTER TABLE application.notify_relationship_type
-  OWNER TO postgres;
-COMMENT ON TABLE application.notify_relationship_type
-  IS 'Code list identifying the type of relationship a party has with land affected by a job. Used for bulk notification purposes. 
-Tags: SOLA State Land Extension, Reference Table';
-COMMENT ON COLUMN application.notify_relationship_type.code IS 'The code for the relationship type.';
-COMMENT ON COLUMN application.notify_relationship_type.display_value IS 'Displayed value of the relationship type.';
-COMMENT ON COLUMN application.notify_relationship_type.description IS 'Description of the relationship type.';
-COMMENT ON COLUMN application.notify_relationship_type.status IS 'Status of the relationship type (c - current, x - no longer valid).';
-
-
-
-
-
-
--- Table: application.notify
-
--- DROP TABLE application.notify;
-
-CREATE TABLE application.notify
-(
-  id character varying(40) NOT NULL, -- Identifier for the notification.
-  service_id character varying(40) NOT NULL, -- Identifier for the service.
-  party_id character varying(40) NOT NULL, -- Identifier for the party.
-  relationship_type_code character varying(20) NOT NULL DEFAULT 'owner'::character varying, -- The type of relationship between the party and the land affected by the job. One of Owner, Adjoining Owner, Occupier, Adjoining Occupier, Rightholder, Other, etc.
-  description text, -- The description of the party to notify.
-  classification_code character varying(20), -- SOLA State Land Extension: The security classification for this Notification Party. Only users with the security classification (or a higher classification) will be able to view the record. If null, the record is considered unrestricted.
-  redact_code character varying(20), -- SOLA State Land Extension: The redact classification for this Notification Party. Only users with the redact classification (or a higher classification) will be able to view the record with un-redacted fields. If null, the record is considered unrestricted and no redaction to the record will occur unless bulk redaction classifications have been set for fields of the record.
-  rowidentifier character varying(40) NOT NULL DEFAULT  public.uuid_generate_v1(), -- Identifies the all change records for the row in the notify_historic table
-  rowversion integer NOT NULL DEFAULT 0, -- Sequential value indicating the number of times this row has been modified.
-  change_action character(1) NOT NULL DEFAULT 'i'::bpchar, -- Indicates if the last data modification action that occurred to the row was insert (i), update (u) or delete (d).
-  change_user character varying(50), -- The user id of the last person to modify the row.
-  change_time timestamp without time zone NOT NULL DEFAULT now(), -- The date and time the row was last modified.
-  cancel_service_id character varying(40),  -- Identifier for the cancelaation service if requested.
-  status character varying(40) NOT NULL DEFAULT 'c'::character varying, -- status of the notification if still enabled (c) or waiting for cancellation (x).
-  CONSTRAINT notify_pkey PRIMARY KEY (id),
-  CONSTRAINT notify_party_id_fk FOREIGN KEY (party_id)
-      REFERENCES party.party (id) MATCH SIMPLE
-      ON UPDATE CASCADE ON DELETE CASCADE,
-  CONSTRAINT notify_service_id_fk FOREIGN KEY (service_id)
-      REFERENCES application.service (id) MATCH SIMPLE
-      ON UPDATE CASCADE ON DELETE CASCADE,
-  CONSTRAINT notify_type_code_fk FOREIGN KEY (relationship_type_code)
-      REFERENCES application.notify_relationship_type (code) MATCH SIMPLE
-      ON UPDATE NO ACTION ON DELETE NO ACTION
-);
-ALTER TABLE application.notify
-  OWNER TO postgres;
-COMMENT ON TABLE application.notify
-  IS 'Identifies parties to be notified in bulk as well as the relationship the party has with the land affected by the job.
-Tags: SOLA State Land Extension, Change History';
-COMMENT ON COLUMN application.notify.id IS 'Identifier for the notification.';
-COMMENT ON COLUMN application.notify.service_id IS 'Identifier for the service.';
-COMMENT ON COLUMN application.notify.party_id IS 'Identifier for the party.';
-COMMENT ON COLUMN application.notify.relationship_type_code IS 'The type of relationship between the party and the land affected by the job. One of Owner, Adjoining Owner, Occupier, Adjoining Occupier, Rightholder, Other, etc.';
-COMMENT ON COLUMN application.notify.description IS 'The description of the party to notify.';
-COMMENT ON COLUMN application.notify.classification_code IS 'SOLA State Land Extension: The security classification for this Notification Party. Only users with the security classification (or a higher classification) will be able to view the record. If null, the record is considered unrestricted.';
-COMMENT ON COLUMN application.notify.redact_code IS 'SOLA State Land Extension: The redact classification for this Notification Party. Only users with the redact classification (or a higher classification) will be able to view the record with un-redacted fields. If null, the record is considered unrestricted and no redaction to the record will occur unless bulk redaction classifications have been set for fields of the record.';
-COMMENT ON COLUMN application.notify.rowidentifier IS 'Identifies the all change records for the row in the notify_historic table';
-COMMENT ON COLUMN application.notify.rowversion IS 'Sequential value indicating the number of times this row has been modified.';
-COMMENT ON COLUMN application.notify.change_action IS 'Indicates if the last data modification action that occurred to the row was insert (i), update (u) or delete (d).';
-COMMENT ON COLUMN application.notify.change_user IS 'The user id of the last person to modify the row.';
-COMMENT ON COLUMN application.notify.change_time IS 'The date and time the row was last modified.';
-
-
--- Index: application.notify_index_on_party_id
-
--- DROP INDEX application.notify_index_on_party_id;
-
-CREATE INDEX notify_index_on_party_id
-  ON application.notify
-  USING btree
-  (party_id COLLATE pg_catalog."default");
-
--- Index: application.notify_index_on_rowidentifier
-
--- DROP INDEX application.notify_index_on_rowidentifier;
-
-CREATE INDEX notify_index_on_rowidentifier
-  ON application.notify
-  USING btree
-  (rowidentifier COLLATE pg_catalog."default");
-
--- Index: application.notify_index_on_service_id
-
--- DROP INDEX application.notify_index_on_service_id;
-
-CREATE INDEX notify_index_on_service_id
-  ON application.notify
-  USING btree
-  (service_id COLLATE pg_catalog."default");
-
-
--- Trigger: __track_changes on application.notify
-
--- DROP TRIGGER __track_changes ON application.notify;
-
-CREATE TRIGGER __track_changes
-  BEFORE INSERT OR UPDATE
-  ON application.notify
-  FOR EACH ROW
-  EXECUTE PROCEDURE public.f_for_trg_track_changes();
-
--- Trigger: __track_history on application.notify
-
--- DROP TRIGGER __track_history ON application.notify;
-
-CREATE TRIGGER __track_history
-  AFTER UPDATE OR DELETE
-  ON application.notify
-  FOR EACH ROW
-  EXECUTE PROCEDURE public.f_for_trg_track_history();
-
-
-
-
--- Table: application.notify_property
-
--- DROP TABLE application.notify_property;
-
-CREATE TABLE application.notify_property
-(
-  notify_id character varying(40) NOT NULL, -- Identifier for the notification party the record is associated to.
-  ba_unit_id character varying(40) NOT NULL, -- Identifier of the property associated to the objection.
-  rowidentifier character varying(40) NOT NULL DEFAULT  public.uuid_generate_v1(), -- Identifies the all change records for the row in the notify_property_historic table
-  rowversion integer NOT NULL DEFAULT 0, -- Sequential value indicating the number of times this row has been modified.
-  change_action character(1) NOT NULL DEFAULT 'i'::bpchar, -- Indicates if the last data modification action that occurred to the row was insert (i), update (u) or delete (d).
-  change_user character varying(50), -- The user id of the last person to modify the row.
-  change_time timestamp without time zone NOT NULL DEFAULT now(), -- The date and time the row was last modified.
-  cancel_service_id character varying(40),  -- Identifier for the cancelaation service if requested.
-  status character varying(40) NOT NULL DEFAULT 'c'::character varying, -- status of the notification if still enabled (c) or waiting for cancellation (x).
-  CONSTRAINT notifiy_property_pkey PRIMARY KEY (notify_id, ba_unit_id),
-  CONSTRAINT notify_property_ba_unit_id_fk FOREIGN KEY (ba_unit_id)
-      REFERENCES administrative.ba_unit (id) MATCH SIMPLE
-      ON UPDATE CASCADE ON DELETE CASCADE,
-  CONSTRAINT notify_property_notify_id_fk FOREIGN KEY (notify_id)
-      REFERENCES application.notify (id) MATCH SIMPLE
-      ON UPDATE CASCADE ON DELETE CASCADE
-);
-ALTER TABLE application.notify_property
-  OWNER TO postgres;
-COMMENT ON TABLE application.notify_property
-  IS 'Identifies the properties (a.k.a. Ba Units) this notification party is related to. 
-Tags: FLOSS SOLA Extension, Change History';
-COMMENT ON COLUMN application.notify_property.notify_id IS 'Identifier for the notification party the record is associated to.';
-COMMENT ON COLUMN application.notify_property.ba_unit_id IS 'Identifier of the property associated to the objection.';
-COMMENT ON COLUMN application.notify_property.rowidentifier IS 'Identifies the all change records for the row in the notify_property_historic table';
-COMMENT ON COLUMN application.notify_property.rowversion IS 'Sequential value indicating the number of times this row has been modified.';
-COMMENT ON COLUMN application.notify_property.change_action IS 'Indicates if the last data modification action that occurred to the row was insert (i), update (u) or delete (d).';
-COMMENT ON COLUMN application.notify_property.change_user IS 'The user id of the last person to modify the row.';
-COMMENT ON COLUMN application.notify_property.change_time IS 'The date and time the row was last modified.';
-
-
--- Index: application.notify_property_ba_unit_id_fk_ind
-
--- DROP INDEX application.notify_property_ba_unit_id_fk_ind;
-
-CREATE INDEX notify_property_ba_unit_id_fk_ind
-  ON application.notify_property
-  USING btree
-  (ba_unit_id COLLATE pg_catalog."default");
-
--- Index: application.notify_property_index_on_rowidentifier
-
--- DROP INDEX application.notify_property_index_on_rowidentifier;
-
-CREATE INDEX notify_property_index_on_rowidentifier
-  ON application.notify_property
-  USING btree
-  (rowidentifier COLLATE pg_catalog."default");
-
--- Index: application.notify_property_notify_id_fk_ind
-
--- DROP INDEX application.notify_property_notify_id_fk_ind;
-
-CREATE INDEX notify_property_notify_id_fk_ind
-  ON application.notify_property
-  USING btree
-  (notify_id COLLATE pg_catalog."default");
-
-
--- Trigger: __track_changes on application.notify_property
-
--- DROP TRIGGER __track_changes ON application.notify_property;
-
-CREATE TRIGGER __track_changes
-  BEFORE INSERT OR UPDATE
-  ON application.notify_property
-  FOR EACH ROW
-  EXECUTE PROCEDURE public.f_for_trg_track_changes();
-
--- Trigger: __track_history on application.notify_property
-
--- DROP TRIGGER __track_history ON application.notify_property;
-
-CREATE TRIGGER __track_history
-  AFTER UPDATE OR DELETE
-  ON application.notify_property
-  FOR EACH ROW
-  EXECUTE PROCEDURE public.f_for_trg_track_history();
-
--- Table: application.notify_property_historic
-
--- DROP TABLE application.notify_property_historic;
-
-CREATE TABLE application.notify_property_historic
-(
-  notify_id character varying(40),
-  ba_unit_id character varying(40),
-  rowidentifier character varying(40),
-  rowversion integer,
-  change_action character(1),
-  change_user character varying(50),
-  change_time timestamp without time zone,
-  change_time_valid_until timestamp without time zone NOT NULL DEFAULT now(),
-  cancel_service_id character varying(40),  -- Identifier for the cancelaation service if requested.
-  status character varying(40) NOT NULL DEFAULT 'c'::character varying -- status of the notification if still enabled (c) or waiting for cancellation (x)
-);
-ALTER TABLE application.notify_property_historic
-  OWNER TO postgres;
-
--- Index: application.notify_property_historic_index_on_rowidentifier
-
--- DROP INDEX application.notify_property_historic_index_on_rowidentifier;
-
-CREATE INDEX notify_property_historic_index_on_rowidentifier
-  ON application.notify_property_historic
-  USING btree
-  (rowidentifier COLLATE pg_catalog."default");
-
-  
--- Table: application.notify_uses_source
-
--- DROP TABLE application.notify_uses_source;
-
-CREATE TABLE application.notify_uses_source
-(
-  notify_id character varying(40) NOT NULL, -- Identifier for the notification party the record is associated to.
-  source_id character varying(40) NOT NULL, -- Identifier of the source associated to the application.
-  rowidentifier character varying(40) NOT NULL DEFAULT  public.uuid_generate_v1(), -- Identifies the all change records for the row in the objection_uses_source_historic table
-  rowversion integer NOT NULL DEFAULT 0, -- Sequential value indicating the number of times this row has been modified.
-  change_action character(1) NOT NULL DEFAULT 'i'::bpchar, -- Indicates if the last data modification action that occurred to the row was insert (i), update (u) or delete (d).
-  change_user character varying(50), -- The user id of the last person to modify the row.
-  change_time timestamp without time zone NOT NULL DEFAULT now(), -- The date and time the row was last modified.
-  CONSTRAINT notify_uses_source_pkey PRIMARY KEY (notify_id, source_id),
-  CONSTRAINT notify_uses_source_notify_id_fk FOREIGN KEY (notify_id)
-      REFERENCES application.notify (id) MATCH SIMPLE
-      ON UPDATE CASCADE ON DELETE CASCADE,
-  CONSTRAINT notify_uses_source_source_id_fk FOREIGN KEY (source_id)
-      REFERENCES source.source (id) MATCH SIMPLE
-      ON UPDATE CASCADE ON DELETE CASCADE
-);
-ALTER TABLE application.notify_uses_source
-  OWNER TO postgres;
-COMMENT ON TABLE application.notify_uses_source
-  IS 'Links the notification parties to the sources (a.k.a. documents) genreated for the bulk notification. 
-Tags: FLOSS SOLA Extension, Change History';
-COMMENT ON COLUMN application.notify_uses_source.notify_id IS 'Identifier for the notification party the record is associated to.';
-COMMENT ON COLUMN application.notify_uses_source.source_id IS 'Identifier of the source associated to the application.';
-COMMENT ON COLUMN application.notify_uses_source.rowidentifier IS 'Identifies the all change records for the row in the objection_uses_source_historic table';
-COMMENT ON COLUMN application.notify_uses_source.rowversion IS 'Sequential value indicating the number of times this row has been modified.';
-COMMENT ON COLUMN application.notify_uses_source.change_action IS 'Indicates if the last data modification action that occurred to the row was insert (i), update (u) or delete (d).';
-COMMENT ON COLUMN application.notify_uses_source.change_user IS 'The user id of the last person to modify the row.';
-COMMENT ON COLUMN application.notify_uses_source.change_time IS 'The date and time the row was last modified.';
-
-
--- Index: application.notify_uses_source_index_on_rowidentifier
-
--- DROP INDEX application.notify_uses_source_index_on_rowidentifier;
-
-CREATE INDEX notify_uses_source_index_on_rowidentifier
-  ON application.notify_uses_source
-  USING btree
-  (rowidentifier COLLATE pg_catalog."default");
-
--- Index: application.notify_uses_source_notify_id_fk_ind
-
--- DROP INDEX application.notify_uses_source_notify_id_fk_ind;
-
-CREATE INDEX notify_uses_source_notify_id_fk_ind
-  ON application.notify_uses_source
-  USING btree
-  (notify_id COLLATE pg_catalog."default");
-
--- Index: application.notify_uses_source_source_id_fk_ind
-
--- DROP INDEX application.notify_uses_source_source_id_fk_ind;
-
-CREATE INDEX notify_uses_source_source_id_fk_ind
-  ON application.notify_uses_source
-  USING btree
-  (source_id COLLATE pg_catalog."default");
-
-
--- Trigger: __track_changes on application.notify_uses_source
-
--- DROP TRIGGER __track_changes ON application.notify_uses_source;
-
-CREATE TRIGGER __track_changes
-  BEFORE INSERT OR UPDATE
-  ON application.notify_uses_source
-  FOR EACH ROW
-  EXECUTE PROCEDURE public.f_for_trg_track_changes();
-
--- Trigger: __track_history on application.notify_uses_source
-
--- DROP TRIGGER __track_history ON application.notify_uses_source;
-
-CREATE TRIGGER __track_history
-  AFTER UPDATE OR DELETE
-  ON application.notify_uses_source
-  FOR EACH ROW
-  EXECUTE PROCEDURE public.f_for_trg_track_history();
-
-
----- HISTORIC -----
-
--- Table: application.notify_historic
-
--- DROP TABLE application.notify_historic;
-
-CREATE TABLE application.notify_historic
-(
-  id character varying(40),
-  service_id character varying(40),
-  party_id character varying(40),
-  relationship_type_code character varying(20),
-  description text,
-  classification_code character varying(20),
-  redact_code character varying(20),
-  cancel_service_id character varying(40),
-  status character varying(40) NOT NULL DEFAULT 'c'::character varying,
-  rowidentifier character varying(40), 
-  rowversion integer NOT NULL DEFAULT 0,
-  change_action character(1),
-  change_user character varying(50),
-  change_time timestamp without time zone,
-  change_time_valid_until timestamp without time zone NOT NULL DEFAULT now()
-);
-ALTER TABLE application.notify_historic
-  OWNER TO postgres;
-COMMENT ON TABLE application.notify_historic
-  IS 'History table for the application.notify table';
-
--- Index: application.notify_historic_index_on_rowidentifier
-
--- DROP INDEX application.notify_historic_index_on_rowidentifier;
-
-CREATE INDEX notify_historic_index_on_rowidentifier
-  ON application.notify_historic
-  USING btree
-  (rowidentifier COLLATE pg_catalog."default");
-
--- Table: application.notify_uses_source_historic
-
--- DROP TABLE application.notify_uses_source_historic;
-
-CREATE TABLE application.notify_uses_source_historic
-(
-  notify_id character varying(40),
-  source_id character varying(40),
-  rowidentifier character varying(40),
-  rowversion integer,
-  change_action character(1),
-  change_user character varying(50),
-  change_time timestamp without time zone,
-  change_time_valid_until timestamp without time zone NOT NULL DEFAULT now()
-)
-WITH (
-  OIDS=FALSE
-);
-ALTER TABLE application.notify_uses_source_historic
-  OWNER TO postgres;
-
--- Index: application.notify_uses_source_historic_index_on_rowidentifier
-
--- DROP INDEX application.notify_uses_source_historic_index_on_rowidentifier;
-
-CREATE INDEX notify_uses_source_historic_index_on_rowidentifier
-  ON application.notify_uses_source_historic
-  USING btree
-  (rowidentifier COLLATE pg_catalog."default");
-
-
-
-
-
--- View: application.notifiable_party_for_baunit
-
--- DROP VIEW application.notifiable_party_for_baunit;
-
- 
-CREATE OR REPLACE VIEW application.notifiable_party_for_baunit AS 
-SELECT n.party_id, 
-    nt.party_id AS target_party_id, 
-    n.service_id, 
-    s.application_id, 
-    np.cancel_service_id, 
-    n.status, 
-    (bu.name_firstpart::text || '/'::text) || bu.name_lastpart::text AS baunit_name, 
-    n.rowidentifier, n.rowversion, n.change_action, n.change_user, 
-    n.change_time, n.id AS notifyid, nt.id AS notifytargetid
-  FROM application.service s, 
-    administrative.ba_unit bu, 
-    application.notify n, 
-    application.notify nt, 
-    application.notify_property np,
-    administrative.party_for_rrr  pr,
-    administrative.rrr rrr
-  WHERE n.service_id::text = s.id::text AND bu.id::text = np.ba_unit_id::text AND np.notify_id::text = n.id::text AND n.relationship_type_code::text = 'safeguard'::text 
-    AND nt.service_id::text = s.id::text AND nt.relationship_type_code::text = 'owner'::text 
-    AND nt.party_id=pr.party_id  
-    AND pr.rrr_id=rrr.id 
-    AND rrr.ba_unit_id= bu.id ;
-
--- View: application.cancel_notification
-
--- DROP VIEW application.cancel_notification;
-
-CREATE OR REPLACE VIEW application.cancel_notification AS 
- SELECT pp.name AS partyname,
-  pp.last_name AS partylastname, 
-    tpp.name AS targetpartyname, 
-    tpp.last_name AS targetpartylastname, 
-    npbu.party_id, 
-    npbu.target_party_id, 
-    npbu.baunit_name,
-    npbu.service_id, 
-    npbu.cancel_service_id 
-   FROM party.party pp, party.party tpp, 
-    application.notifiable_party_for_baunit npbu, 
-    application.application aa, application.service s
-  WHERE s.application_id::text = aa.id::text 
-  AND s.id::text = npbu.cancel_service_id::text 
-  AND pp.id::text = npbu.party_id::text AND tpp.id::text = npbu.target_party_id::text 
- AND s.request_type_code::text = 'cancelRelationship'::text;
-
-
-
 
 
 --

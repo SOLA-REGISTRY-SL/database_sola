@@ -54,7 +54,7 @@ echo Creating database... >> %BUILD_LOG% 2>&1
 REM Run the files to create the tables, functions and views, etc, of the database
 REM and load the configuration data from the config directory. 
 :CREATE_SCHEMA
-for %%f in (schema\*.sql config\*.sql extension\*.sql) do (
+for %%f in (schema\*.sql config\*.sql) do (
    echo Running %%f...
    echo ### Running %%f... >> %BUILD_LOG% 2>&1
    %psql% --host=%host% --port=%port% --dbname=%dbname% --username=%username% --file=%%f >NUL 2>> %BUILD_LOG%
