@@ -18,6 +18,10 @@ CREATE TABLE cadastre.survey_plan_details
   "PropertyNameofStreet" character varying(50) NOT NULL, -- The Name of the Street/Road where the land is situated. (eg. PENINSULA ROAD)
   "PropertyAddressNo" character varying(10) NOT NULL, -- The address no of the property (eg. No. 2)
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+  "TypeofLand" character varying(25) NOT NULL, -- The type of land (eg. Private Land, State Land)
+>>>>>>> 7bb7cff2c3026c755d9d3e047918e80fc4f76baf
 =======
   "TypeofLand" character varying(25) NOT NULL, -- The type of land (eg. Private Land, State Land)
 >>>>>>> 7bb7cff2c3026c755d9d3e047918e80fc4f76baf

@@ -4,6 +4,7 @@
 
 DELETE FROM cadastre.spatial_unit_group;
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 
 --------------- Country
@@ -26,6 +27,8 @@ FROM interim_data.district;
 --------------- Section
 ---INSERT INTO cadastre.spatial_unit_group( name,id, hierarchy_level, label,  change_user,geom,seq_nr) SELECT first_sect, uuid_generate_v1(), 4, first_sect, 'test', geom, 0 
 =======
+=======
+>>>>>>> 7bb7cff2c3026c755d9d3e047918e80fc4f76baf
 DELETE FROM cadastre.spatial_unit_group_historic;
 
 
@@ -57,6 +60,9 @@ FROM interim_data.district where ST_GeometryN(geom, 1) is not null;
 
 --------------- Section
 ---INSERT INTO cadastre.spatial_unit_group( name,id, hierarchy_level, label,  change_user,geom,seq_nr) SELECT first_sect, uuid_generate_v1(), 4, first_sect, 'test', ST_SetSRID(ST_GeometryN(geom, 1),32629), 0 
+<<<<<<< HEAD
+>>>>>>> 7bb7cff2c3026c755d9d3e047918e80fc4f76baf
+=======
 >>>>>>> 7bb7cff2c3026c755d9d3e047918e80fc4f76baf
 ---FROM interim_data.sections
  
@@ -64,6 +70,7 @@ FROM interim_data.district where ST_GeometryN(geom, 1) is not null;
 ----------- SPATIAL_UNIT_GROUP_IN TABLE POPULATION ----------------------------------------
 
 DELETE FROM cadastre.spatial_unit_in_group;
+<<<<<<< HEAD
 <<<<<<< HEAD
 
 
@@ -74,5 +81,7 @@ INSERT INTO cadastre.spatial_unit_in_group (spatial_unit_group_id, spatial_unit_
  
 =======
 >>>>>>> c56c2cbc92efa7c8f81b332811f8d98843ee68ca
+=======
+>>>>>>> 7bb7cff2c3026c755d9d3e047918e80fc4f76baf
 =======
 >>>>>>> 7bb7cff2c3026c755d9d3e047918e80fc4f76baf
