@@ -23,9 +23,8 @@ CREATE TABLE cadastre.survey_plan_details
   "beacon_number" character varying(30) NOT NULL,
   "charting_officer_name" character varying(50), -- Name of the Charting Officer
   "state_land_clearing_officer_name" character varying(50), -- The Name of the State Land Clearing Officer (SLCO)
-  "input_date" date, -- Date the survy plan was inputted into the system.
-  "inputed_by" character varying(30), -- The user that inputted this record into the SOLA system.
-  CONSTRAINT "License Surveyor No" PRIMARY KEY ("ls_nr"),
+  
+ CONSTRAINT "License Surveyor No" PRIMARY KEY ("ls_nr"),
   CONSTRAINT "Foreign Key" FOREIGN KEY (id)
       REFERENCES cadastre.cadastre_object (id) MATCH SIMPLE
       ON UPDATE CASCADE ON DELETE CASCADE
@@ -47,5 +46,47 @@ COMMENT ON COLUMN cadastre.survey_plan_details."charting_officer_name" IS 'Name 
 COMMENT ON COLUMN cadastre.survey_plan_details."state_land_clearing_officer_name" IS 'The Name of the State Land Clearing Officer (SLCO)';
 COMMENT ON COLUMN cadastre.survey_plan_details."input_date" IS 'Date the survy plan was inputted into the system.';
 COMMENT ON COLUMN cadastre.survey_plan_details."inputed_by" IS 'The user that inputted this record into the SOLA system.';
+
+
+ALTER TABLE cadastre.survey_plan_details ADD COLUMN rowidentifier character varying(40);
+
+ALTER TABLE cadastre.survey_plan_details ALTER COLUMN rowidentifier SET NOT NULL;
+
+ALTER TABLE cadastre.survey_plan_details ALTER COLUMN rowidentifier SET DEFAULT uuid_generate_v1();
+
+COMMENT ON COLUMN cadastre.survey_plan_details.rowidentifier IS 'SOLA Extension: Identifies the all change records for the row in the spatial_unit_historic table';
+
+
+ALTER TABLE cadastre.survey_plan_details ADD COLUMN rowversion integer;
+
+ALTER TABLE cadastre.survey_plan_details ALTER COLUMN rowversion SET NOT NULL;
+
+ALTER TABLE cadastre.survey_plan_details 
+ALTER COLUMN rowversion SET DEFAULT 0;
+
+COMMENT ON COLUMN cadastre.survey_plan_details.rowversion IS 'SOLA Extension: Sequential value indicating the number of times this row has been modified.';
+
+
+ALTER TABLE cadastre.survey_plan_details ADD COLUMN change_action character(1);
+
+ALTER TABLE cadastre.survey_plan_details ALTER COLUMN change_action SET NOT NULL;
+
+ALTER TABLE cadastre.survey_plan_details ALTER COLUMN change_action SET DEFAULT 'i'::bpchar;
+
+COMMENT ON COLUMN cadastre.survey_plan_details.change_action IS 'SOLA Extension: Indicates if the last data modification action that occurred to the row was insert (i), update (u) or delete (d).';
+
+
+ALTER TABLE cadastre.survey_plan_details ADD COLUMN change_user character varying(50);
+
+COMMENT ON COLUMN cadastre.survey_plan_details.change_user IS 'SOLA Extension: The user id of the last person to modify the row.';
+
+
+ALTER TABLE cadastre.survey_plan_details ADD COLUMN change_time timestamp without time zone;
+
+ALTER TABLE cadastre.survey_plan_details ALTER COLUMN change_time SET NOT NULL;
+
+ALTER TABLE cadastre.survey_plan_details ALTER COLUMN change_time SET DEFAULT now();
+
+COMMENT ON COLUMN cadastre.survey_plan_details.change_time IS 'SOLA Extension: The date and time the row was last modified.';
 
 
