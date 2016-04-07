@@ -9099,6 +9099,56 @@ CREATE VIEW chief AS
 ALTER TABLE cadastre.chief OWNER TO postgres;
 
 --
+-- Name: chiefdoms_type; Type: TABLE; Schema: cadastre; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE chiefdoms_type (
+    code character varying(20) NOT NULL,
+    display_value character varying(500) NOT NULL,
+    description character varying(1000),
+    status character(1) DEFAULT 't'::bpchar NOT NULL
+);
+
+
+ALTER TABLE cadastre.chiefdoms_type OWNER TO postgres;
+
+--
+-- Name: TABLE chiefdoms_type; Type: COMMENT; Schema: cadastre; Owner: postgres
+--
+
+COMMENT ON TABLE chiefdoms_type IS 'Code list of chiefdoms. 
+Tags: Reference Table, LADM Reference Object';
+
+
+--
+-- Name: COLUMN chiefdoms_type.code; Type: COMMENT; Schema: cadastre; Owner: postgres
+--
+
+COMMENT ON COLUMN chiefdoms_type.code IS 'LADM Definition: The code for the chiefdom.';
+
+
+--
+-- Name: COLUMN chiefdoms_type.display_value; Type: COMMENT; Schema: cadastre; Owner: postgres
+--
+
+COMMENT ON COLUMN chiefdoms_type.display_value IS 'LADM Definition: Displayed value of the chiefdom.';
+
+
+--
+-- Name: COLUMN chiefdoms_type.description; Type: COMMENT; Schema: cadastre; Owner: postgres
+--
+
+COMMENT ON COLUMN chiefdoms_type.description IS 'LADM Definition: Description of the chiefdom.';
+
+
+--
+-- Name: COLUMN chiefdoms_type.status; Type: COMMENT; Schema: cadastre; Owner: postgres
+--
+
+COMMENT ON COLUMN chiefdoms_type.status IS 'SOLA Extension: Status of the chiefdom';
+
+
+--
 -- Name: dimension_type; Type: TABLE; Schema: cadastre; Owner: postgres; Tablespace: 
 --
 
@@ -9223,6 +9273,56 @@ COMMENT ON COLUMN hierarchy_level.description IS 'Description of the hierarchy l
 --
 
 COMMENT ON COLUMN hierarchy_level.status IS 'Status of the hierarchy level';
+
+
+--
+-- Name: land_type; Type: TABLE; Schema: cadastre; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE land_type (
+    code character varying(20) NOT NULL,
+    display_value character varying(500) NOT NULL,
+    description character varying(1000),
+    status character(1) DEFAULT 't'::bpchar NOT NULL
+);
+
+
+ALTER TABLE cadastre.land_type OWNER TO postgres;
+
+--
+-- Name: TABLE land_type; Type: COMMENT; Schema: cadastre; Owner: postgres
+--
+
+COMMENT ON TABLE land_type IS 'Code list of land types. E.g. Private, State Land. 
+Tags: Reference Table, LADM Reference Object';
+
+
+--
+-- Name: COLUMN land_type.code; Type: COMMENT; Schema: cadastre; Owner: postgres
+--
+
+COMMENT ON COLUMN land_type.code IS 'LADM Definition: The code for the land type (private or state_land).';
+
+
+--
+-- Name: COLUMN land_type.display_value; Type: COMMENT; Schema: cadastre; Owner: postgres
+--
+
+COMMENT ON COLUMN land_type.display_value IS 'LADM Definition: Displayed value of the land type (Private or State Land).';
+
+
+--
+-- Name: COLUMN land_type.description; Type: COMMENT; Schema: cadastre; Owner: postgres
+--
+
+COMMENT ON COLUMN land_type.description IS 'LADM Definition: Description of the land type.';
+
+
+--
+-- Name: COLUMN land_type.status; Type: COMMENT; Schema: cadastre; Owner: postgres
+--
+
+COMMENT ON COLUMN land_type.status IS 'SOLA Extension: Status of the land type';
 
 
 --
@@ -13553,6 +13653,56 @@ COMMENT ON COLUMN consolidation_config.log_in_extracted_rows IS 'True - If the r
 
 
 --
+-- Name: cordinate_system_type; Type: TABLE; Schema: system; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE cordinate_system_type (
+    code character varying(20) NOT NULL,
+    display_value character varying(500) NOT NULL,
+    description character varying(1000),
+    status character(1) DEFAULT 't'::bpchar NOT NULL
+);
+
+
+ALTER TABLE system.cordinate_system_type OWNER TO postgres;
+
+--
+-- Name: TABLE cordinate_system_type; Type: COMMENT; Schema: system; Owner: postgres
+--
+
+COMMENT ON TABLE cordinate_system_type IS 'Code list of cordinate_system. 
+Tags: Reference Table, LADM Reference Object';
+
+
+--
+-- Name: COLUMN cordinate_system_type.code; Type: COMMENT; Schema: system; Owner: postgres
+--
+
+COMMENT ON COLUMN cordinate_system_type.code IS 'LADM Definition: The code for the cordinate system.';
+
+
+--
+-- Name: COLUMN cordinate_system_type.display_value; Type: COMMENT; Schema: system; Owner: postgres
+--
+
+COMMENT ON COLUMN cordinate_system_type.display_value IS 'LADM Definition: Displayed value of the cordinate system.';
+
+
+--
+-- Name: COLUMN cordinate_system_type.description; Type: COMMENT; Schema: system; Owner: postgres
+--
+
+COMMENT ON COLUMN cordinate_system_type.description IS 'LADM Definition: Description of the cordinate system.';
+
+
+--
+-- Name: COLUMN cordinate_system_type.status; Type: COMMENT; Schema: system; Owner: postgres
+--
+
+COMMENT ON COLUMN cordinate_system_type.status IS 'SOLA Extension: Status of the cordinate system';
+
+
+--
 -- Name: crs; Type: TABLE; Schema: system; Owner: postgres; Tablespace: 
 --
 
@@ -14064,6 +14214,56 @@ COMMENT ON COLUMN query_field.name IS 'Identifier/name for the query field';
 --
 
 COMMENT ON COLUMN query_field.display_value IS 'The title to display for the query field when presenting results to the user. This value supports localization.';
+
+
+--
+-- Name: surveying_method_type; Type: TABLE; Schema: system; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE surveying_method_type (
+    code character varying(20) NOT NULL,
+    display_value character varying(500) NOT NULL,
+    description character varying(1000),
+    status character(1) DEFAULT 't'::bpchar NOT NULL
+);
+
+
+ALTER TABLE system.surveying_method_type OWNER TO postgres;
+
+--
+-- Name: TABLE surveying_method_type; Type: COMMENT; Schema: system; Owner: postgres
+--
+
+COMMENT ON TABLE surveying_method_type IS 'Code list of surveying_method. 
+Tags: Reference Table, LADM Reference Object';
+
+
+--
+-- Name: COLUMN surveying_method_type.code; Type: COMMENT; Schema: system; Owner: postgres
+--
+
+COMMENT ON COLUMN surveying_method_type.code IS 'LADM Definition: The code for the Surveying Method.';
+
+
+--
+-- Name: COLUMN surveying_method_type.display_value; Type: COMMENT; Schema: system; Owner: postgres
+--
+
+COMMENT ON COLUMN surveying_method_type.display_value IS 'LADM Definition: Displayed value of the Surveying Method.';
+
+
+--
+-- Name: COLUMN surveying_method_type.description; Type: COMMENT; Schema: system; Owner: postgres
+--
+
+COMMENT ON COLUMN surveying_method_type.description IS 'LADM Definition: Description of the Surveying Method.';
+
+
+--
+-- Name: COLUMN surveying_method_type.status; Type: COMMENT; Schema: system; Owner: postgres
+--
+
+COMMENT ON COLUMN surveying_method_type.status IS 'SOLA Extension: Status of the Surveying Method';
 
 
 --
@@ -14837,6 +15037,22 @@ ALTER TABLE ONLY cadastre_object_type
 
 
 --
+-- Name: chiefdoms_display_value_unique; Type: CONSTRAINT; Schema: cadastre; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY chiefdoms_type
+    ADD CONSTRAINT chiefdoms_display_value_unique UNIQUE (display_value);
+
+
+--
+-- Name: chiefdoms_pkey; Type: CONSTRAINT; Schema: cadastre; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY chiefdoms_type
+    ADD CONSTRAINT chiefdoms_pkey PRIMARY KEY (code);
+
+
+--
 -- Name: config_map_layer_pkey; Type: CONSTRAINT; Schema: cadastre; Owner: postgres; Tablespace: 
 --
 
@@ -14874,6 +15090,22 @@ ALTER TABLE ONLY hierarchy_level
 
 ALTER TABLE ONLY hierarchy_level
     ADD CONSTRAINT hierarchy_level_pkey PRIMARY KEY (code);
+
+
+--
+-- Name: land_type_display_value_unique; Type: CONSTRAINT; Schema: cadastre; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY land_type
+    ADD CONSTRAINT land_type_display_value_unique UNIQUE (display_value);
+
+
+--
+-- Name: land_type_pkey; Type: CONSTRAINT; Schema: cadastre; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY land_type
+    ADD CONSTRAINT land_type_pkey PRIMARY KEY (code);
 
 
 --
@@ -15581,6 +15813,22 @@ ALTER TABLE ONLY consolidation_config
 
 
 --
+-- Name: cordinate_system_display_value_unique; Type: CONSTRAINT; Schema: system; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY cordinate_system_type
+    ADD CONSTRAINT cordinate_system_display_value_unique UNIQUE (display_value);
+
+
+--
+-- Name: cordinate_system_pkey; Type: CONSTRAINT; Schema: system; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY cordinate_system_type
+    ADD CONSTRAINT cordinate_system_pkey PRIMARY KEY (code);
+
+
+--
 -- Name: crs_pkey; Type: CONSTRAINT; Schema: system; Owner: postgres; Tablespace: 
 --
 
@@ -15698,6 +15946,22 @@ ALTER TABLE ONLY query
 
 ALTER TABLE ONLY setting
     ADD CONSTRAINT setting_pkey PRIMARY KEY (name);
+
+
+--
+-- Name: surveying_method_display_value_unique; Type: CONSTRAINT; Schema: system; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY surveying_method_type
+    ADD CONSTRAINT surveying_method_display_value_unique UNIQUE (display_value);
+
+
+--
+-- Name: surveying_method_pkey; Type: CONSTRAINT; Schema: system; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY surveying_method_type
+    ADD CONSTRAINT surveying_method_pkey PRIMARY KEY (code);
 
 
 --

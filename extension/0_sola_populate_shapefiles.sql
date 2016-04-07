@@ -21,7 +21,8 @@ ST_Transform(
 FROM interim_data.region;
 
 --------------- District
-INSERT INTO cadastre.spatial_unit_group( name,id, hierarchy_level, label,  change_user,geom,seq_nr) Select adm2, uuid_generate_v1(), 2, adm2, 'test', ST_SetSRID(ST_GeometryN(geom, 1),32629), 0 
+INSERT INTO cadastre.spatial_unit_group( name,id, hierarchy_level, label,  
+change_user,geom,seq_nr) Select adm2, uuid_generate_v1(), 2, adm2, 'test', ST_SetSRID(ST_GeometryN(geom, 1),32629), 0 
 --name_2, uuid_generate_v1(), 2, name_2, 'test', 
 --ST_SetSRID(ST_GeometryN(geom, 1),32629), 0 
 --ST_GeometryN(geom, 1) , 0

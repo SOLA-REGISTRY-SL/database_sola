@@ -370,9 +370,9 @@ INSERT INTO setting (name, vl, active, description) VALUES ('email-mailer-jndi-n
 INSERT INTO setting (name, vl, active, description) VALUES ('network-scan-folder', '', false, 'Scan folder path, used by digital archive service. This setting is disabled by default. It has to be specified only if specific folder path is required (e.g. network drive). By default, system will use user''s home folder + /sola/scan');
 INSERT INTO setting (name, vl, active, description) VALUES ('product-name', 'SOLA Registry', true, 'SOLA product name');
 INSERT INTO setting (name, vl, active, description) VALUES ('product-code', 'sr', true, 'SOLA product code. sr - SOLA Registry, ssr - SOLA Systematic Registration, ssl - SOLA State Land, scs - SOLA Community Server');
+INSERT INTO setting (name, vl, active, description) VALUES ('map-srid', '32629', true, 'srid for the map');
 INSERT INTO setting (name, vl, active, description) VALUES ('map-east', '611734', true, 'The most east coordinate. It is used in the map control.');
 INSERT INTO setting (name, vl, active, description) VALUES ('map-north', '1109199', true, 'The most north coordinate. It is used in the map control.');
-INSERT INTO setting (name, vl, active, description) VALUES ('map-srid', '32629', true, 'srid for the map');
 INSERT INTO setting (name, vl, active, description) VALUES ('map-south', '763134', true, 'The most south coordinate. It is used in the map control.');
 INSERT INTO setting (name, vl, active, description) VALUES ('map-west', '22660', true, 'The most west coordinate. It is used in the map control.');
 

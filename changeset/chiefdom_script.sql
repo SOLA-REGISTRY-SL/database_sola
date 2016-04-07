@@ -1,9 +1,9 @@
-﻿-- Table: cadastre.chiefdoms
+﻿-- Table: cadastre.chiefdoms_type
 -- Script designed by Moses and Momodu for REGISTRY-SL
 
-DROP TABLE IF EXISTS cadastre.chiefdoms;
+DROP TABLE IF EXISTS cadastre.chiefdoms_type;
 
-CREATE TABLE cadastre.chiefdoms
+CREATE TABLE cadastre.chiefdoms_type
 (
   code character varying(20) NOT NULL, -- LADM Definition: The code for the chiefdom.
   display_value character varying(500) NOT NULL, -- LADM Definition: Displayed value of the chiefdom.
@@ -15,15 +15,15 @@ CREATE TABLE cadastre.chiefdoms
 WITH (
   OIDS=FALSE
 );
-ALTER TABLE cadastre.chiefdoms
+ALTER TABLE cadastre.chiefdoms_type
   OWNER TO postgres;
-COMMENT ON TABLE cadastre.chiefdoms
+COMMENT ON TABLE cadastre.chiefdoms_type
   IS 'Code list of chiefdoms. 
 Tags: Reference Table, LADM Reference Object';
-COMMENT ON COLUMN cadastre.chiefdoms.code IS 'LADM Definition: The code for the chiefdom.';
-COMMENT ON COLUMN cadastre.chiefdoms.display_value IS 'LADM Definition: Displayed value of the chiefdom.';
-COMMENT ON COLUMN cadastre.chiefdoms.description IS 'LADM Definition: Description of the chiefdom.';
-COMMENT ON COLUMN cadastre.chiefdoms.status IS 'SOLA Extension: Status of the chiefdom';
+COMMENT ON COLUMN cadastre.chiefdoms_type.code IS 'LADM Definition: The code for the chiefdom.';
+COMMENT ON COLUMN cadastre.chiefdoms_type.display_value IS 'LADM Definition: Displayed value of the chiefdom.';
+COMMENT ON COLUMN cadastre.chiefdoms_type.description IS 'LADM Definition: Description of the chiefdom.';
+COMMENT ON COLUMN cadastre.chiefdoms_type.status IS 'SOLA Extension: Status of the chiefdom';
 
---DELETE FROM cadastre.chiefdoms;
---INSERT INTO cadastre.chiefdoms (code, display_value, description, status) values('','','','');
+--DELETE FROM cadastre.chiefdoms_type;
+--INSERT INTO cadastre.chiefdoms_type (code, display_value, description, status) values('','','','');

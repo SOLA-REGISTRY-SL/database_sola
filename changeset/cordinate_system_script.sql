@@ -1,9 +1,9 @@
-﻿-- Table: system.cordinate_system
+﻿-- Table: system.cordinate_system_type
 -- Script designed by Moses and Momodu for REGISTRY-SL
 
-DROP TABLE IF EXISTS system.cordinate_system;
+DROP TABLE IF EXISTS system.cordinate_system_type;
 
-CREATE TABLE system.cordinate_system
+CREATE TABLE system.cordinate_system_type
 (
   code character varying(20) NOT NULL, -- LADM Definition: The code for the cordinate system.
   display_value character varying(500) NOT NULL, -- LADM Definition: Displayed value of the cordinate system.
@@ -15,15 +15,15 @@ CREATE TABLE system.cordinate_system
 WITH (
   OIDS=FALSE
 );
-ALTER TABLE system.cordinate_system
+ALTER TABLE system.cordinate_system_type
   OWNER TO postgres;
-COMMENT ON TABLE system.cordinate_system
+COMMENT ON TABLE system.cordinate_system_type
   IS 'Code list of cordinate_system. 
 Tags: Reference Table, LADM Reference Object';
-COMMENT ON COLUMN system.cordinate_system.code IS 'LADM Definition: The code for the cordinate system.';
-COMMENT ON COLUMN system.cordinate_system.display_value IS 'LADM Definition: Displayed value of the cordinate system.';
-COMMENT ON COLUMN system.cordinate_system.description IS 'LADM Definition: Description of the cordinate system.';
-COMMENT ON COLUMN system.cordinate_system.status IS 'SOLA Extension: Status of the cordinate system';
+COMMENT ON COLUMN system.cordinate_system_type.code IS 'LADM Definition: The code for the cordinate system.';
+COMMENT ON COLUMN system.cordinate_system_type.display_value IS 'LADM Definition: Displayed value of the cordinate system.';
+COMMENT ON COLUMN system.cordinate_system_type.description IS 'LADM Definition: Description of the cordinate system.';
+COMMENT ON COLUMN system.cordinate_system_type.status IS 'SOLA Extension: Status of the cordinate system';
 
---DELETE FROM system.cordinate_system;
---INSERT INTO system.cordinate_system (code, display_value, description, status) values('','','','');
+--DELETE FROM system.cordinate_system_type;
+--INSERT INTO system.cordinate_system_type (code, display_value, description, status) values('','','','');
