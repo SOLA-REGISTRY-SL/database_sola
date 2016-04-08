@@ -25,5 +25,8 @@ COMMENT ON COLUMN system.cordinate_system_type.display_value IS 'LADM Definition
 COMMENT ON COLUMN system.cordinate_system_type.description IS 'LADM Definition: Description of the cordinate system.';
 COMMENT ON COLUMN system.cordinate_system_type.status IS 'SOLA Extension: Status of the cordinate system';
 
---DELETE FROM system.cordinate_system_type;
---INSERT INTO system.cordinate_system_type (code, display_value, description, status) values('','','','');
+DELETE FROM system.cordinate_system_type;
+INSERT INTO system.cordinate_system_type (code, display_value, description, status) values('colonial','Colonial','Colonial Cordinate System','c');
+INSERT INTO system.cordinate_system_type (code, display_value, description, status) values('protectorate','Protectorate','Protectorate Cordinate System','c');
+INSERT INTO system.cordinate_system_type (code, display_value, description, status) values('UTM28','UTM28','Universal Transverse Mercator Cordinate System','c');
+INSERT INTO system.cordinate_system_type (code, display_value, description, status) values('UTM29','UTM29','Universal Transverse Mercator Cordinate System','c');

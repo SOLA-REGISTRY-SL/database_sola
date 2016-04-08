@@ -25,5 +25,6 @@ COMMENT ON COLUMN cadastre.land_type.display_value IS 'LADM Definition: Displaye
 COMMENT ON COLUMN cadastre.land_type.description IS 'LADM Definition: Description of the land type.';
 COMMENT ON COLUMN cadastre.land_type.status IS 'SOLA Extension: Status of the land type';
 
---DELETE FROM cadastre.land_type;
---INSERT INTO cadastre.land_type (code, display_value, description, status) values('','','','');
+DELETE FROM cadastre.land_type;
+INSERT INTO cadastre.land_type (code, display_value, description, status) values('private_land','Private Land','Land owned privately by an individual','c');
+INSERT INTO cadastre.land_type (code, display_value, description, status) values('state_land','State Land','Land owned by the government buy may be acquired by an individual after going through series of procedures.','c');
