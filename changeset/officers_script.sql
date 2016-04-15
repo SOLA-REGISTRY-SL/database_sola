@@ -11,4 +11,4 @@ INSERT INTO party.party_type (code, display_value, status, description) values('
 -- Table: party.party
 
 INSERT INTO address.address (id, description, ext_address) values('addressid','theaddress','optional');
-INSERT INTO party.party (ext_id, type_code, name, last_name, alias, gender_code, address_id, id_type_code, id_number, email, phone) Values('extid','type_code','name','last name','alias','gendercode','addressid','id_typecode','idnumber','email','phone')
+INSERT INTO party.party (ext_id, type_code, name, last_name, alias, gender_code, address_id, id_type_code, id_number, email, phone) Values('extid','type_code','name','last name','alias','gendercode','addressid','id_typecode','idnumber','email','phone');
