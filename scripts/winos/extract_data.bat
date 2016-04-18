@@ -134,9 +134,9 @@ echo ### Dumping bulk operation tables... >> %EXTRACT_LOG% 2>&1
 REM Compress the test/demo data using 7z. 
 echo Compressing data files...
 echo ### Compressing data files... >> %EXTRACT_LOG% 2>&1
-%zip_exe% a -y "%data_path%waiheke.7z" "%data_path%*.sql" >> %EXTRACT_LOG% 2>&1
+%zip_exe% a -y "%data_path%sierraleone.7z" "%data_path%*.sql" >> %EXTRACT_LOG% 2>&1
 REM Use -p option if the archive needs to be password protected as follows
-REM %zip_exe% a -y -p%archive_password% "%data_path%waiheke.7z" "%data_path%*.sql" >> %EXTRACT_LOG% 2>&1
+REM %zip_exe% a -y -p%archive_password% "%data_path%sierraleone.7z" "%data_path%*.sql" >> %EXTRACT_LOG% 2>&1
 
 REM Report the finish time
 echo Finished at %time% - Check data.log for errors!
