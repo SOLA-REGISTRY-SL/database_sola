@@ -45,10 +45,8 @@ INSERT INTO cadastre.chiefdoms_type (code,display_value,description,status) VALU
 INSERT INTO cadastre.chiefdoms_type (code,display_value,description,status) VALUES ('dama','Dama','  ','c');
 INSERT INTO cadastre.chiefdoms_type (code,display_value,description,status) VALUES ('dodo','Dodo','  ','c');
 INSERT INTO cadastre.chiefdoms_type (code,display_value,description,status) VALUES ('gaura','Gaura','  ','c');
-INSERT INTO cadastre.chiefdoms_type (code,display_value,description,status) VALUES ('gaura','Gaura','  ','c');
 INSERT INTO cadastre.chiefdoms_type (code,display_value,description,status) VALUES ('gorama mende','Gorama Mende','  ','c');
 INSERT INTO cadastre.chiefdoms_type (code,display_value,description,status) VALUES ('kandu leppiama','Kandu Leppiama','  ','c');
-INSERT INTO cadastre.chiefdoms_type (code,display_value,description,status) VALUES ('koya','Koya','  ','c');
 INSERT INTO cadastre.chiefdoms_type (code,display_value,description,status) VALUES ('langrama','Langrama','  ','c');
 INSERT INTO cadastre.chiefdoms_type (code,display_value,description,status) VALUES ('lower bambara','Lower Bambara','  ','c');
 INSERT INTO cadastre.chiefdoms_type (code,display_value,description,status) VALUES ('malegohun','Malegohun','  ','c');
@@ -169,7 +167,6 @@ INSERT INTO cadastre.chiefdoms_type (code,display_value,description,status) VALU
 INSERT INTO cadastre.chiefdoms_type (code,display_value,description,status) VALUES ('kpaka','Kpaka','  ','c');
 INSERT INTO cadastre.chiefdoms_type (code,display_value,description,status) VALUES ('makpele','Makpele','  ','c');
 INSERT INTO cadastre.chiefdoms_type (code,display_value,description,status) VALUES ('malen','Malen','  ','c');
-INSERT INTO cadastre.chiefdoms_type (code,display_value,description,status) VALUES ('malen','Malen','  ','c');
 INSERT INTO cadastre.chiefdoms_type (code,display_value,description,status) VALUES ('mono sakrim','Mono Sakrim','  ','c');
 INSERT INTO cadastre.chiefdoms_type (code,display_value,description,status) VALUES ('panga kabonde','Panga Kabonde','  ','c');
 INSERT INTO cadastre.chiefdoms_type (code,display_value,description,status) VALUES ('panga krim','Panga krim','  ','c');
@@ -182,7 +179,6 @@ INSERT INTO cadastre.chiefdoms_type (code,display_value,description,status) VALU
 INSERT INTO cadastre.chiefdoms_type (code,display_value,description,status) VALUES ('waterloo rural','Waterloo Rural','  ','c');
 INSERT INTO cadastre.chiefdoms_type (code,display_value,description,status) VALUES ('york rural','York Rural','  ','c');
 INSERT INTO cadastre.chiefdoms_type (code,display_value,description,status) VALUES ('central i','Central I','  ','c');
-INSERT INTO cadastre.chiefdoms_type (code,display_value,description,status) VALUES ('central ii','Central II','  ','c');
 INSERT INTO cadastre.chiefdoms_type (code,display_value,description,status) VALUES ('central ii','Central II','  ','c');
 INSERT INTO cadastre.chiefdoms_type (code,display_value,description,status) VALUES ('east i','East I','  ','c');
 INSERT INTO cadastre.chiefdoms_type (code,display_value,description,status) VALUES ('east ii','East II','  ','c');
