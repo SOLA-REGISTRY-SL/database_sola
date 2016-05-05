@@ -34,3 +34,18 @@ COMMENT ON COLUMN cadastre.cadastre_object.beacon_number IS 'Beacon number';
 COMMENT ON COLUMN cadastre.cadastre_object.charting_officer_id IS 'Charting officer id';
 COMMENT ON COLUMN cadastre.cadastre_object.state_land_clearing_officer_id IS 'State land clearing officer id';
 
+
+ALTER TABLE cadastre.cadastre_object_historic ADD COLUMN owner_name character varying(2000);
+ALTER TABLE cadastre.cadastre_object_historic ADD COLUMN address character varying(1000);
+ALTER TABLE cadastre.cadastre_object_historic ADD COLUMN land_type character varying(20);
+ALTER TABLE cadastre.cadastre_object_historic ADD COLUMN parcel_area double precision;
+ALTER TABLE cadastre.cadastre_object_historic ADD COLUMN licensed_surveyor_id character varying(20);
+ALTER TABLE cadastre.cadastre_object_historic ADD COLUMN east_neighbour character varying(500);
+ALTER TABLE cadastre.cadastre_object_historic ADD COLUMN west_neighbour character varying(500);
+ALTER TABLE cadastre.cadastre_object_historic ADD COLUMN south_neighbour character varying(500);
+ALTER TABLE cadastre.cadastre_object_historic ADD COLUMN north_neighbour character varying(500);
+ALTER TABLE cadastre.cadastre_object_historic ADD COLUMN survey_method character varying(20);
+ALTER TABLE cadastre.cadastre_object_historic ADD COLUMN survey_date date;
+ALTER TABLE cadastre.cadastre_object_historic ADD COLUMN beacon_number character varying(30);
+ALTER TABLE cadastre.cadastre_object_historic ADD COLUMN charting_officer_id character varying(20);
+ALTER TABLE cadastre.cadastre_object_historic ADD COLUMN state_land_clearing_officer_id character varying(20);
