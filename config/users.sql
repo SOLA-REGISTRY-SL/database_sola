@@ -212,6 +212,8 @@ INSERT INTO approle_appgroup (approle_code, appgroup_id, rowidentifier, rowversi
 INSERT INTO approle_appgroup (approle_code, appgroup_id, rowidentifier, rowversion, change_action, change_user, change_time) VALUES ('MapFeatureEditor', 'super-group-id', '65e1ce80-c216-11e4-9b2e-5b36c326716c', 1, 'i', 'db:postgres', '2015-03-04 15:30:18.217');
 INSERT INTO approle_appgroup (approle_code, appgroup_id, rowidentifier, rowversion, change_action, change_user, change_time) VALUES ('MapZoneEditor', 'super-group-id', '65e48daa-c216-11e4-b81b-8bb0457ebb45', 1, 'i', 'db:postgres', '2015-03-04 15:30:18.217');
 INSERT INTO approle_appgroup (approle_code, appgroup_id, rowidentifier, rowversion, change_action, change_user, change_time) VALUES ('ReportGender', 'super-group-id', '65e529ea-c216-11e4-a806-2b89f1f9e9c1', 1, 'i', 'db:postgres', '2015-03-04 15:30:18.217');
+INSERT INTO approle_appgroup (approle_code, appgroup_id, rowidentifier, rowversion, change_action, change_user, change_time) VALUES ('newParcel', 'super-group-id', '0585d834-154d-11e6-9731-83d2a3a8b4c5', 1, 'i', 'db:postgres', '2016-05-09 00:45:23.045');
+INSERT INTO approle_appgroup (approle_code, appgroup_id, rowidentifier, rowversion, change_action, change_user, change_time) VALUES ('newParcel', 'ff94bfad-7079-41ea-bf4b-6962e36cad1f', '058b0868-154d-11e6-abec-bbdb4ac745fa', 1, 'i', 'db:postgres', '2016-05-09 00:45:23.045');
 
 
 ALTER TABLE approle_appgroup ENABLE TRIGGER ALL;

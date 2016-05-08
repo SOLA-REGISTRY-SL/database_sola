@@ -8,6 +8,12 @@ update system.query set sql=
     where ST_Intersects(ST_Transform(geom,#{srid}), ST_SetSRID(ST_MakeBox3D(ST_Point(#{minx}, #{miny}),ST_Point(#{maxx}, #{maxy})), #{srid})) and st_area(geom)> power(5 * #{pixel_res}, 2)'
 where name = 'SpatialResult.getRegion';
 
+update system.query set sql=
+'select id, label, st_asewkb(ST_Transform(geom,#{srid})) as the_geom from cadastre.chiefdom 
+    where ST_Intersects(ST_Transform(geom,#{srid}), ST_SetSRID(ST_MakeBox3D(ST_Point(#{minx}, #{miny}),ST_Point(#{maxx}, #{maxy})), #{srid})) and st_area(geom)> power(5 * #{pixel_res}, 2)'
+where name = 'SpatialResult.getChiefdom';    
+
+    
 INSERT INTO application.request_type(
             code, request_category_code, display_value, description, status, 
             nr_days_to_complete, base_fee, area_base_fee, value_base_fee, 

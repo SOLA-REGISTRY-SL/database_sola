@@ -264,6 +264,7 @@ INSERT INTO request_type (code, request_category_code, display_value, descriptio
 INSERT INTO request_type (code, request_category_code, display_value, description, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, rrr_type_code, type_action_code, service_panel_code, display_group_code, display_order) VALUES ('cadastrePrint', 'informationServices', 'Cadastre Print::::Печать кадастровых данных::::اطبع المساحة::::Imprimer Cadastre::::::::Imprimir Cadastro::::地籍打印', '...::::...::::...::::...::::::::...::::...', 'c', 1, 0.50, 0.00, 0.00, 0, NULL, NULL, NULL, 'map', 'supporting', 390);
 INSERT INTO request_type (code, request_category_code, display_value, description, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, rrr_type_code, type_action_code, service_panel_code, display_group_code, display_order) VALUES ('cadastreChange', 'registrationServices', 'Change to Cadastre::::Изменение кадастра::::تغيير المساحة::::Modification du Cadastre::::::::Alterar para Cadastro::::变更为地籍', '...::::...::::...::::...::::::::...::::...', 'c', 30, 25.00, 0.10, 0.00, 1, NULL, NULL, NULL, 'cadastreTransMap', 'survey', 420);
 INSERT INTO request_type (code, request_category_code, display_value, description, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, rrr_type_code, type_action_code, service_panel_code, display_group_code, display_order) VALUES ('redefineCadastre', 'registrationServices', 'Existing Boundaries Change::::Изменение кадастрового объекта::::إعادة تعريف المساحة::::Redéfinir Cadastre::::::::Redefinir o Cadastro::::重新定义地籍', '...::::...::::...::::...::::::::...::::...', 'c', 30, 25.00, 0.10, 0.00, 1, NULL, NULL, NULL, 'cadastreTransMap', 'survey', 430);
+INSERT INTO request_type (code, request_category_code, display_value, description, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, rrr_type_code, type_action_code, service_panel_code, display_group_code, display_order) VALUES ('newParcel', 'registrationServices', 'New survey plan', '', 'c', 1, 25.00, 0.10, 0.00, 0, NULL, NULL, NULL, 'cadastreTransMap', 'survey', 399);
 
 
 ALTER TABLE request_type ENABLE TRIGGER ALL;
@@ -339,6 +340,174 @@ INSERT INTO cadastre_object_type (code, display_value, description, status, in_t
 ALTER TABLE cadastre_object_type ENABLE TRIGGER ALL;
 
 --
+-- Data for Name: chiefdoms_type; Type: TABLE DATA; Schema: cadastre; Owner: postgres
+--
+
+ALTER TABLE chiefdoms_type DISABLE TRIGGER ALL;
+
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('dea', 'Dea', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('jawei', 'Jawei', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('kissi kama', 'Kissi Kama', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('kissi teng', 'Kissi Teng', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('kissi tongi', 'Kissi Tongi', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('kpeje bongre', 'Kpeje Bongre', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('kpeje west', 'Kpeje West', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('luawa', 'Luawa', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('malema', 'Malema', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('mandu', 'Mandu', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('njaluahun', 'Njaluahun', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('penguia', 'Penguia', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('upper bambara', 'Upper Bambara', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('yawei', 'Yawei', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('dama', 'Dama', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('dodo', 'Dodo', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('gaura', 'Gaura', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('gorama mende', 'Gorama Mende', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('kandu leppiama', 'Kandu Leppiama', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('langrama', 'Langrama', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('lower bambara', 'Lower Bambara', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('malegohun', 'Malegohun', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('niawa', 'Niawa', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('nomo', 'Nomo', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('nongowa', 'Nongowa', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('simbaru', 'Simbaru', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('small bo', 'Small Bo', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('tunkia', 'Tunkia', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('wandor', 'Wandor', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('kenema town', 'Kenema Town', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('koidu town', 'Koidu Town', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('fiama', 'Fiama', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('gbane', 'Gbane', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('gbane kandor', 'Gbane Kandor', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('gbense', 'Gbense', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('gorama kono', 'Gorama Kono', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('kamara', 'Kamara', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('lei', 'Lei', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('mafindor', 'Mafindor', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('nimikoro', 'Nimikoro', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('nimiyama', 'Nimiyama', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('sandor', 'Sandor', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('soa', 'Soa', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('tankoro', 'Tankoro', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('biriwa', 'Biriwa', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('bombali sebora', 'Bombali Sebora', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('gbanti kamarank', 'Gbanti Kamarank', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('gbendembu ngowa', 'Gbendembu Ngowa', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('libeisaygahun', 'Libeisaygahun', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('magbaimba ndorh', 'Magbaimba Ndorh', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('makari gbanti', 'Makari Gbanti', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('paki masabong', 'Paki Masabong', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('safroko limba', 'Safroko Limba', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('sanda loko', 'Sanda Loko', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('sanda tendaran', 'Sanda Tendaran', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('tambakha', 'Tambakha', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('makeni town', 'Makeni Town', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('bramaia', 'Bramaia', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('gbinle dixing', 'Gbinle Dixing', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('magbema', 'Magbema', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('mambolo', 'Mambolo', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('masungbala', 'Masungbala', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('samu', 'Samu', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('tonko limba', 'Tonko Limba', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('dembelia - sink', 'Dembelia - Sink', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('diang', 'Diang', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('folosaba dembel', 'Folosaba Dembel', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('kasunko', 'Kasunko', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('mongo', 'Mongo', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('nieni', 'Nieni', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('sengbe', 'Sengbe', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('sulima', 'Sulima', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('wara wara bafod', 'Wara Wara Bafod', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('bureh kasseh ma', 'Bureh Kasseh Ma', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('buya romende', 'Buya Romende', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('dibia', 'Dibia', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('kaffu bullom', 'Kaffu Bullom', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('koya', 'Koya', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('lokomasama', 'Lokomasama', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('maforki', 'Maforki', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('marampa', 'Marampa', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('masimera', 'Masimera', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('sanda magbolont', 'Sanda Magbolont', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('tms', 'TMS', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('gbonkolenken', 'Gbonkolenken', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('kafe simiria', 'Kafe Simiria', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('kalansogoia', 'Kalansogoia', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('kholifa mabang', 'Kholifa Mabang', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('kunike', 'Kunike', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('kunike barina', 'Kunike Barina', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('malal mara', 'Malal Mara', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('sambaya', 'Sambaya', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('tane', 'Tane', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('yoni', 'Yoni', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('badjia', 'Badjia', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('wonde', 'Wonde', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('selenga', 'Selenga', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('niawa lenga', 'Niawa Lenga', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('bagbwe', 'Bagbwe', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('valunia', 'Valunia', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('jaiama bongor', 'Jaiama Bongor', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('bagbo', 'Bagbo', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('tikonko', 'Tikonko', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('kakua', 'Kakua', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('bumpe-gao', 'Bumpe-Gao', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('baoma', 'Baoma', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('gbo', 'Gbo', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('lugbu', 'Lugbu', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('bo town', 'Bo Town', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('bendu-cha', 'Bendu-Cha', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('bum', 'Bum', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('dema', 'Dema', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('imperri', 'Imperri', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('jong', 'Jong', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('kpanda kemo', 'Kpanda Kemo', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('kwamebai krim', 'Kwamebai Krim', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('nongoba bullom', 'Nongoba Bullom', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('sogbeni', 'Sogbeni', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('yawbeko', 'Yawbeko', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('bonthe urban', 'Bonthe Urban', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('bagruwa', 'Bagruwa', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('bumpeh', 'Bumpeh', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('dasse', 'Dasse', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('fakunya', 'Fakunya', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('kagboro', 'Kagboro', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('kaiyamba', 'Kaiyamba', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('kamajei', 'Kamajei', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('kongbora', 'Kongbora', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('kori', 'Kori', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('kowa', 'Kowa', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('lower banta', 'Lower Banta', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('ribbi', 'Ribbi', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('timdale', 'Timdale', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('upper banta', 'Upper Banta', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('barri', 'Barri', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('galliness perri', 'Galliness Perri', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('kpaka', 'Kpaka', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('makpele', 'Makpele', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('malen', 'Malen', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('mono sakrim', 'Mono Sakrim', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('panga kabonde', 'Panga Kabonde', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('panga krim', 'Panga krim', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('pejeh(futa peje', 'Pejeh(Futa peje', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('soro gbema', 'Soro Gbema', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('sowa', 'Sowa', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('yakemu kpukumu', 'Yakemu Kpukumu', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('koya rural', 'Koya Rural', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('mountain rural', 'Mountain Rural', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('waterloo rural', 'Waterloo Rural', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('york rural', 'York Rural', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('central i', 'Central I', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('central ii', 'Central II', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('east i', 'East I', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('east ii', 'East II', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('east iii', 'East III', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('west i', 'West I', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('west ii', 'West II', '  ', 'c');
+INSERT INTO chiefdoms_type (code, display_value, description, status) VALUES ('west iii', 'West III', '  ', 'c');
+
+
+ALTER TABLE chiefdoms_type ENABLE TRIGGER ALL;
+
+--
 -- Data for Name: dimension_type; Type: TABLE DATA; Schema: cadastre; Owner: postgres
 --
 
@@ -367,6 +536,18 @@ INSERT INTO hierarchy_level (code, display_value, description, status) VALUES ('
 
 
 ALTER TABLE hierarchy_level ENABLE TRIGGER ALL;
+
+--
+-- Data for Name: land_type; Type: TABLE DATA; Schema: cadastre; Owner: postgres
+--
+
+ALTER TABLE land_type DISABLE TRIGGER ALL;
+
+INSERT INTO land_type (code, display_value, description, status) VALUES ('private_land', 'Private Land', 'Land owned privately by an individual', 'c');
+INSERT INTO land_type (code, display_value, description, status) VALUES ('state_land', 'State Land', 'Land owned by the government buy may be acquired by an individual after going through series of procedures.', 'c');
+
+
+ALTER TABLE land_type ENABLE TRIGGER ALL;
 
 --
 -- Data for Name: land_use_type; Type: TABLE DATA; Schema: cadastre; Owner: postgres
@@ -446,6 +627,16 @@ INSERT INTO surface_relation_type (code, display_value, description, status) VAL
 
 
 ALTER TABLE surface_relation_type ENABLE TRIGGER ALL;
+
+--
+-- Data for Name: surveying_method_type; Type: TABLE DATA; Schema: cadastre; Owner: postgres
+--
+
+ALTER TABLE surveying_method_type DISABLE TRIGGER ALL;
+
+
+
+ALTER TABLE surveying_method_type ENABLE TRIGGER ALL;
 
 --
 -- Data for Name: utility_network_status_type; Type: TABLE DATA; Schema: cadastre; Owner: postgres
@@ -575,6 +766,9 @@ INSERT INTO party_type (code, display_value, status, description) VALUES ('bauni
 INSERT INTO party_type (code, display_value, status, description) VALUES ('group', 'Group::::Группа::::مجموعة::::Groupe::::::::Grupo::::组', 't', '...::::::::...::::...::::::::...::::...');
 INSERT INTO party_type (code, display_value, status, description) VALUES ('naturalPerson', 'Natural Person::::Физическое лицо::::شخص طبيعي::::Personne Physique::::::::Pessoa Natural::::自然人', 'c', '...::::::::...::::...::::::::...::::...');
 INSERT INTO party_type (code, display_value, status, description) VALUES ('nonNaturalPerson', 'Non-natural Person::::Организация::::شخص اعتباري::::Personne Non Physique::::::::Pessoa Não Natural::::非自然人', 'c', '...::::::::...::::...::::::::...::::...');
+INSERT INTO party_type (code, display_value, status, description) VALUES ('license_surveyor', 'License Surveyor', 'c', 'A Certified License Surveyor of doing surveying of lands');
+INSERT INTO party_type (code, display_value, status, description) VALUES ('charting_officer', 'Charting Officer', 'c', 'A Certified Charting Officer');
+INSERT INTO party_type (code, display_value, status, description) VALUES ('stland_clr_officer', 'State Land Clearing Officer', 'c', 'This is a Certified State Land Clearing Officer');
 
 
 ALTER TABLE party_type ENABLE TRIGGER ALL;
@@ -790,6 +984,7 @@ INSERT INTO approle (code, display_value, status, description) VALUES ('ApplnEdi
 INSERT INTO approle (code, display_value, status, description) VALUES ('MapZoneEditor', 'Map - Zone Editor::::::::::::::::::::::::', 'c', 'Allows the user to edit map zones and configure zone hierarchies.::::::::::::::::::::::::');
 INSERT INTO approle (code, display_value, status, description) VALUES ('ReportGender', 'Reports - Gender::::::::::::::::::::::::', 'c', 'Allows the user to generate the Gender Report.::::::::::::::::::::::::');
 INSERT INTO approle (code, display_value, status, description) VALUES ('ApplnValidate', 'Appln Action - Validate::::Appln Action - Validate::::حركة طلب- التحقق من صحة البيانات::::Action Demande - Valider::::::::Ação Appln - Validar::::申请操作 - 确认', 'c', 'Required to perform the Validate applicaiton action. Allows the user to manually run the validation rules against the application. ::::Required to perform the Validate applicaiton action. Allows the user to manually run the validation rules against the application.::::مطلوبة لعمل حركة التحقق من صحة الطلب. تسمح هذه الحركة للمستخدم بالتحقق من قواعد الأعمال مع الطلب  يدويا ::::Requis pour pouvoir effectuer l''action de demande de validation. Permet à l''utilisateur de confronter manuellement les règles de validation à la demande.::::::::Necessário para executar a ação de Validação do pedido. Permite ao usuário executar manualmente as regras de validação diante do pedido.::::需要执行“确认”申请操作。允许用户手动运行确认规则。');
+INSERT INTO approle (code, display_value, status, description) VALUES ('newParcel', 'Service - New survey plan', 'c', '"Survey Service. Allows New survey plan service to be started.');
 
 
 ALTER TABLE approle ENABLE TRIGGER ALL;
