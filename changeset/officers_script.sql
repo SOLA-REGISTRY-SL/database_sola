@@ -2,22 +2,22 @@
 ﻿----------------------------------------------------------------------------------------------------------
 --Table: party.party_type
 ----------------------------------------------------------------------------------------------------------
---DELETE FROM party.party_type WHERE code = 'licensed_surveyor' OR code = 'charting_officer' OR code = 'state_land_co';
+--DELETE FROM party.party_type WHERE code = 'certifiedSurveyor' OR code = 'charting_officer' OR code = 'stland_clr_officer';
 
---INSERT INTO party.party_type (code, display_value, status, description) values('licensed_surveyor','License Surveyor','c','A Certified License Surveyor of doing surveying of lands');
+--INSERT INTO party.party_type (code, display_value, status, description) values('naturalPerson','License Surveyor','c','A Certified License Surveyor of doing surveying of lands');
 --INSERT INTO party.party_type (code, display_value, status, description) values('charting_officer','Charting Officer','c','A Certified Charting Officer');
---INSERT INTO party.party_type (code, display_value, status, description) values('state_land_co','State Land Clearing Officer','c','This is a Certified State Land Clearing Officer');
+--INSERT INTO party.party_type (code, display_value, status, description) values('stland_clr_officer','State Land Clearing Officer','c','This is a Certified State Land Clearing Officer');
  
  --PREPARING THE party.id_type table
 --DELETE FROM party.id_type WHERE code = 'NA';
 --INSERT INTO party.id_type (code, description, display_value, status) values('NA', 'Not Available at the moment of Inserting this record', 'Not Available', 'c');
 
 =======
-﻿DELETE FROM party.party_type WHERE code = 'license_surveyor' OR code = 'charting_officer' OR code = 'state_land_clearing_officer';
+﻿DELETE FROM party.party_role_type WHERE code = 'certifiedSurveyor' OR code = 'charting_officer' OR code = 'stland_clr_officer';
 
-INSERT INTO party.party_type (code, display_value, status, description) values('license_surveyor','License Surveyor','c','A Certified License Surveyor of doing surveying of lands');
-INSERT INTO party.party_type (code, display_value, status, description) values('charting_officer','Charting Officer','c','A Certified Charting Officer');
-INSERT INTO party.party_type (code, display_value, status, description) values('stland_clr_officer','State Land Clearing Officer','c','This is a Certified State Land Clearing Officer');
+INSERT INTO party.party_role_type (code, display_value, status, description) values('certifiedSurveyor','License Surveyor','c','A Certified License Surveyor of doing surveying of lands');
+INSERT INTO party.party_role_type (code, display_value, status, description) values('charting_officer','Charting Officer','c','A Certified Charting Officer');
+INSERT INTO party.party_role_type (code, display_value, status, description) values('stland_clr_officer','State Land Clearing Officer','c','This is a Certified State Land Clearing Officer');
 >>>>>>> 9c885803687c189a2d97556f8691714a4ff59928
 
 ----------------------------------------------------------------------------------------------------------
@@ -35,7 +35,7 @@ INSERT INTO party.party(id, ext_id, type_code, name, last_name, fathers_name, fa
             phone, mobile, fax, preferred_communication_code, birth_date, 
             classification_code, redact_code)
 			
-			Values('060520161131-01', 'na', 'licensed_surveyor', 'DR. KOSONIKE', 'KOSO-THOMAS', 'na', 'na', 
+			Values('060520161131-01', 'na', 'naturalPerson', 'DR. KOSONIKE', 'KOSO-THOMAS', 'na', 'na', 
             'na', 'male', '060520161131', 'NA', 'na', 'na', 
             'na', 'na', 'na', 'phone', '2999-01-01', 
             'na', 'na');
@@ -52,7 +52,7 @@ INSERT INTO party.party(id, ext_id, type_code, name, last_name, fathers_name, fa
             phone, mobile, fax, preferred_communication_code, birth_date, 
             classification_code, redact_code)
 			
-			Values('060520161131-02', 'na', 'licensed_surveyor', 'BOBOH', 'DAVID', 'na', 'na', 
+			Values('060520161131-02', 'na', 'naturalPerson', 'BOBOH', 'DAVID', 'na', 'na', 
             'na', 'male', '060520161132', 'NA', 'na', 'na', 
             'na', 'na', 'na', 'phone', '2999-01-01', 
             'na', 'na');
@@ -69,7 +69,7 @@ INSERT INTO party.party(id, ext_id, type_code, name, last_name, fathers_name, fa
             phone, mobile, fax, preferred_communication_code, birth_date, 
             classification_code, redact_code)
 			
-			Values('060520161131-03', 'na', 'licensed_surveyor', 'ERIC CHRISTIAN', 'ARTHUR FORSTER', 'na', 'na', 
+			Values('060520161131-03', 'na', 'naturalPerson', 'ERIC CHRISTIAN', 'ARTHUR FORSTER', 'na', 'na', 
             'na', 'male', '060520161133', 'NA', 'na', 'na', 
             'na', '076-261613', 'na', 'phone', '2999-01-01', 
             'na', 'na');
@@ -86,7 +86,7 @@ INSERT INTO party.party(id, ext_id, type_code, name, last_name, fathers_name, fa
             phone, mobile, fax, preferred_communication_code, birth_date, 
             classification_code, redact_code)
 			
-			Values('060520161131-04', 'na', 'licensed_surveyor', 'FODAY JIBBA', 'ANTHONY', 'na', 'na', 
+			Values('060520161131-04', 'na', 'naturalPerson', 'FODAY JIBBA', 'ANTHONY', 'na', 'na', 
             'na', 'male', '060520161134', 'NA', 'na', 'na', 
             'na', 'na', 'na', 'phone', '2999-01-01', 
             'na', 'na');
@@ -103,7 +103,7 @@ INSERT INTO party.party(id, ext_id, type_code, name, last_name, fathers_name, fa
             phone, mobile, fax, preferred_communication_code, birth_date, 
             classification_code, redact_code)
 			
-			Values('060520161131-05', 'na', 'licensed_surveyor', 'SAMUEL CHRISPIN', 'OZENDRICK SWARRAY', 'na', 'na', 
+			Values('060520161131-05', 'na', 'naturalPerson', 'SAMUEL CHRISPIN', 'OZENDRICK SWARRAY', 'na', 'na', 
             'na', 'male', '060520161135', 'NA', 'na', 'na', 
             'na', 'na', 'na', 'phone', '2999-01-01', 
             'na', 'na');
@@ -120,7 +120,7 @@ INSERT INTO party.party(id, ext_id, type_code, name, last_name, fathers_name, fa
             phone, mobile, fax, preferred_communication_code, birth_date, 
             classification_code, redact_code)
 			
-			Values('060520161131-06', 'na', 'licensed_surveyor', 'SIATI CHARLES', 'LANSANA', 'na', 'na', 
+			Values('060520161131-06', 'na', 'naturalPerson', 'SIATI CHARLES', 'LANSANA', 'na', 'na', 
             'na', 'male', '060520161136', 'NA', 'na', 'na', 
             'na', 'na', 'na', 'phone', '2999-01-01', 
             'na', 'na');
@@ -137,7 +137,7 @@ INSERT INTO party.party(id, ext_id, type_code, name, last_name, fathers_name, fa
             phone, mobile, fax, preferred_communication_code, birth_date, 
             classification_code, redact_code)
 			
-			Values('060520161131-07', 'na', 'licensed_surveyor', 'ALHAJI MOHAMED LAMIN', 'ABDULLAH', 'na', 'na', 
+			Values('060520161131-07', 'na', 'naturalPerson', 'ALHAJI MOHAMED LAMIN', 'ABDULLAH', 'na', 'na', 
             'na', 'male', '060520161137', 'NA', 'na', 'na', 
             'na', 'na', 'na', 'phone', '2999-01-01', 
             'na', 'na');
@@ -154,7 +154,7 @@ INSERT INTO party.party(id, ext_id, type_code, name, last_name, fathers_name, fa
             phone, mobile, fax, preferred_communication_code, birth_date, 
             classification_code, redact_code)
 			
-			Values('060520161131-08', 'na', 'licensed_surveyor', 'MOHAMED SANFA', 'BOCKARIE', 'na', 'na', 
+			Values('060520161131-08', 'na', 'naturalPerson', 'MOHAMED SANFA', 'BOCKARIE', 'na', 'na', 
             'na', 'male', '060520161138', 'NA', 'na', 'na', 
             'na', 'na', 'na', 'phone', '2999-01-01', 
             'na', 'na');
@@ -171,7 +171,7 @@ INSERT INTO party.party(id, ext_id, type_code, name, last_name, fathers_name, fa
             phone, mobile, fax, preferred_communication_code, birth_date, 
             classification_code, redact_code)
 			
-			Values('060520161131-09', 'na', 'licensed_surveyor', 'JOE PETER', 'ARUNA', 'na', 'na', 
+			Values('060520161131-09', 'na', 'naturalPerson', 'JOE PETER', 'ARUNA', 'na', 'na', 
             'na', 'male', '060520161139', 'NA', 'na', 'na', 
             'na', 'na', 'na', 'phone', '2999-01-01', 
             'na', 'na');
@@ -188,7 +188,7 @@ INSERT INTO party.party(id, ext_id, type_code, name, last_name, fathers_name, fa
             phone, mobile, fax, preferred_communication_code, birth_date, 
             classification_code, redact_code)
 			
-			Values('060520161131-40', 'na', 'licensed_surveyor', 'ALEXANDER MACAVORAY', 'COKER', 'na', 'na', 
+			Values('060520161131-40', 'na', 'naturalPerson', 'ALEXANDER MACAVORAY', 'COKER', 'na', 'na', 
             'na', 'male', '060520161140', 'NA', 'na', 'na', 
             'na', '076613100', 'na', 'phone', '2999-01-01', 
             'na', 'na');
@@ -205,7 +205,7 @@ INSERT INTO party.party(id, ext_id, type_code, name, last_name, fathers_name, fa
             phone, mobile, fax, preferred_communication_code, birth_date, 
             classification_code, redact_code)
 			
-			Values('060520161131-41', 'na', 'licensed_surveyor', 'JAMES MORGAI', 'BANGURA', 'na', 'na', 
+			Values('060520161131-41', 'na', 'naturalPerson', 'JAMES MORGAI', 'BANGURA', 'na', 'na', 
             'na', 'male', '060520161141', 'NA', 'na', 'na', 
             'na', '077542096', 'na', 'phone', '2999-01-01', 
             'na', 'na');
@@ -222,7 +222,7 @@ INSERT INTO party.party(id, ext_id, type_code, name, last_name, fathers_name, fa
             phone, mobile, fax, preferred_communication_code, birth_date, 
             classification_code, redact_code)
 			
-			Values('060520161131-42', 'na', 'licensed_surveyor', 'IBRAHIM', 'KAMARA', 'na', 'na', 
+			Values('060520161131-42', 'na', 'naturalPerson', 'IBRAHIM', 'KAMARA', 'na', 'na', 
             'na', 'male', '060520161142', 'NA', 'na', 'na', 
             'na', 'na', 'na', 'phone', '2999-01-01', 
             'na', 'na');
@@ -239,7 +239,7 @@ INSERT INTO party.party(id, ext_id, type_code, name, last_name, fathers_name, fa
             phone, mobile, fax, preferred_communication_code, birth_date, 
             classification_code, redact_code)
 			
-			Values('060520161131-43', 'na', 'licensed_surveyor', 'ALHAJI ISSA BANGURA', 'KAMARA', 'na', 'na', 
+			Values('060520161131-43', 'na', 'naturalPerson', 'ALHAJI ISSA BANGURA', 'KAMARA', 'na', 'na', 
             'na', 'male', '060520161143', 'NA', 'na', 'na', 
             'na', '076673686', '077673686', 'phone', '2999-01-01', 
             'na', 'na');
@@ -256,7 +256,7 @@ INSERT INTO party.party(id, ext_id, type_code, name, last_name, fathers_name, fa
             phone, mobile, fax, preferred_communication_code, birth_date, 
             classification_code, redact_code)
 			
-			Values('060520161131-44', 'na', 'licensed_surveyor', 'SHERIFF ABASS', 'KARGBO', 'na', 'na', 
+			Values('060520161131-44', 'na', 'naturalPerson', 'SHERIFF ABASS', 'KARGBO', 'na', 'na', 
             'na', 'male', '060520161144', 'NA', 'na', 'na', 
             'na', '076686109', '077700862', 'phone', '2999-01-01', 
             'na', 'na');
@@ -273,7 +273,7 @@ INSERT INTO party.party(id, ext_id, type_code, name, last_name, fathers_name, fa
             phone, mobile, fax, preferred_communication_code, birth_date, 
             classification_code, redact_code)
 			
-			Values('060520161131-45', 'na', 'licensed_surveyor', 'ALLIAH JOSEPH', 'SUNDIMA', 'na', 'na', 
+			Values('060520161131-45', 'na', 'naturalPerson', 'ALLIAH JOSEPH', 'SUNDIMA', 'na', 'na', 
             'na', 'male', '060520161145', 'NA', 'na', 'na', 
             'na', '076628782', 'na', 'phone', '2999-01-01', 
             'na', 'na');
@@ -290,7 +290,7 @@ INSERT INTO party.party(id, ext_id, type_code, name, last_name, fathers_name, fa
             phone, mobile, fax, preferred_communication_code, birth_date, 
             classification_code, redact_code)
 			
-			Values('060520161131-46', 'na', 'licensed_surveyor', 'EDWARD ARTHUR', 'EDDY', 'na', 'na', 
+			Values('060520161131-46', 'na', 'naturalPerson', 'EDWARD ARTHUR', 'EDDY', 'na', 'na', 
             'na', 'male', '060520161146', 'NA', 'na', 'na', 
             'na', 'na', 'na', 'phone', '2999-01-01', 
             'na', 'na');
@@ -307,7 +307,7 @@ INSERT INTO party.party(id, ext_id, type_code, name, last_name, fathers_name, fa
             phone, mobile, fax, preferred_communication_code, birth_date, 
             classification_code, redact_code)
 			
-			Values('060520161131-47', 'na', 'licensed_surveyor', 'JONATHAN D.', 'COLLIER', 'na', 'na', 
+			Values('060520161131-47', 'na', 'naturalPerson', 'JONATHAN D.', 'COLLIER', 'na', 'na', 
             'na', 'male', '060520161147', 'NA', 'na', 'na', 
             'na', 'na', 'na', 'phone', '2999-01-01', 
             'na', 'na');
@@ -324,7 +324,7 @@ INSERT INTO party.party(id, ext_id, type_code, name, last_name, fathers_name, fa
             phone, mobile, fax, preferred_communication_code, birth_date, 
             classification_code, redact_code)
 			
-			Values('060520161131-48', 'na', 'licensed_surveyor', 'SYLVANUS ABDUL', 'LUSANIE', 'na', 'na', 
+			Values('060520161131-48', 'na', 'naturalPerson', 'SYLVANUS ABDUL', 'LUSANIE', 'na', 'na', 
             'na', 'male', '060520161148', 'NA', 'na', 'na', 
             'na', '076604050', 'na', 'phone', '2999-01-01', 
             'na', 'na');
@@ -341,7 +341,7 @@ INSERT INTO party.party(id, ext_id, type_code, name, last_name, fathers_name, fa
             phone, mobile, fax, preferred_communication_code, birth_date, 
             classification_code, redact_code)
 			
-			Values('060520161131-49', 'na', 'licensed_surveyor', 'FESTUS EDMONDSON THODPHILUS', 'GEORGE', 'na', 'na', 
+			Values('060520161131-49', 'na', 'naturalPerson', 'FESTUS EDMONDSON THODPHILUS', 'GEORGE', 'na', 'na', 
             'na', 'male', '060520161149', 'NA', 'na', 'na', 
             'na', '088579105', '030233768', 'phone', '2999-01-01', 
             'na', 'na');
@@ -358,7 +358,7 @@ INSERT INTO party.party(id, ext_id, type_code, name, last_name, fathers_name, fa
             phone, mobile, fax, preferred_communication_code, birth_date, 
             classification_code, redact_code)
 			
-			Values('060520161131-50', 'na', 'licensed_surveyor', 'ALHAJI AMADU IBRAHIM', 'ALIM-TURAY', 'na', 'na', 
+			Values('060520161131-50', 'na', 'naturalPerson', 'ALHAJI AMADU IBRAHIM', 'ALIM-TURAY', 'na', 'na', 
             'na', 'male', '060520161150', 'NA', 'na', 'na', 
             'na', '076262048', 'na', 'phone', '2999-01-01', 
             'na', 'na');
@@ -375,7 +375,7 @@ INSERT INTO party.party(id, ext_id, type_code, name, last_name, fathers_name, fa
             phone, mobile, fax, preferred_communication_code, birth_date, 
             classification_code, redact_code)
 			
-			Values('060520161131-51', 'na', 'licensed_surveyor', 'JOSIAH BACOGUN', 'COLE-DAVIS', 'na', 'na', 
+			Values('060520161131-51', 'na', 'naturalPerson', 'JOSIAH BACOGUN', 'COLE-DAVIS', 'na', 'na', 
             'na', 'male', '060520161151', 'NA', 'na', 'na', 
             'na', '030230079', '025230079', 'phone', '2999-01-01', 
             'na', 'na');
@@ -392,7 +392,7 @@ INSERT INTO party.party(id, ext_id, type_code, name, last_name, fathers_name, fa
             phone, mobile, fax, preferred_communication_code, birth_date, 
             classification_code, redact_code)
 			
-			Values('060520161131-52', 'na', 'licensed_surveyor', 'GEOFFERY C.', 'BOBB-LUCAS', 'na', 'na', 
+			Values('060520161131-52', 'na', 'naturalPerson', 'GEOFFERY C.', 'BOBB-LUCAS', 'na', 'na', 
             'na', 'male', '060520161152', 'NA', 'na', 'na', 
             'na', '076640736', 'na', 'phone', '2999-01-01', 
             'na', 'na');
@@ -409,7 +409,7 @@ INSERT INTO party.party(id, ext_id, type_code, name, last_name, fathers_name, fa
             phone, mobile, fax, preferred_communication_code, birth_date, 
             classification_code, redact_code)
 			
-			Values('060520161131-53', 'na', 'licensed_surveyor', 'STANLEY MUSTAPHA', 'LAHAI', 'na', 'na', 
+			Values('060520161131-53', 'na', 'naturalPerson', 'STANLEY MUSTAPHA', 'LAHAI', 'na', 'na', 
             'na', 'male', '060520161153', 'NA', 'na', 'na', 
             'na', '076674479', '077991178', 'phone', '2999-01-01', 
             'na', 'na');
@@ -426,7 +426,7 @@ INSERT INTO party.party(id, ext_id, type_code, name, last_name, fathers_name, fa
             phone, mobile, fax, preferred_communication_code, birth_date, 
             classification_code, redact_code)
 			
-			Values('060520161131-54', 'na', 'licensed_surveyor', 'ABDUL R.', 'HAMID', 'na', 'na', 
+			Values('060520161131-54', 'na', 'naturalPerson', 'ABDUL R.', 'HAMID', 'na', 'na', 
             'na', 'male', '060520161154', 'NA', 'na', 'na', 
             'na', '076652314', 'na', 'phone', '2999-01-01', 
             'na', 'na');
@@ -443,7 +443,7 @@ INSERT INTO party.party(id, ext_id, type_code, name, last_name, fathers_name, fa
             phone, mobile, fax, preferred_communication_code, birth_date, 
             classification_code, redact_code)
 			
-			Values('060520161131-55', 'na', 'licensed_surveyor', 'ALFRED B.', 'JUNISA', 'na', 'na', 
+			Values('060520161131-55', 'na', 'naturalPerson', 'ALFRED B.', 'JUNISA', 'na', 'na', 
             'na', 'male', '060520161155', 'NA', 'na', 'na', 
             'na', 'na', 'na', 'phone', '2999-01-01', 
             'na', 'na');
@@ -460,7 +460,7 @@ INSERT INTO party.party(id, ext_id, type_code, name, last_name, fathers_name, fa
             phone, mobile, fax, preferred_communication_code, birth_date, 
             classification_code, redact_code)
 			
-			Values('060520161131-56', 'na', 'licensed_surveyor', 'MOHAMED B.B.', 'MAHDI', 'na', 'na', 
+			Values('060520161131-56', 'na', 'naturalPerson', 'MOHAMED B.B.', 'MAHDI', 'na', 'na', 
             'na', 'male', '060520161156', 'NA', 'na', 'na', 
             'na', '077622184', 'na', 'phone', '2999-01-01', 
             'na', 'na');
@@ -477,7 +477,7 @@ INSERT INTO party.party(id, ext_id, type_code, name, last_name, fathers_name, fa
             phone, mobile, fax, preferred_communication_code, birth_date, 
             classification_code, redact_code)
 			
-			Values('060520161131-57', 'na', 'licensed_surveyor', 'PHILIP', 'MOIBA', 'na', 'na', 
+			Values('060520161131-57', 'na', 'naturalPerson', 'PHILIP', 'MOIBA', 'na', 'na', 
             'na', 'male', '060520161157', 'NA', 'na', 'na', 
             'na', '076624828', 'na', 'phone', '2999-01-01', 
             'na', 'na');
@@ -494,7 +494,7 @@ INSERT INTO party.party(id, ext_id, type_code, name, last_name, fathers_name, fa
             phone, mobile, fax, preferred_communication_code, birth_date, 
             classification_code, redact_code)
 			
-			Values('060520161131-58', 'na', 'licensed_surveyor', 'PHILIP', 'MOIBA', 'na', 'na', 
+			Values('060520161131-58', 'na', 'naturalPerson', 'PHILIP', 'MOIBA', 'na', 'na', 
             'na', 'male', '060520161158', 'NA', 'na', 'na', 
             'na', 'na', 'na', 'phone', '2999-01-01', 
             'na', 'na');
@@ -510,7 +510,7 @@ INSERT INTO party.party(id, ext_id, type_code, name, last_name, fathers_name, fa
             phone, mobile, fax, preferred_communication_code, birth_date, 
             classification_code, redact_code)
 			
-			Values('060520161131-59', 'na', 'licensed_surveyor', 'ABDUL FATTAH', 'IBRAHIM', 'na', 'na', 
+			Values('060520161131-59', 'na', 'naturalPerson', 'ABDUL FATTAH', 'IBRAHIM', 'na', 'na', 
             'na', 'male', '060520161159', 'NA', 'na', 'na', 
             'na', '078744243', 'na', 'phone', '2999-01-01', 
             'na', 'na');
@@ -527,7 +527,7 @@ INSERT INTO party.party(id, ext_id, type_code, name, last_name, fathers_name, fa
             phone, mobile, fax, preferred_communication_code, birth_date, 
             classification_code, redact_code)
 			
-			Values('060520161131-60', 'na', 'licensed_surveyor', 'HAMLET A.', 'KHANI', 'na', 'na', 
+			Values('060520161131-60', 'na', 'naturalPerson', 'HAMLET A.', 'KHANI', 'na', 'na', 
             'na', 'male', '060520161160', 'NA', 'na', 'na', 
             'na', '076629436', 'na', 'phone', '2999-01-01', 
             'na', 'na');
@@ -544,7 +544,7 @@ INSERT INTO party.party(id, ext_id, type_code, name, last_name, fathers_name, fa
             phone, mobile, fax, preferred_communication_code, birth_date, 
             classification_code, redact_code)
 			
-			Values('060520161131-61', 'na', 'licensed_surveyor', 'AHMED M.', 'BANGURA', 'na', 'na', 
+			Values('060520161131-61', 'na', 'naturalPerson', 'AHMED M.', 'BANGURA', 'na', 'na', 
             'na', 'male', '060520161161', 'NA', 'na', 'na', 
             'na', '076752763', 'na', 'phone', '2999-01-01', 
             'na', 'na');
@@ -561,7 +561,7 @@ INSERT INTO party.party(id, ext_id, type_code, name, last_name, fathers_name, fa
             phone, mobile, fax, preferred_communication_code, birth_date, 
             classification_code, redact_code)
 			
-			Values('060520161131-62', 'na', 'licensed_surveyor', 'SYLVANUES B.', 'FODAY', 'na', 'na', 
+			Values('060520161131-62', 'na', 'naturalPerson', 'SYLVANUES B.', 'FODAY', 'na', 'na', 
             'na', 'male', '060520161162', 'NA', 'na', 'na', 
             'na', '076752763', '077428185', 'phone', '2999-01-01', 
             'na', 'na');
@@ -578,7 +578,7 @@ INSERT INTO party.party(id, ext_id, type_code, name, last_name, fathers_name, fa
             phone, mobile, fax, preferred_communication_code, birth_date, 
             classification_code, redact_code)
 			
-			Values('060520161131-63', 'na', 'licensed_surveyor', 'ABUBAKARR K.', 'JAJUA', 'na', 'na', 
+			Values('060520161131-63', 'na', 'naturalPerson', 'ABUBAKARR K.', 'JAJUA', 'na', 'na', 
             'na', 'male', '060520161163', 'NA', 'na', 'na', 
             'na', '076817423', 'na', 'phone', '2999-01-01', 
             'na', 'na');
@@ -595,7 +595,7 @@ INSERT INTO party.party(id, ext_id, type_code, name, last_name, fathers_name, fa
             phone, mobile, fax, preferred_communication_code, birth_date, 
             classification_code, redact_code)
 			
-			Values('060520161131-64', 'na', 'licensed_surveyor', 'BANGALI', 'BANGURA', 'na', 'na', 
+			Values('060520161131-64', 'na', 'naturalPerson', 'BANGALI', 'BANGURA', 'na', 'na', 
             'na', 'male', '060520161164', 'NA', 'na', 'na', 
             'na', '078463586', '088190193', 'phone', '2999-01-01', 
             'na', 'na');
@@ -612,7 +612,7 @@ INSERT INTO party.party(id, ext_id, type_code, name, last_name, fathers_name, fa
             phone, mobile, fax, preferred_communication_code, birth_date, 
             classification_code, redact_code)
 			
-			Values('060520161131-65', 'na', 'licensed_surveyor', 'MOHAMED LAMARANA', 'JALLOH', 'na', 'na', 
+			Values('060520161131-65', 'na', 'naturalPerson', 'MOHAMED LAMARANA', 'JALLOH', 'na', 'na', 
             'na', 'male', '060520161165', 'NA', 'na', 'na', 
             'na', 'na', 'na', 'phone', '2999-01-01', 
             'na', 'na');
@@ -750,7 +750,7 @@ INSERT INTO party.party(id, ext_id, type_code, name, last_name, fathers_name, fa
             phone, mobile, fax, preferred_communication_code, birth_date, 
             classification_code, redact_code)
 			
-			Values('060520161131-66', 'na', 'charting_officer', 'TAMBA M.', 'JONES', 'na', 'na', 
+			Values('060520161131-66', 'na', 'naturalPerson', 'TAMBA M.', 'JONES', 'na', 'na', 
             'na', 'male', '060520161166', 'NA', 'na', 'na', 
             'na', 'na', 'na', 'phone', '2999-01-01', 
             'na', 'na');
@@ -1454,7 +1454,7 @@ INSERT INTO party.party(id, ext_id, type_code, name, last_name, fathers_name, fa
             phone, mobile, fax, preferred_communication_code, birth_date, 
             classification_code, redact_code)
 			
-			Values('060520161131-166', 'na', 'state_land_co', 'TAMBA M.', 'JONES', 'na', 'na', 
+			Values('060520161131-166', 'na', 'naturalPerson', 'TAMBA M.', 'JONES', 'na', 'na', 
             'na', 'male', '060520161166', 'NA', 'na', 'na', 
             'na', 'na', 'na', 'phone', '2999-01-01', 
             'na', 'na');
@@ -1467,7 +1467,7 @@ INSERT INTO party.party(id, ext_id, type_code, name, last_name, fathers_name, fa
             phone, mobile, fax, preferred_communication_code, birth_date, 
             classification_code, redact_code)
 			
-			Values('060520161131-167', 'na', 'state_land_co', 'ABRAHAM', 'COOPER', 'na', 'na', 
+			Values('060520161131-167', 'na', 'naturalPerson', 'ABRAHAM', 'COOPER', 'na', 'na', 
             'na', 'male', '060520161166', 'NA', 'na', 'na', 
             'na', 'na', 'na', 'phone', '2999-01-01', 
             'na', 'na');
@@ -1479,7 +1479,7 @@ INSERT INTO party.party(id, ext_id, type_code, name, last_name, fathers_name, fa
             phone, mobile, fax, preferred_communication_code, birth_date, 
             classification_code, redact_code)
 			
-			Values('060520161131-168', 'na', 'state_land_co', 'NOAH', 'FOFANAH', 'na', 'na', 
+			Values('060520161131-168', 'na', 'naturalPerson', 'NOAH', 'FOFANAH', 'na', 'na', 
             'na', 'male', '060520161166', 'NA', 'na', 'na', 
             'na', 'na', 'na', 'phone', '2999-01-01', 
             'na', 'na');
@@ -1492,7 +1492,7 @@ INSERT INTO party.party(id, ext_id, type_code, name, last_name, fathers_name, fa
             phone, mobile, fax, preferred_communication_code, birth_date, 
             classification_code, redact_code)
 			
-			Values('060520161131-169', 'na', 'state_land_co', 'RASHEED CHARLES', 'NGAIWEE', 'na', 'na', 
+			Values('060520161131-169', 'na', 'naturalPerson', 'RASHEED CHARLES', 'NGAIWEE', 'na', 'na', 
             'na', 'male', '060520161166', 'NA', 'na', 'na', 
             'na', 'na', 'na', 'phone', '2999-01-01', 
             'na', 'na');
@@ -1505,7 +1505,7 @@ INSERT INTO party.party(id, ext_id, type_code, name, last_name, fathers_name, fa
             phone, mobile, fax, preferred_communication_code, birth_date, 
             classification_code, redact_code)
 			
-			Values('060520161131-170', 'na', 'state_land_co', 'JOHN N. A.', 'COKER', 'na', 'na', 
+			Values('060520161131-170', 'na', 'naturalPerson', 'JOHN N. A.', 'COKER', 'na', 'na', 
             'na', 'male', '060520161166', 'NA', 'na', 'na', 
             'na', 'na', 'na', 'phone', '2999-01-01', 
             'na', 'na');
@@ -1518,7 +1518,7 @@ INSERT INTO party.party(id, ext_id, type_code, name, last_name, fathers_name, fa
             phone, mobile, fax, preferred_communication_code, birth_date, 
             classification_code, redact_code)
 			
-			Values('060520161131-171', 'na', 'state_land_co', 'FRANCIS A.', 'KOROMA', 'na', 'na', 
+			Values('060520161131-171', 'na', 'naturalPerson', 'FRANCIS A.', 'KOROMA', 'na', 'na', 
             'na', 'male', '060520161166', 'NA', 'na', 'na', 
             'na', 'na', 'na', 'phone', '2999-01-01', 
             'na', 'na');
@@ -1531,7 +1531,7 @@ INSERT INTO party.party(id, ext_id, type_code, name, last_name, fathers_name, fa
             phone, mobile, fax, preferred_communication_code, birth_date, 
             classification_code, redact_code)
 			
-			Values('060520161131-172', 'na', 'state_land_co', 'ALPHA', 'SESAY', 'na', 'na', 
+			Values('060520161131-172', 'na', 'naturalPerson', 'ALPHA', 'SESAY', 'na', 'na', 
             'na', 'male', '060520161166', 'NA', 'na', 'na', 
             'na', 'na', 'na', 'phone', '2999-01-01', 
             'na', 'na');
@@ -1544,7 +1544,7 @@ INSERT INTO party.party(id, ext_id, type_code, name, last_name, fathers_name, fa
             phone, mobile, fax, preferred_communication_code, birth_date, 
             classification_code, redact_code)
 			
-			Values('060520161131-173', 'na', 'state_land_co', 'FRANK LEBBIE', 'ALLIE', 'na', 'na', 
+			Values('060520161131-173', 'na', 'naturalPerson', 'FRANK LEBBIE', 'ALLIE', 'na', 'na', 
             'na', 'male', '060520161166', 'NA', 'na', 'na', 
             'na', 'na', 'na', 'phone', '2999-01-01', 
             'na', 'na');
@@ -1557,7 +1557,7 @@ INSERT INTO party.party(id, ext_id, type_code, name, last_name, fathers_name, fa
             phone, mobile, fax, preferred_communication_code, birth_date, 
             classification_code, redact_code)
 			
-			Values('060520161131-174', 'na', 'state_land_co', 'JOSEPH M. K.', 'SINNAH', 'na', 'na', 
+			Values('060520161131-174', 'na', 'naturalPerson', 'JOSEPH M. K.', 'SINNAH', 'na', 'na', 
             'na', 'male', '060520161166', 'NA', 'na', 'na', 
             'na', 'na', 'na', 'phone', '2999-01-01', 
             'na', 'na');
@@ -1570,7 +1570,7 @@ INSERT INTO party.party(id, ext_id, type_code, name, last_name, fathers_name, fa
             phone, mobile, fax, preferred_communication_code, birth_date, 
             classification_code, redact_code)
 			
-			Values('060520161131-175', 'na', 'state_land_co', 'ALHAJI B.', 'DUMBUYA', 'na', 'na', 
+			Values('060520161131-175', 'na', 'naturalPerson', 'ALHAJI B.', 'DUMBUYA', 'na', 'na', 
             'na', 'male', '060520161166', 'NA', 'na', 'na', 
             'na', 'na', 'na', 'phone', '2999-01-01', 
             'na', 'na');
@@ -1583,7 +1583,7 @@ INSERT INTO party.party(id, ext_id, type_code, name, last_name, fathers_name, fa
             phone, mobile, fax, preferred_communication_code, birth_date, 
             classification_code, redact_code)
 			
-			Values('060520161131-176', 'na', 'state_land_co', 'MAMUDU M.', 'JALLOH', 'na', 'na', 
+			Values('060520161131-176', 'na', 'naturalPerson', 'MAMUDU M.', 'JALLOH', 'na', 'na', 
             'na', 'male', '060520161166', 'NA', 'na', 'na', 
             'na', 'na', 'na', 'phone', '2999-01-01', 
             'na', 'na');
@@ -1596,7 +1596,7 @@ INSERT INTO party.party(id, ext_id, type_code, name, last_name, fathers_name, fa
             phone, mobile, fax, preferred_communication_code, birth_date, 
             classification_code, redact_code)
 			
-			Values('060520161131-177', 'na', 'state_land_co', 'JOSEPH C. K.', 'TOMMY', 'na', 'na', 
+			Values('060520161131-177', 'na', 'naturalPerson', 'JOSEPH C. K.', 'TOMMY', 'na', 'na', 
             'na', 'male', '060520161166', 'NA', 'na', 'na', 
             'na', 'na', 'na', 'phone', '2999-01-01', 
             'na', 'na');
@@ -1609,7 +1609,7 @@ INSERT INTO party.party(id, ext_id, type_code, name, last_name, fathers_name, fa
             phone, mobile, fax, preferred_communication_code, birth_date, 
             classification_code, redact_code)
 			
-			Values('060520161131-178', 'na', 'state_land_co', 'KARIM', 'KARGBO', 'na', 'na', 
+			Values('060520161131-178', 'na', 'naturalPerson', 'KARIM', 'KARGBO', 'na', 'na', 
             'na', 'male', '060520161166', 'NA', 'na', 'na', 
             'na', 'na', 'na', 'phone', '2999-01-01', 
             'na', 'na');
@@ -1622,7 +1622,7 @@ INSERT INTO party.party(id, ext_id, type_code, name, last_name, fathers_name, fa
             phone, mobile, fax, preferred_communication_code, birth_date, 
             classification_code, redact_code)
 			
-			Values('060520161131-179', 'na', 'state_land_co', 'MISCHECK BOB', 'KOKER', 'na', 'na', 
+			Values('060520161131-179', 'na', 'naturalPerson', 'MISCHECK BOB', 'KOKER', 'na', 'na', 
             'na', 'male', '060520161166', 'NA', 'na', 'na', 
             'na', 'na', 'na', 'phone', '2999-01-01', 
             'na', 'na');
@@ -1635,7 +1635,7 @@ INSERT INTO party.party(id, ext_id, type_code, name, last_name, fathers_name, fa
             phone, mobile, fax, preferred_communication_code, birth_date, 
             classification_code, redact_code)
 			
-			Values('060520161131-180', 'na', 'state_land_co', 'BERNARD SAHR', 'JUSU', 'na', 'na', 
+			Values('060520161131-180', 'na', 'naturalPerson', 'BERNARD SAHR', 'JUSU', 'na', 'na', 
             'na', 'male', '060520161166', 'NA', 'na', 'na', 
             'na', 'na', 'na', 'phone', '2999-01-01', 
             'na', 'na');
@@ -1648,7 +1648,7 @@ INSERT INTO party.party(id, ext_id, type_code, name, last_name, fathers_name, fa
             phone, mobile, fax, preferred_communication_code, birth_date, 
             classification_code, redact_code)
 			
-			Values('060520161131-181', 'na', 'state_land_co', 'JUSTINE B.', 'MUSA', 'na', 'na', 
+			Values('060520161131-181', 'na', 'naturalPerson', 'JUSTINE B.', 'MUSA', 'na', 'na', 
             'na', 'male', '060520161166', 'NA', 'na', 'na', 
             'na', 'na', 'na', 'phone', '2999-01-01', 
             'na', 'na');
@@ -1661,7 +1661,7 @@ INSERT INTO party.party(id, ext_id, type_code, name, last_name, fathers_name, fa
             phone, mobile, fax, preferred_communication_code, birth_date, 
             classification_code, redact_code)
 			
-			Values('060520161131-182', 'na', 'state_land_co', 'ALFRED M.', 'SIMBO', 'na', 'na', 
+			Values('060520161131-182', 'na', 'naturalPerson', 'ALFRED M.', 'SIMBO', 'na', 'na', 
             'na', 'male', '060520161166', 'NA', 'na', 'na', 
             'na', 'na', 'na', 'phone', '2999-01-01', 
             'na', 'na');
@@ -1674,7 +1674,7 @@ INSERT INTO party.party(id, ext_id, type_code, name, last_name, fathers_name, fa
             phone, mobile, fax, preferred_communication_code, birth_date, 
             classification_code, redact_code)
 			
-			Values('060520161131-183', 'na', 'state_land_co', 'JAMES K.', 'JUSU', 'na', 'na', 
+			Values('060520161131-183', 'na', 'naturalPerson', 'JAMES K.', 'JUSU', 'na', 'na', 
             'na', 'male', '060520161166', 'NA', 'na', 'na', 
             'na', 'na', 'na', 'phone', '2999-01-01', 
             'na', 'na');
@@ -1688,7 +1688,7 @@ INSERT INTO party.party(id, ext_id, type_code, name, last_name, fathers_name, fa
             phone, mobile, fax, preferred_communication_code, birth_date, 
             classification_code, redact_code)
 			
-			Values('060520161131-184', 'na', 'state_land_co', 'IDRISSA', 'KOROMA', 'na', 'na', 
+			Values('060520161131-184', 'na', 'naturalPerson', 'IDRISSA', 'KOROMA', 'na', 'na', 
             'na', 'male', '060520161166', 'NA', 'na', 'na', 
             'na', 'na', 'na', 'phone', '2999-01-01', 
             'na', 'na');
@@ -1702,7 +1702,7 @@ INSERT INTO party.party(id, ext_id, type_code, name, last_name, fathers_name, fa
             phone, mobile, fax, preferred_communication_code, birth_date, 
             classification_code, redact_code)
 			
-			Values('060520161131-185', 'na', 'state_land_co', 'SOLOMON L.', 'SESAY', 'na', 'na', 
+			Values('060520161131-185', 'na', 'naturalPerson', 'SOLOMON L.', 'SESAY', 'na', 'na', 
             'na', 'male', '060520161166', 'NA', 'na', 'na', 
             'na', 'na', 'na', 'phone', '2999-01-01', 
             'na', 'na');
@@ -1716,7 +1716,7 @@ INSERT INTO party.party(id, ext_id, type_code, name, last_name, fathers_name, fa
             phone, mobile, fax, preferred_communication_code, birth_date, 
             classification_code, redact_code)
 			
-			Values('060520161131-186', 'na', 'state_land_co', 'DONALD S. C.', 'HOYTE', 'na', 'na', 
+			Values('060520161131-186', 'na', 'naturalPerson', 'DONALD S. C.', 'HOYTE', 'na', 'na', 
             'na', 'male', '060520161166', 'NA', 'na', 'na', 
             'na', 'na', 'na', 'phone', '2999-01-01', 
             'na', 'na');
@@ -1730,7 +1730,7 @@ INSERT INTO party.party(id, ext_id, type_code, name, last_name, fathers_name, fa
             phone, mobile, fax, preferred_communication_code, birth_date, 
             classification_code, redact_code)
 			
-			Values('060520161131-187', 'na', 'state_land_co', 'YAYA', 'HOYTE', 'na', 'na', 
+			Values('060520161131-187', 'na', 'naturalPerson', 'YAYA', 'HOYTE', 'na', 'na', 
             'na', 'male', '060520161166', 'NA', 'na', 'na', 
             'na', 'na', 'na', 'phone', '2999-01-01', 
             'na', 'na');
@@ -1744,7 +1744,7 @@ INSERT INTO party.party(id, ext_id, type_code, name, last_name, fathers_name, fa
             phone, mobile, fax, preferred_communication_code, birth_date, 
             classification_code, redact_code)
 			
-			Values('060520161131-188', 'na', 'state_land_co', 'ALICE M.', 'KANU', 'na', 'na', 
+			Values('060520161131-188', 'na', 'naturalPerson', 'ALICE M.', 'KANU', 'na', 'na', 
             'na', 'male', '060520161166', 'NA', 'na', 'na', 
             'na', 'na', 'na', 'phone', '2999-01-01', 
             'na', 'na');
@@ -1758,7 +1758,7 @@ INSERT INTO party.party(id, ext_id, type_code, name, last_name, fathers_name, fa
             phone, mobile, fax, preferred_communication_code, birth_date, 
             classification_code, redact_code)
 			
-			Values('060520161131-189', 'na', 'state_land_co', 'ALBERT', 'BENJAMIN', 'na', 'na', 
+			Values('060520161131-189', 'na', 'naturalPerson', 'ALBERT', 'BENJAMIN', 'na', 'na', 
             'na', 'male', '060520161166', 'NA', 'na', 'na', 
             'na', 'na', 'na', 'phone', '2999-01-01', 
             'na', 'na');
@@ -1772,7 +1772,7 @@ INSERT INTO party.party(id, ext_id, type_code, name, last_name, fathers_name, fa
             phone, mobile, fax, preferred_communication_code, birth_date, 
             classification_code, redact_code)
 			
-			Values('060520161131-190', 'na', 'state_land_co', 'ABDUL KARIM', 'KAMARA', 'na', 'na', 
+			Values('060520161131-190', 'na', 'naturalPerson', 'ABDUL KARIM', 'KAMARA', 'na', 'na', 
             'na', 'male', '060520161166', 'NA', 'na', 'na', 
             'na', 'na', 'na', 'phone', '2999-01-01', 
             'na', 'na');
@@ -1786,7 +1786,7 @@ INSERT INTO party.party(id, ext_id, type_code, name, last_name, fathers_name, fa
             phone, mobile, fax, preferred_communication_code, birth_date, 
             classification_code, redact_code)
 			
-			Values('060520161131-191', 'na', 'state_land_co', 'SULAIMAN', 'SAMURA', 'na', 'na', 
+			Values('060520161131-191', 'na', 'naturalPerson', 'SULAIMAN', 'SAMURA', 'na', 'na', 
             'na', 'male', '060520161166', 'NA', 'na', 'na', 
             'na', 'na', 'na', 'phone', '2999-01-01', 
             'na', 'na');
@@ -1800,7 +1800,7 @@ INSERT INTO party.party(id, ext_id, type_code, name, last_name, fathers_name, fa
             phone, mobile, fax, preferred_communication_code, birth_date, 
             classification_code, redact_code)
 			
-			Values('060520161131-192', 'na', 'state_land_co', 'JOHN EDWARD', 'SINNAH', 'na', 'na', 
+			Values('060520161131-192', 'na', 'naturalPerson', 'JOHN EDWARD', 'SINNAH', 'na', 'na', 
             'na', 'male', '060520161166', 'NA', 'na', 'na', 
             'na', 'na', 'na', 'phone', '2999-01-01', 
             'na', 'na');
@@ -1814,7 +1814,7 @@ INSERT INTO party.party(id, ext_id, type_code, name, last_name, fathers_name, fa
             phone, mobile, fax, preferred_communication_code, birth_date, 
             classification_code, redact_code)
 			
-			Values('060520161131-193', 'na', 'state_land_co', 'RAYMOND', 'COLE', 'na', 'na', 
+			Values('060520161131-193', 'na', 'naturalPerson', 'RAYMOND', 'COLE', 'na', 'na', 
             'na', 'male', '060520161166', 'NA', 'na', 'na', 
             'na', 'na', 'na', 'phone', '2999-01-01', 
             'na', 'na');
@@ -1827,7 +1827,7 @@ INSERT INTO party.party(id, ext_id, type_code, name, last_name, fathers_name, fa
             phone, mobile, fax, preferred_communication_code, birth_date, 
             classification_code, redact_code)
 			
-			Values('060520161131-194', 'na', 'state_land_co', 'CECIL', 'STANLEY', 'na', 'na', 
+			Values('060520161131-194', 'na', 'naturalPerson', 'CECIL', 'STANLEY', 'na', 'na', 
             'na', 'male', '060520161166', 'NA', 'na', 'na', 
             'na', 'na', 'na', 'phone', '2999-01-01', 
             'na', 'na');
@@ -1840,7 +1840,7 @@ INSERT INTO party.party(id, ext_id, type_code, name, last_name, fathers_name, fa
             phone, mobile, fax, preferred_communication_code, birth_date, 
             classification_code, redact_code)
 			
-			Values('060520161131-195', 'na', 'state_land_co', 'BUNGI M.', 'TURAY', 'na', 'na', 
+			Values('060520161131-195', 'na', 'naturalPerson', 'BUNGI M.', 'TURAY', 'na', 'na', 
             'na', 'male', '060520161166', 'NA', 'na', 'na', 
             'na', 'na', 'na', 'phone', '2999-01-01', 
             'na', 'na');
@@ -1854,7 +1854,7 @@ INSERT INTO party.party(id, ext_id, type_code, name, last_name, fathers_name, fa
             phone, mobile, fax, preferred_communication_code, birth_date, 
             classification_code, redact_code)
 			
-			Values('060520161131-196', 'na', 'state_land_co', 'SANTOS AHMED', 'KAMARA', 'na', 'na', 
+			Values('060520161131-196', 'na', 'naturalPerson', 'SANTOS AHMED', 'KAMARA', 'na', 'na', 
             'na', 'male', '060520161166', 'NA', 'na', 'na', 
             'na', 'na', 'na', 'phone', '2999-01-01', 
             'na', 'na');
@@ -1868,7 +1868,7 @@ INSERT INTO party.party(id, ext_id, type_code, name, last_name, fathers_name, fa
             phone, mobile, fax, preferred_communication_code, birth_date, 
             classification_code, redact_code)
 			
-			Values('060520161131-198', 'na', 'state_land_co', 'ALHASSAN MORLAI', 'KAMARA', 'na', 'na', 
+			Values('060520161131-198', 'na', 'naturalPerson', 'ALHASSAN MORLAI', 'KAMARA', 'na', 'na', 
             'na', 'male', '060520161166', 'NA', 'na', 'na', 
             'na', 'na', 'na', 'phone', '2999-01-01', 
             'na', 'na');
@@ -1882,7 +1882,7 @@ INSERT INTO party.party(id, ext_id, type_code, name, last_name, fathers_name, fa
             phone, mobile, fax, preferred_communication_code, birth_date, 
             classification_code, redact_code)
 			
-			Values('060520161131-299', 'na', 'state_land_co', 'SAMUEL', 'GEORGE', 'na', 'na', 
+			Values('060520161131-299', 'na', 'naturalPerson', 'SAMUEL', 'GEORGE', 'na', 'na', 
             'na', 'male', '060520161166', 'NA', 'na', 'na', 
             'na', 'na', 'na', 'phone', '2999-01-01', 
             'na', 'na');
@@ -1896,7 +1896,7 @@ INSERT INTO party.party(id, ext_id, type_code, name, last_name, fathers_name, fa
             phone, mobile, fax, preferred_communication_code, birth_date, 
             classification_code, redact_code)
 			
-			Values('060520161131-1100', 'na', 'state_land_co', 'LANSANA MAGBA', 'KOROMA', 'na', 'na', 
+			Values('060520161131-1100', 'na', 'naturalPerson', 'LANSANA MAGBA', 'KOROMA', 'na', 'na', 
             'na', 'male', '060520161166', 'NA', 'na', 'na', 
             'na', 'na', 'na', 'phone', '2999-01-01', 
             'na', 'na');
@@ -1910,7 +1910,7 @@ INSERT INTO party.party(id, ext_id, type_code, name, last_name, fathers_name, fa
             phone, mobile, fax, preferred_communication_code, birth_date, 
             classification_code, redact_code)
 			
-			Values('060520161131-1101', 'na', 'state_land_co', 'PETER KAMANDA', 'KAMANDA', 'na', 'na', 
+			Values('060520161131-1101', 'na', 'naturalPerson', 'PETER KAMANDA', 'KAMANDA', 'na', 'na', 
             'na', 'male', '060520161166', 'NA', 'na', 'na', 
             'na', 'na', 'na', 'phone', '2999-01-01', 
             'na', 'na');
@@ -1924,7 +1924,7 @@ INSERT INTO party.party(id, ext_id, type_code, name, last_name, fathers_name, fa
             phone, mobile, fax, preferred_communication_code, birth_date, 
             classification_code, redact_code)
 			
-			Values('060520161131-1199', 'na', 'state_land_co', 'NYUMA', 'DAUDA', 'na', 'na', 
+			Values('060520161131-1199', 'na', 'naturalPerson', 'NYUMA', 'DAUDA', 'na', 'na', 
             'na', 'male', '060520161166', 'NA', 'na', 'na', 
             'na', 'na', 'na', 'phone', '2999-01-01', 
             'na', 'na');
@@ -1938,7 +1938,7 @@ INSERT INTO party.party(id, ext_id, type_code, name, last_name, fathers_name, fa
             phone, mobile, fax, preferred_communication_code, birth_date, 
             classification_code, redact_code)
 			
-			Values('060520161131-1102', 'na', 'state_land_co', 'ALEX M.', 'BUREH', 'na', 'na', 
+			Values('060520161131-1102', 'na', 'naturalPerson', 'ALEX M.', 'BUREH', 'na', 'na', 
             'na', 'male', '060520161166', 'NA', 'na', 'na', 
             'na', 'na', 'na', 'phone', '2999-01-01', 
             'na', 'na');
@@ -1952,7 +1952,7 @@ INSERT INTO party.party(id, ext_id, type_code, name, last_name, fathers_name, fa
             phone, mobile, fax, preferred_communication_code, birth_date, 
             classification_code, redact_code)
 			
-			Values('060520161131-1103', 'na', 'state_land_co', 'HANNAH ROSELYN', 'FARMA', 'na', 'na', 
+			Values('060520161131-1103', 'na', 'naturalPerson', 'HANNAH ROSELYN', 'FARMA', 'na', 'na', 
             'na', 'female', '060520161166', 'NA', 'na', 'na', 
             'na', 'na', 'na', 'phone', '2999-01-01', 
             'na', 'na');
@@ -1966,7 +1966,7 @@ INSERT INTO party.party(id, ext_id, type_code, name, last_name, fathers_name, fa
             phone, mobile, fax, preferred_communication_code, birth_date, 
             classification_code, redact_code)
 			
-			Values('060520161131-1104', 'na', 'state_land_co', 'ALIMAMY', 'SESAY', 'na', 'na', 
+			Values('060520161131-1104', 'na', 'naturalPerson', 'ALIMAMY', 'SESAY', 'na', 'na', 
             'na', 'male', '060520161166', 'NA', 'na', 'na', 
             'na', 'na', 'na', 'phone', '2999-01-01', 
             'na', 'na');
@@ -1980,7 +1980,7 @@ INSERT INTO party.party(id, ext_id, type_code, name, last_name, fathers_name, fa
             phone, mobile, fax, preferred_communication_code, birth_date, 
             classification_code, redact_code)
 			
-			Values('060520161131-1105', 'na', 'state_land_co', 'MOHAMED', 'LANSANA', 'na', 'na', 
+			Values('060520161131-1105', 'na', 'naturalPerson', 'MOHAMED', 'LANSANA', 'na', 'na', 
             'na', 'male', '060520161166', 'NA', 'na', 'na', 
             'na', 'na', 'na', 'phone', '2999-01-01', 
             'na', 'na');
@@ -1994,7 +1994,7 @@ INSERT INTO party.party(id, ext_id, type_code, name, last_name, fathers_name, fa
             phone, mobile, fax, preferred_communication_code, birth_date, 
             classification_code, redact_code)
 			
-			Values('060520161131-1106', 'na', 'state_land_co', 'ABDUL KOLLIA', 'KARGBO', 'na', 'na', 
+			Values('060520161131-1106', 'na', 'naturalPerson', 'ABDUL KOLLIA', 'KARGBO', 'na', 'na', 
             'na', 'male', '060520161166', 'NA', 'na', 'na', 
             'na', 'na', 'na', 'phone', '2999-01-01', 
             'na', 'na');
@@ -2008,7 +2008,7 @@ INSERT INTO party.party(id, ext_id, type_code, name, last_name, fathers_name, fa
             phone, mobile, fax, preferred_communication_code, birth_date, 
             classification_code, redact_code)
 			
-			Values('060520161131-1107', 'na', 'state_land_co', 'CHARLES', 'SENESIE', 'na', 'na', 
+			Values('060520161131-1107', 'na', 'naturalPerson', 'CHARLES', 'SENESIE', 'na', 'na', 
             'na', 'male', '060520161166', 'NA', 'na', 'na', 
             'na', 'na', 'na', 'phone', '2999-01-01', 
             'na', 'na');
@@ -2022,7 +2022,7 @@ INSERT INTO party.party(id, ext_id, type_code, name, last_name, fathers_name, fa
             phone, mobile, fax, preferred_communication_code, birth_date, 
             classification_code, redact_code)
 			
-			Values('060520161131-1108', 'na', 'state_land_co', 'ALPHA UMARU', 'TURAY', 'na', 'na', 
+			Values('060520161131-1108', 'na', 'naturalPerson', 'ALPHA UMARU', 'TURAY', 'na', 'na', 
             'na', 'male', '060520161166', 'NA', 'na', 'na', 
             'na', 'na', 'na', 'phone', '2999-01-01', 
             'na', 'na');
@@ -2036,7 +2036,7 @@ INSERT INTO party.party(id, ext_id, type_code, name, last_name, fathers_name, fa
             phone, mobile, fax, preferred_communication_code, birth_date, 
             classification_code, redact_code)
 			
-			Values('060520161131-1109', 'na', 'state_land_co', 'ANSUMANA ABU', 'SESAY', 'na', 'na', 
+			Values('060520161131-1109', 'na', 'naturalPerson', 'ANSUMANA ABU', 'SESAY', 'na', 'na', 
             'na', 'male', '060520161166', 'NA', 'na', 'na', 
             'na', 'na', 'na', 'phone', '2999-01-01', 
             'na', 'na');
@@ -2050,7 +2050,7 @@ INSERT INTO party.party(id, ext_id, type_code, name, last_name, fathers_name, fa
             phone, mobile, fax, preferred_communication_code, birth_date, 
             classification_code, redact_code)
 			
-			Values('060520161131-1110', 'na', 'state_land_co', 'FRANCIS', 'KAMARA', 'na', 'na', 
+			Values('060520161131-1110', 'na', 'naturalPerson', 'FRANCIS', 'KAMARA', 'na', 'na', 
             'na', 'male', '060520161166', 'NA', 'na', 'na', 
             'na', 'na', 'na', 'phone', '2999-01-01', 
             'na', 'na');
@@ -2064,7 +2064,7 @@ INSERT INTO party.party(id, ext_id, type_code, name, last_name, fathers_name, fa
             phone, mobile, fax, preferred_communication_code, birth_date, 
             classification_code, redact_code)
 			
-			Values('060520161131-1111', 'na', 'state_land_co', 'DAVID KOMBA', 'KONO', 'na', 'na', 
+			Values('060520161131-1111', 'na', 'naturalPerson', 'DAVID KOMBA', 'KONO', 'na', 'na', 
             'na', 'male', '060520161166', 'NA', 'na', 'na', 
             'na', 'na', 'na', 'phone', '2999-01-01', 
             'na', 'na');
@@ -2078,7 +2078,7 @@ INSERT INTO party.party(id, ext_id, type_code, name, last_name, fathers_name, fa
             phone, mobile, fax, preferred_communication_code, birth_date, 
             classification_code, redact_code)
 			
-			Values('060520161131-1112', 'na', 'state_land_co', 'BABAH K.', 'KAMARA', 'na', 'na', 
+			Values('060520161131-1112', 'na', 'naturalPerson', 'BABAH K.', 'KAMARA', 'na', 'na', 
             'na', 'male', '060520161166', 'NA', 'na', 'na', 
             'na', 'na', 'na', 'phone', '2999-01-01', 
             'na', 'na');
@@ -2092,7 +2092,7 @@ INSERT INTO party.party(id, ext_id, type_code, name, last_name, fathers_name, fa
             phone, mobile, fax, preferred_communication_code, birth_date, 
             classification_code, redact_code)
 			
-			Values('060520161131-1113', 'na', 'state_land_co', 'MOHAMED S. B.', 'CONTEH', 'na', 'na', 
+			Values('060520161131-1113', 'na', 'naturalPerson', 'MOHAMED S. B.', 'CONTEH', 'na', 'na', 
             'na', 'male', '060520161166', 'NA', 'na', 'na', 
             'na', 'na', 'na', 'phone', '2999-01-01', 
             'na', 'na');
@@ -2106,7 +2106,7 @@ INSERT INTO party.party(id, ext_id, type_code, name, last_name, fathers_name, fa
             phone, mobile, fax, preferred_communication_code, birth_date, 
             classification_code, redact_code)
 			
-			Values('060520161131-1114', 'na', 'state_land_co', 'MOSES', 'MARCARTHY', 'na', 'na', 
+			Values('060520161131-1114', 'na', 'naturalPerson', 'MOSES', 'MARCARTHY', 'na', 'na', 
             'na', 'male', '060520161166', 'NA', 'na', 'na', 
             'na', 'na', 'na', 'phone', '2999-01-01', 
             'na', 'na');
@@ -2120,7 +2120,7 @@ INSERT INTO party.party(id, ext_id, type_code, name, last_name, fathers_name, fa
             phone, mobile, fax, preferred_communication_code, birth_date, 
             classification_code, redact_code)
 			
-			Values('060520161131-1115', 'na', 'state_land_co', 'MUSTAPHA ARTHUR', 'KEMOKAI', 'na', 'na', 
+			Values('060520161131-1115', 'na', 'naturalPerson', 'MUSTAPHA ARTHUR', 'KEMOKAI', 'na', 'na', 
             'na', 'male', '060520161166', 'NA', 'na', 'na', 
             'na', 'na', 'na', 'phone', '2999-01-01', 
             'na', 'na');
@@ -2134,7 +2134,7 @@ INSERT INTO party.party(id, ext_id, type_code, name, last_name, fathers_name, fa
             phone, mobile, fax, preferred_communication_code, birth_date, 
             classification_code, redact_code)
 			
-			Values('060520161131-1116', 'na', 'state_land_co', 'LAMIN MOMOH', 'SESAY', 'na', 'na', 
+			Values('060520161131-1116', 'na', 'naturalPerson', 'LAMIN MOMOH', 'SESAY', 'na', 'na', 
             'na', 'male', '060520161166', 'NA', 'na', 'na', 
             'na', 'na', 'na', 'phone', '2999-01-01', 
             'na', 'na');
