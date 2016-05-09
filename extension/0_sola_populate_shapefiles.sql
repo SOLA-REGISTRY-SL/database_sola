@@ -1,4 +1,4 @@
------------ SPATIAL_UNIT_GROUP TABLE POPULATION MADE by Paola on 10/09/2013 ----------------------------------------
+﻿----------- SPATIAL_UNIT_GROUP TABLE POPULATION MADE by Paola on 10/09/2013 ----------------------------------------
 
 -- insert Country, Region, District, Chiefdom - hierarchy
 
@@ -32,6 +32,17 @@ FROM interim_data.district where ST_GeometryN(geom, 1) is not null;
 --------------- Chiefdom
 ---INSERT INTO cadastre.spatial_unit_group( name,id, hierarchy_level, label,  change_user,geom,seq_nr) SELECT name_3, uuid_generate_v1(), 3, name_3, 'test', ST_SetSRID(ST_GeometryN(geom, 1),32629), 0 
 ---FROM interim_data.chiefdom
+
+
+
+--------------- Chiefdom
+INSERT INTO cadastre.spatial_unit_group( name,id, hierarchy_level, label,  
+change_user,geom,seq_nr) Select adm3_name, uuid_generate_v1(), 3, adm3_name, 'test', ST_SetSRID(ST_GeometryN(the_geom, 1),32629), 0 
+--name_2, uuid_generate_v1(), 2, name_2, 'test', 
+--ST_SetSRID(ST_GeometryN(geom, 1),32629), 0 
+--ST_GeometryN(geom, 1) , 0
+--ST_SetSRID(ST_GeometryN(geom, 1),32628) , 0 
+FROM interim_data.chiefdom where ST_GeometryN(the_geom, 1) is not null;
 
 --------------- Section
 ---INSERT INTO cadastre.spatial_unit_group( name,id, hierarchy_level, label,  change_user,geom,seq_nr) SELECT first_sect, uuid_generate_v1(), 4, first_sect, 'test', ST_SetSRID(ST_GeometryN(geom, 1),32629), 0 

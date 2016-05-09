@@ -6479,6 +6479,20 @@ CREATE TABLE cadastre_object (
     change_time timestamp without time zone DEFAULT now() NOT NULL,
     classification_code character varying(20),
     redact_code character varying(20),
+    owner_name character varying(2000),
+    address character varying(1000),
+    land_type character varying(20),
+    parcel_area double precision,
+    licensed_surveyor_id character varying(20),
+    east_neighbour character varying(500),
+    west_neighbour character varying(500),
+    south_neighbour character varying(500),
+    north_neighbour character varying(500),
+    survey_method character varying(20),
+    survey_date date,
+    beacon_number character varying(30),
+    charting_officer_id character varying(20),
+    state_land_clearing_officer_id character varying(20),
     CONSTRAINT enforce_dims_geom_polygon CHECK ((public.st_ndims(geom_polygon) = 2)),
     CONSTRAINT enforce_geotype_geom_polygon CHECK (((public.geometrytype(geom_polygon) = 'POLYGON'::text) OR (geom_polygon IS NULL))),
     CONSTRAINT enforce_srid_geom_polygon CHECK ((public.st_srid(geom_polygon) = ANY (ARRAY[32628, 32629]))),
@@ -6627,6 +6641,104 @@ COMMENT ON COLUMN cadastre_object.classification_code IS 'FROM  SOLA State Land 
 --
 
 COMMENT ON COLUMN cadastre_object.redact_code IS 'FROM  SOLA State Land Extension: The redact classification for this Parcel. Only users with the redact classification (or a higher classification) will be able to view the record with un-redacted fields. If null, the record is considered unrestricted and no redaction to the record will occur unless bulk redaction classifications have been set for fields of the record.';
+
+
+--
+-- Name: COLUMN cadastre_object.owner_name; Type: COMMENT; Schema: cadastre; Owner: postgres
+--
+
+COMMENT ON COLUMN cadastre_object.owner_name IS 'The name of the Property Owner/Applicant';
+
+
+--
+-- Name: COLUMN cadastre_object.address; Type: COMMENT; Schema: cadastre; Owner: postgres
+--
+
+COMMENT ON COLUMN cadastre_object.address IS 'Parcel address';
+
+
+--
+-- Name: COLUMN cadastre_object.land_type; Type: COMMENT; Schema: cadastre; Owner: postgres
+--
+
+COMMENT ON COLUMN cadastre_object.land_type IS 'Land type code';
+
+
+--
+-- Name: COLUMN cadastre_object.parcel_area; Type: COMMENT; Schema: cadastre; Owner: postgres
+--
+
+COMMENT ON COLUMN cadastre_object.parcel_area IS 'Parcel area in sq meters';
+
+
+--
+-- Name: COLUMN cadastre_object.licensed_surveyor_id; Type: COMMENT; Schema: cadastre; Owner: postgres
+--
+
+COMMENT ON COLUMN cadastre_object.licensed_surveyor_id IS 'Licensed surveyor id';
+
+
+--
+-- Name: COLUMN cadastre_object.east_neighbour; Type: COMMENT; Schema: cadastre; Owner: postgres
+--
+
+COMMENT ON COLUMN cadastre_object.east_neighbour IS 'Neighbour name at the east';
+
+
+--
+-- Name: COLUMN cadastre_object.west_neighbour; Type: COMMENT; Schema: cadastre; Owner: postgres
+--
+
+COMMENT ON COLUMN cadastre_object.west_neighbour IS 'Neighbour name at the west';
+
+
+--
+-- Name: COLUMN cadastre_object.south_neighbour; Type: COMMENT; Schema: cadastre; Owner: postgres
+--
+
+COMMENT ON COLUMN cadastre_object.south_neighbour IS 'Neighbour name at the south';
+
+
+--
+-- Name: COLUMN cadastre_object.north_neighbour; Type: COMMENT; Schema: cadastre; Owner: postgres
+--
+
+COMMENT ON COLUMN cadastre_object.north_neighbour IS 'Neighbour name at the north';
+
+
+--
+-- Name: COLUMN cadastre_object.survey_method; Type: COMMENT; Schema: cadastre; Owner: postgres
+--
+
+COMMENT ON COLUMN cadastre_object.survey_method IS 'Survey method code';
+
+
+--
+-- Name: COLUMN cadastre_object.survey_date; Type: COMMENT; Schema: cadastre; Owner: postgres
+--
+
+COMMENT ON COLUMN cadastre_object.survey_date IS 'Surveying date';
+
+
+--
+-- Name: COLUMN cadastre_object.beacon_number; Type: COMMENT; Schema: cadastre; Owner: postgres
+--
+
+COMMENT ON COLUMN cadastre_object.beacon_number IS 'Beacon number';
+
+
+--
+-- Name: COLUMN cadastre_object.charting_officer_id; Type: COMMENT; Schema: cadastre; Owner: postgres
+--
+
+COMMENT ON COLUMN cadastre_object.charting_officer_id IS 'Charting officer id';
+
+
+--
+-- Name: COLUMN cadastre_object.state_land_clearing_officer_id; Type: COMMENT; Schema: cadastre; Owner: postgres
+--
+
+COMMENT ON COLUMN cadastre_object.state_land_clearing_officer_id IS 'State land clearing officer id';
 
 
 --
@@ -8673,6 +8785,20 @@ CREATE TABLE cadastre_object_historic (
     change_time_valid_until timestamp without time zone DEFAULT now() NOT NULL,
     classification_code character varying(20),
     redact_code character varying(20),
+    owner_name character varying(2000),
+    address character varying(1000),
+    land_type character varying(20),
+    parcel_area double precision,
+    licensed_surveyor_id character varying(20),
+    east_neighbour character varying(500),
+    west_neighbour character varying(500),
+    south_neighbour character varying(500),
+    north_neighbour character varying(500),
+    survey_method character varying(20),
+    survey_date date,
+    beacon_number character varying(30),
+    charting_officer_id character varying(20),
+    state_land_clearing_officer_id character varying(20),
     CONSTRAINT enforce_dims_geom_polygon CHECK ((public.st_ndims(geom_polygon) = 2)),
     CONSTRAINT enforce_geotype_geom_polygon CHECK (((public.geometrytype(geom_polygon) = 'POLYGON'::text) OR (geom_polygon IS NULL))),
     CONSTRAINT enforce_srid_geom_polygon CHECK ((public.st_srid(geom_polygon) = ANY (ARRAY[32628, 32629]))),
@@ -9097,6 +9223,16 @@ CREATE VIEW chief AS
 
 
 ALTER TABLE cadastre.chief OWNER TO postgres;
+
+--
+-- Name: chiefdom; Type: VIEW; Schema: cadastre; Owner: postgres
+--
+
+CREATE VIEW chiefdom AS
+    SELECT s.id, s.label, s.geom FROM spatial_unit_group s WHERE (s.hierarchy_level = 3);
+
+
+ALTER TABLE cadastre.chiefdom OWNER TO postgres;
 
 --
 -- Name: chiefdoms_type; Type: TABLE; Schema: cadastre; Owner: postgres; Tablespace: 
@@ -10287,6 +10423,16 @@ COMMENT ON VIEW survey_control IS 'View for retrieving survey control features f
 
 
 --
+-- Name: survey_plan_view; Type: VIEW; Schema: cadastre; Owner: postgres
+--
+
+CREATE VIEW survey_plan_view AS
+    SELECT sp.id, sp.type_code, sp.building_unit_type_code, sp.approval_datetime, sp.historic_datetime, sp.source_reference, sp.name_firstpart, sp.name_lastpart, sp.status_code, sp.geom_polygon, sp.transaction_id, sp.land_use_code, sp.rowidentifier, sp.rowversion, sp.change_action, sp.change_user, sp.change_time, sp.classification_code, sp.redact_code, sp.owner_name, sp.address, sp.land_type, sp.parcel_area, sp.licensed_surveyor_id, sp.east_neighbour, sp.west_neighbour, sp.south_neighbour, sp.north_neighbour, sp.survey_method, sp.survey_date, sp.beacon_number, sp.charting_officer_id, sp.state_land_clearing_officer_id, pco.id AS pco_id, pco.ext_id AS co_ext_id, pco.type_code AS co_type_code, pco.name AS co_name, pco.last_name AS co_last_name, pco.fathers_name AS co_fathers_name, pco.fathers_last_name AS co_fathers_last_name, pco.alias AS co_alias, pco.gender_code AS co_gender_code, pco.address_id AS co_address, pco.id_type_code AS co_id_type_code, pco.id_number AS co_id_number, pco.email AS co_email, pco.mobile AS co_mobile, pco.phone AS co_phone, pco.fax AS co_fax, pco.preferred_communication_code AS co_preferred_communication_code, pco.birth_date AS co_birth_date, pco.classification_code AS co_classification_code, pco.redact_code AS co_redact_code, pslco.id AS pslco_id, pslco.ext_id AS slco_ext_id, pslco.type_code AS slco_type_code, pslco.name AS slco_name, pslco.last_name AS slco_last_name, pslco.fathers_name AS slco_fathers_name, pslco.fathers_last_name AS slco_fathers_last_name, pslco.alias AS slco_alias, pslco.gender_code AS slco_gender_code, pslco.address_id AS slco_address, pslco.id_type_code AS slco_id_type_code, pslco.id_number AS slco_id_number, pslco.email AS slco_email, pslco.mobile AS slco_mobile, pslco.phone AS slco_phone, pslco.fax AS slco_fax, pslco.preferred_communication_code AS slco_preferred_communication_code, pslco.birth_date AS slco_birth_date, pslco.classification_code AS slco_classification_code, pslco.redact_code AS slco_redact_code FROM ((cadastre_object sp JOIN party.party pco ON (((sp.charting_officer_id)::text = (pco.ext_id)::text))) JOIN party.party pslco ON (((sp.state_land_clearing_officer_id)::text = (pslco.ext_id)::text))) ORDER BY sp.id;
+
+
+ALTER TABLE cadastre.survey_plan_view OWNER TO postgres;
+
+--
 -- Name: survey_point; Type: TABLE; Schema: cadastre; Owner: postgres; Tablespace: 
 --
 
@@ -10429,6 +10575,56 @@ CREATE TABLE survey_point_historic (
 
 
 ALTER TABLE cadastre.survey_point_historic OWNER TO postgres;
+
+--
+-- Name: surveying_method_type; Type: TABLE; Schema: cadastre; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE surveying_method_type (
+    code character varying(20) NOT NULL,
+    display_value character varying(500) NOT NULL,
+    description character varying(1000),
+    status character(1) DEFAULT 't'::bpchar NOT NULL
+);
+
+
+ALTER TABLE cadastre.surveying_method_type OWNER TO postgres;
+
+--
+-- Name: TABLE surveying_method_type; Type: COMMENT; Schema: cadastre; Owner: postgres
+--
+
+COMMENT ON TABLE surveying_method_type IS 'Code list of surveying_method. 
+Tags: Reference Table, LADM Reference Object';
+
+
+--
+-- Name: COLUMN surveying_method_type.code; Type: COMMENT; Schema: cadastre; Owner: postgres
+--
+
+COMMENT ON COLUMN surveying_method_type.code IS 'LADM Definition: The code for the Surveying Method.';
+
+
+--
+-- Name: COLUMN surveying_method_type.display_value; Type: COMMENT; Schema: cadastre; Owner: postgres
+--
+
+COMMENT ON COLUMN surveying_method_type.display_value IS 'LADM Definition: Displayed value of the Surveying Method.';
+
+
+--
+-- Name: COLUMN surveying_method_type.description; Type: COMMENT; Schema: cadastre; Owner: postgres
+--
+
+COMMENT ON COLUMN surveying_method_type.description IS 'LADM Definition: Description of the Surveying Method.';
+
+
+--
+-- Name: COLUMN surveying_method_type.status; Type: COMMENT; Schema: cadastre; Owner: postgres
+--
+
+COMMENT ON COLUMN surveying_method_type.status IS 'SOLA Extension: Status of the Surveying Method';
+
 
 --
 -- Name: utility_network_status_type; Type: TABLE; Schema: cadastre; Owner: postgres; Tablespace: 
@@ -14217,56 +14413,6 @@ COMMENT ON COLUMN query_field.display_value IS 'The title to display for the que
 
 
 --
--- Name: surveying_method_type; Type: TABLE; Schema: system; Owner: postgres; Tablespace: 
---
-
-CREATE TABLE surveying_method_type (
-    code character varying(20) NOT NULL,
-    display_value character varying(500) NOT NULL,
-    description character varying(1000),
-    status character(1) DEFAULT 't'::bpchar NOT NULL
-);
-
-
-ALTER TABLE system.surveying_method_type OWNER TO postgres;
-
---
--- Name: TABLE surveying_method_type; Type: COMMENT; Schema: system; Owner: postgres
---
-
-COMMENT ON TABLE surveying_method_type IS 'Code list of surveying_method. 
-Tags: Reference Table, LADM Reference Object';
-
-
---
--- Name: COLUMN surveying_method_type.code; Type: COMMENT; Schema: system; Owner: postgres
---
-
-COMMENT ON COLUMN surveying_method_type.code IS 'LADM Definition: The code for the Surveying Method.';
-
-
---
--- Name: COLUMN surveying_method_type.display_value; Type: COMMENT; Schema: system; Owner: postgres
---
-
-COMMENT ON COLUMN surveying_method_type.display_value IS 'LADM Definition: Displayed value of the Surveying Method.';
-
-
---
--- Name: COLUMN surveying_method_type.description; Type: COMMENT; Schema: system; Owner: postgres
---
-
-COMMENT ON COLUMN surveying_method_type.description IS 'LADM Definition: Description of the Surveying Method.';
-
-
---
--- Name: COLUMN surveying_method_type.status; Type: COMMENT; Schema: system; Owner: postgres
---
-
-COMMENT ON COLUMN surveying_method_type.status IS 'SOLA Extension: Status of the Surveying Method';
-
-
---
 -- Name: version; Type: TABLE; Schema: system; Owner: postgres; Tablespace: 
 --
 
@@ -15253,6 +15399,22 @@ ALTER TABLE ONLY survey_point
 
 
 --
+-- Name: surveying_method_display_value_unique; Type: CONSTRAINT; Schema: cadastre; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY surveying_method_type
+    ADD CONSTRAINT surveying_method_display_value_unique UNIQUE (display_value);
+
+
+--
+-- Name: surveying_method_pkey; Type: CONSTRAINT; Schema: cadastre; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY surveying_method_type
+    ADD CONSTRAINT surveying_method_pkey PRIMARY KEY (code);
+
+
+--
 -- Name: utility_network_status_type_display_value_unique; Type: CONSTRAINT; Schema: cadastre; Owner: postgres; Tablespace: 
 --
 
@@ -15946,22 +16108,6 @@ ALTER TABLE ONLY query
 
 ALTER TABLE ONLY setting
     ADD CONSTRAINT setting_pkey PRIMARY KEY (name);
-
-
---
--- Name: surveying_method_display_value_unique; Type: CONSTRAINT; Schema: system; Owner: postgres; Tablespace: 
---
-
-ALTER TABLE ONLY surveying_method_type
-    ADD CONSTRAINT surveying_method_display_value_unique UNIQUE (display_value);
-
-
---
--- Name: surveying_method_pkey; Type: CONSTRAINT; Schema: system; Owner: postgres; Tablespace: 
---
-
-ALTER TABLE ONLY surveying_method_type
-    ADD CONSTRAINT surveying_method_pkey PRIMARY KEY (code);
 
 
 --
@@ -19232,6 +19378,14 @@ ALTER TABLE ONLY cadastre_object
 
 
 --
+-- Name: cadastre_object_land_type_fk; Type: FK CONSTRAINT; Schema: cadastre; Owner: postgres
+--
+
+ALTER TABLE ONLY cadastre_object
+    ADD CONSTRAINT cadastre_object_land_type_fk FOREIGN KEY (land_type) REFERENCES land_type(code) ON UPDATE CASCADE;
+
+
+--
 -- Name: cadastre_object_node_target_transaction_id_fk102; Type: FK CONSTRAINT; Schema: cadastre; Owner: postgres
 --
 
@@ -19240,11 +19394,43 @@ ALTER TABLE ONLY cadastre_object_node_target
 
 
 --
+-- Name: cadastre_object_party_charting_officer_fk; Type: FK CONSTRAINT; Schema: cadastre; Owner: postgres
+--
+
+ALTER TABLE ONLY cadastre_object
+    ADD CONSTRAINT cadastre_object_party_charting_officer_fk FOREIGN KEY (charting_officer_id) REFERENCES party.party(id) ON UPDATE CASCADE;
+
+
+--
+-- Name: cadastre_object_party_state_land_officer_fk; Type: FK CONSTRAINT; Schema: cadastre; Owner: postgres
+--
+
+ALTER TABLE ONLY cadastre_object
+    ADD CONSTRAINT cadastre_object_party_state_land_officer_fk FOREIGN KEY (state_land_clearing_officer_id) REFERENCES party.party(id) ON UPDATE CASCADE;
+
+
+--
+-- Name: cadastre_object_party_surveyor_fk; Type: FK CONSTRAINT; Schema: cadastre; Owner: postgres
+--
+
+ALTER TABLE ONLY cadastre_object
+    ADD CONSTRAINT cadastre_object_party_surveyor_fk FOREIGN KEY (licensed_surveyor_id) REFERENCES party.party(id) ON UPDATE CASCADE;
+
+
+--
 -- Name: cadastre_object_status_code_fk63; Type: FK CONSTRAINT; Schema: cadastre; Owner: postgres
 --
 
 ALTER TABLE ONLY cadastre_object
     ADD CONSTRAINT cadastre_object_status_code_fk63 FOREIGN KEY (status_code) REFERENCES transaction.reg_status_type(code) ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+--
+-- Name: cadastre_object_surveying_method_fk; Type: FK CONSTRAINT; Schema: cadastre; Owner: postgres
+--
+
+ALTER TABLE ONLY cadastre_object
+    ADD CONSTRAINT cadastre_object_surveying_method_fk FOREIGN KEY (survey_method) REFERENCES surveying_method_type(code) ON UPDATE CASCADE;
 
 
 --
