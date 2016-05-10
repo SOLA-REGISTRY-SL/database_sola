@@ -1,5 +1,4 @@
-<<<<<<< HEAD
-﻿----------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------
 --Table: party.party_type
 ----------------------------------------------------------------------------------------------------------
 --DELETE FROM party.party_type WHERE code = 'certifiedSurveyor' OR code = 'charting_officer' OR code = 'stland_clr_officer';
@@ -9,16 +8,14 @@
 --INSERT INTO party.party_type (code, display_value, status, description) values('stland_clr_officer','State Land Clearing Officer','c','This is a Certified State Land Clearing Officer');
  
  --PREPARING THE party.id_type table
---DELETE FROM party.id_type WHERE code = 'NA';
---INSERT INTO party.id_type (code, description, display_value, status) values('NA', 'Not Available at the moment of Inserting this record', 'Not Available', 'c');
+DELETE FROM party.id_type WHERE code = 'NA';
+INSERT INTO party.id_type (code, description, display_value, status) values('NA', 'Not Available at the moment of Inserting this record', 'Not Available', 'c');
 
-=======
-﻿DELETE FROM party.party_role_type WHERE code = 'certifiedSurveyor' OR code = 'charting_officer' OR code = 'stland_clr_officer';
+DELETE FROM party.party_role_type WHERE code = 'certifiedSurveyor' OR code = 'charting_officer' OR code = 'stland_clr_officer';
 
 INSERT INTO party.party_role_type (code, display_value, status, description) values('certifiedSurveyor','License Surveyor','c','A Certified License Surveyor of doing surveying of lands');
 INSERT INTO party.party_role_type (code, display_value, status, description) values('charting_officer','Charting Officer','c','A Certified Charting Officer');
 INSERT INTO party.party_role_type (code, display_value, status, description) values('stland_clr_officer','State Land Clearing Officer','c','This is a Certified State Land Clearing Officer');
->>>>>>> 9c885803687c189a2d97556f8691714a4ff59928
 
 ----------------------------------------------------------------------------------------------------------
 --INSERTING LICENSED SUVEYOR
