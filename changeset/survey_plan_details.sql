@@ -12,12 +12,14 @@ ALTER TABLE cadastre.cadastre_object ADD COLUMN survey_date date;
 ALTER TABLE cadastre.cadastre_object ADD COLUMN beacon_number character varying(30);
 ALTER TABLE cadastre.cadastre_object ADD COLUMN charting_officer_id character varying(20);
 ALTER TABLE cadastre.cadastre_object ADD COLUMN state_land_clearing_officer_id character varying(20);
+ALTER TABLE cadastre.cadastre_object ADD COLUMN chiefdom_type character varying(20);
       
-ALTER TABLE cadastre.cadastre_object ADD CONSTRAINT cadastre_object_land_type_fk FOREIGN KEY (land_type) REFERENCES cadastre.land_type (code) ON UPDATE CASCADE ON DELETE NO ACTION;
-ALTER TABLE cadastre.cadastre_object ADD CONSTRAINT cadastre_object_party_surveyor_fk FOREIGN KEY (licensed_surveyor_id) REFERENCES party.party (id) ON UPDATE CASCADE ON DELETE NO ACTION;
-ALTER TABLE cadastre.cadastre_object ADD CONSTRAINT cadastre_object_party_charting_officer_fk FOREIGN KEY (charting_officer_id) REFERENCES party.party (id) ON UPDATE CASCADE ON DELETE NO ACTION;
-ALTER TABLE cadastre.cadastre_object ADD CONSTRAINT cadastre_object_party_state_land_officer_fk FOREIGN KEY (state_land_clearing_officer_id) REFERENCES party.party (id) ON UPDATE CASCADE ON DELETE NO ACTION;
-ALTER TABLE cadastre.cadastre_object ADD CONSTRAINT cadastre_object_surveying_method_fk FOREIGN KEY (survey_method) REFERENCES cadastre.surveying_method_type (code) ON UPDATE CASCADE ON DELETE NO ACTION;
+ALTER TABLE cadastre.cadastre_object ADD CONSTRAINT cadastre_object_land_type_fk FOREIGN KEY (land_type) REFERENCES cadastre.land_type (code) ON UPDATE CASCADE ON DELETE RESTRICT;
+ALTER TABLE cadastre.cadastre_object ADD CONSTRAINT cadastre_object_party_surveyor_fk FOREIGN KEY (licensed_surveyor_id) REFERENCES party.party (id) ON UPDATE CASCADE ON DELETE RESTRICT;
+ALTER TABLE cadastre.cadastre_object ADD CONSTRAINT cadastre_object_party_charting_officer_fk FOREIGN KEY (charting_officer_id) REFERENCES party.party (id) ON UPDATE CASCADE ON DELETE RESTRICT;
+ALTER TABLE cadastre.cadastre_object ADD CONSTRAINT cadastre_object_party_state_land_officer_fk FOREIGN KEY (state_land_clearing_officer_id) REFERENCES party.party (id) ON UPDATE CASCADE ON DELETE RESTRICT;
+ALTER TABLE cadastre.cadastre_object ADD CONSTRAINT cadastre_object_surveying_method_fk FOREIGN KEY (survey_method) REFERENCES cadastre.surveying_method_type (code) ON UPDATE CASCADE ON DELETE RESTRICT;
+ALTER TABLE cadastre.cadastre_object ADD FOREIGN KEY (chiefdom_type) REFERENCES cadastre.chiefdoms_type (code) ON UPDATE CASCADE ON DELETE RESTRICT;
 
 COMMENT ON COLUMN cadastre.cadastre_object.owner_name IS 'The name of the Property Owner/Applicant';
 COMMENT ON COLUMN cadastre.cadastre_object.address IS 'Parcel address';
@@ -33,6 +35,7 @@ COMMENT ON COLUMN cadastre.cadastre_object.survey_date IS 'Surveying date';
 COMMENT ON COLUMN cadastre.cadastre_object.beacon_number IS 'Beacon number';
 COMMENT ON COLUMN cadastre.cadastre_object.charting_officer_id IS 'Charting officer id';
 COMMENT ON COLUMN cadastre.cadastre_object.state_land_clearing_officer_id IS 'State land clearing officer id';
+COMMENT ON COLUMN cadastre.cadastre_object.chiefdom_type IS 'Chiefdom type code.';
 
 ALTER TABLE cadastre.cadastre_object_historic ADD COLUMN owner_name character varying(2000);
 ALTER TABLE cadastre.cadastre_object_historic ADD COLUMN address character varying(1000);
@@ -48,3 +51,4 @@ ALTER TABLE cadastre.cadastre_object_historic ADD COLUMN survey_date date;
 ALTER TABLE cadastre.cadastre_object_historic ADD COLUMN beacon_number character varying(30);
 ALTER TABLE cadastre.cadastre_object_historic ADD COLUMN charting_officer_id character varying(20);
 ALTER TABLE cadastre.cadastre_object_historic ADD COLUMN state_land_clearing_officer_id character varying(20);
+ALTER TABLE cadastre.cadastre_object_historic ADD COLUMN chiefdom_type character varying(20);
