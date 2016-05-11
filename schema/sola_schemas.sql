@@ -6493,6 +6493,7 @@ CREATE TABLE cadastre_object (
     beacon_number character varying(30),
     charting_officer_id character varying(20),
     state_land_clearing_officer_id character varying(20),
+    chiefdom_type character varying(20),
     CONSTRAINT enforce_dims_geom_polygon CHECK ((public.st_ndims(geom_polygon) = 2)),
     CONSTRAINT enforce_geotype_geom_polygon CHECK (((public.geometrytype(geom_polygon) = 'POLYGON'::text) OR (geom_polygon IS NULL))),
     CONSTRAINT enforce_srid_geom_polygon CHECK ((public.st_srid(geom_polygon) = ANY (ARRAY[32628, 32629]))),
@@ -6739,6 +6740,13 @@ COMMENT ON COLUMN cadastre_object.charting_officer_id IS 'Charting officer id';
 --
 
 COMMENT ON COLUMN cadastre_object.state_land_clearing_officer_id IS 'State land clearing officer id';
+
+
+--
+-- Name: COLUMN cadastre_object.chiefdom_type; Type: COMMENT; Schema: cadastre; Owner: postgres
+--
+
+COMMENT ON COLUMN cadastre_object.chiefdom_type IS 'Chiefdom type code.';
 
 
 --
@@ -8799,6 +8807,7 @@ CREATE TABLE cadastre_object_historic (
     beacon_number character varying(30),
     charting_officer_id character varying(20),
     state_land_clearing_officer_id character varying(20),
+    chiefdom_type character varying(20),
     CONSTRAINT enforce_dims_geom_polygon CHECK ((public.st_ndims(geom_polygon) = 2)),
     CONSTRAINT enforce_geotype_geom_polygon CHECK (((public.geometrytype(geom_polygon) = 'POLYGON'::text) OR (geom_polygon IS NULL))),
     CONSTRAINT enforce_srid_geom_polygon CHECK ((public.st_srid(geom_polygon) = ANY (ARRAY[32628, 32629]))),
@@ -19370,6 +19379,14 @@ ALTER TABLE ONLY cadastre_object
 
 
 --
+-- Name: cadastre_object_chiefdom_type_fkey; Type: FK CONSTRAINT; Schema: cadastre; Owner: postgres
+--
+
+ALTER TABLE ONLY cadastre_object
+    ADD CONSTRAINT cadastre_object_chiefdom_type_fkey FOREIGN KEY (chiefdom_type) REFERENCES chiefdoms_type(code) ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+--
 -- Name: cadastre_object_id_fk61; Type: FK CONSTRAINT; Schema: cadastre; Owner: postgres
 --
 
@@ -19382,7 +19399,7 @@ ALTER TABLE ONLY cadastre_object
 --
 
 ALTER TABLE ONLY cadastre_object
-    ADD CONSTRAINT cadastre_object_land_type_fk FOREIGN KEY (land_type) REFERENCES land_type(code) ON UPDATE CASCADE;
+    ADD CONSTRAINT cadastre_object_land_type_fk FOREIGN KEY (land_type) REFERENCES land_type(code) ON UPDATE CASCADE ON DELETE RESTRICT;
 
 
 --
@@ -19398,7 +19415,7 @@ ALTER TABLE ONLY cadastre_object_node_target
 --
 
 ALTER TABLE ONLY cadastre_object
-    ADD CONSTRAINT cadastre_object_party_charting_officer_fk FOREIGN KEY (charting_officer_id) REFERENCES party.party(id) ON UPDATE CASCADE;
+    ADD CONSTRAINT cadastre_object_party_charting_officer_fk FOREIGN KEY (charting_officer_id) REFERENCES party.party(id) ON UPDATE CASCADE ON DELETE RESTRICT;
 
 
 --
@@ -19406,7 +19423,7 @@ ALTER TABLE ONLY cadastre_object
 --
 
 ALTER TABLE ONLY cadastre_object
-    ADD CONSTRAINT cadastre_object_party_state_land_officer_fk FOREIGN KEY (state_land_clearing_officer_id) REFERENCES party.party(id) ON UPDATE CASCADE;
+    ADD CONSTRAINT cadastre_object_party_state_land_officer_fk FOREIGN KEY (state_land_clearing_officer_id) REFERENCES party.party(id) ON UPDATE CASCADE ON DELETE RESTRICT;
 
 
 --
@@ -19414,7 +19431,7 @@ ALTER TABLE ONLY cadastre_object
 --
 
 ALTER TABLE ONLY cadastre_object
-    ADD CONSTRAINT cadastre_object_party_surveyor_fk FOREIGN KEY (licensed_surveyor_id) REFERENCES party.party(id) ON UPDATE CASCADE;
+    ADD CONSTRAINT cadastre_object_party_surveyor_fk FOREIGN KEY (licensed_surveyor_id) REFERENCES party.party(id) ON UPDATE CASCADE ON DELETE RESTRICT;
 
 
 --
@@ -19430,7 +19447,7 @@ ALTER TABLE ONLY cadastre_object
 --
 
 ALTER TABLE ONLY cadastre_object
-    ADD CONSTRAINT cadastre_object_surveying_method_fk FOREIGN KEY (survey_method) REFERENCES surveying_method_type(code) ON UPDATE CASCADE;
+    ADD CONSTRAINT cadastre_object_surveying_method_fk FOREIGN KEY (survey_method) REFERENCES surveying_method_type(code) ON UPDATE CASCADE ON DELETE RESTRICT;
 
 
 --
