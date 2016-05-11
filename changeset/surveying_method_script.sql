@@ -25,5 +25,9 @@ COMMENT ON COLUMN cadastre.surveying_method_type.display_value IS 'LADM Definiti
 COMMENT ON COLUMN cadastre.surveying_method_type.description IS 'LADM Definition: Description of the Surveying Method.';
 COMMENT ON COLUMN cadastre.surveying_method_type.status IS 'SOLA Extension: Status of the Surveying Method';
 
---DELETE FROM system.surveying_method_type;
---INSERT INTO system.surveying_method_type (code, display_value, description, status) values('','','','');
+DELETE FROM system.surveying_method_type;
+INSERT INTO system.surveying_method_type (code, display_value, description, status) values('theodolite_SBS','Theodolite and Steel Band Survey','A survey that uses theodolite and steel bank','c');
+INSERT INTO system.surveying_method_type (code, display_value, description, status) values('gps_observation_ABP','GPS Observation at Boundary Points','A survey that is done using gps equipments','c');
+INSERT INTO system.surveying_method_type (code, display_value, description, status) values('theodolite_SBS_GPS','Theodolite and Steel Band Survey on GPS Observation at Boundary Points','A survey that uses the combination of theodolite and steel band with the inclusion of a GPS equipment.','c');
+INSERT INTO system.surveying_method_type (code, display_value, description, status) values('tape_rule','Tape Rule','A survey that uses a tape rull to measure distance','c');
+INSERT INTO system.surveying_method_type (code, display_value, description, status) values('laser','Laser','A survey that uses a laser device to measure distance.','c');
