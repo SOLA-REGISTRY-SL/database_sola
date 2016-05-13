@@ -8,8 +8,10 @@
 --INSERT INTO party.party_type (code, display_value, status, description) values('stland_clr_officer','State Land Clearing Officer','c','This is a Certified State Land Clearing Officer');
  
  --PREPARING THE party.id_type table
-DELETE FROM party.id_type WHERE code = 'NA';
-INSERT INTO party.id_type (code, description, display_value, status) values('NA', 'Not Available at the moment of Inserting this record', 'Not Available', 'c');
+--DELETE FROM party.id_type WHERE code = 'NA';
+--INSERT INTO party.id_type (code, description, display_value, status) values('NA', 'Not Available at the moment of Inserting this record', 'Not Available', 'c');
+
+INSERT INTO party.id_type (code, description, display_value, status) SELECT 'NA', 'Not Available at the moment of Inserting this record', 'Not Available', 'c'   where not exists (SELECT code FROM party.id_type WHERE code = 'NA');
 
 DELETE FROM party.party_role_type WHERE code = 'certifiedSurveyor' OR code = 'charting_officer' OR code = 'stland_clr_officer';
 
