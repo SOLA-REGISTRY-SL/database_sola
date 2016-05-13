@@ -1,7 +1,7 @@
 ﻿-- Table: system.surveying_method
 -- Script designed by Moses and Momodu for REGISTRY-SL
 
-DROP TABLE IF EXISTS system.surveying_method_type;
+DROP TABLE IF EXISTS cadastre.surveying_method_type;
 
 CREATE TABLE cadastre.surveying_method_type
 (
@@ -25,7 +25,10 @@ COMMENT ON COLUMN cadastre.surveying_method_type.display_value IS 'LADM Definiti
 COMMENT ON COLUMN cadastre.surveying_method_type.description IS 'LADM Definition: Description of the Surveying Method.';
 COMMENT ON COLUMN cadastre.surveying_method_type.status IS 'SOLA Extension: Status of the Surveying Method';
 
---DELETE FROM system.surveying_method_type;
-INSERT INTO cadastre.surveying_method_type (code, display_value, description, status) values('theodolite','Theodolite and Steel band survey','','c');
-INSERT INTO cadastre.surveying_method_type (code, display_value, description, status) values('gps','GPS Observation at Boundary points','','c');
-INSERT INTO cadastre.surveying_method_type (code, display_value, description, status) values('theodolite_gps','Theodolite and Steel band survey based on GPS Observation at Boundary points','','c');
+DELETE FROM cadastre.surveying_method_type;
+INSERT INTO cadastre.surveying_method_type (code, display_value, description, status) values('theodolite_SBS','Theodolite and Steel Band Survey','A survey that uses theodolite and steel bank','c');
+INSERT INTO cadastre.surveying_method_type (code, display_value, description, status) values('gps_observation_ABP','GPS Observation at Boundary Points','A survey that is done using gps equipments','c');
+INSERT INTO cadastre.surveying_method_type (code, display_value, description, status) values('theodolite_SBS_GPS','Theodolite and Steel Band Survey on GPS Observation at Boundary Points','A survey that uses the combination of theodolite and steel band with the inclusion of a GPS equipment.','c');
+INSERT INTO cadastre.surveying_method_type (code, display_value, description, status) values('tape_rule','Tape Rule','A survey that uses a tape rull to measure distance','c');
+INSERT INTO cadastre.surveying_method_type (code, display_value, description, status) values('laser','Laser','A survey that uses a laser device to measure distance.','c');
+

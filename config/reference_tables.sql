@@ -634,9 +634,11 @@ ALTER TABLE surface_relation_type ENABLE TRIGGER ALL;
 
 ALTER TABLE surveying_method_type DISABLE TRIGGER ALL;
 
-INSERT INTO surveying_method_type (code, display_value, description, status) VALUES ('theodolite', 'Theodolite and Steel band survey', '', 'c');
-INSERT INTO surveying_method_type (code, display_value, description, status) VALUES ('gps', 'GPS Observation at Boundary points', '', 'c');
-INSERT INTO surveying_method_type (code, display_value, description, status) VALUES ('theodolite_gps', 'Theodolite and Steel band survey based on GPS Observation at Boundary points', '', 'c');
+INSERT INTO surveying_method_type (code, display_value, description, status) VALUES ('theodolite_SBS', 'Theodolite and Steel Band Survey', 'A survey that uses theodolite and steel bank', 'c');
+INSERT INTO surveying_method_type (code, display_value, description, status) VALUES ('gps_observation_ABP', 'GPS Observation at Boundary Points', 'A survey that is done using gps equipments', 'c');
+INSERT INTO surveying_method_type (code, display_value, description, status) VALUES ('theodolite_SBS_GPS', 'Theodolite and Steel Band Survey on GPS Observation at Boundary Points', 'A survey that uses the combination of theodolite and steel band with the inclusion of a GPS equipment.', 'c');
+INSERT INTO surveying_method_type (code, display_value, description, status) VALUES ('tape_rule', 'Tape Rule', 'A survey that uses a tape rull to measure distance', 'c');
+INSERT INTO surveying_method_type (code, display_value, description, status) VALUES ('laser', 'Laser', 'A survey that uses a laser device to measure distance.', 'c');
 
 
 ALTER TABLE surveying_method_type ENABLE TRIGGER ALL;
