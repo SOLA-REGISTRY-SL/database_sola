@@ -26,4 +26,6 @@ COMMENT ON COLUMN cadastre.surveying_method_type.description IS 'LADM Definition
 COMMENT ON COLUMN cadastre.surveying_method_type.status IS 'SOLA Extension: Status of the Surveying Method';
 
 --DELETE FROM system.surveying_method_type;
---INSERT INTO system.surveying_method_type (code, display_value, description, status) values('','','','');
+INSERT INTO cadastre.surveying_method_type (code, display_value, description, status) values('theodolite','Theodolite and Steel band survey','','c');
+INSERT INTO cadastre.surveying_method_type (code, display_value, description, status) values('gps','GPS Observation at Boundary points','','c');
+INSERT INTO cadastre.surveying_method_type (code, display_value, description, status) values('theodolite_gps','Theodolite and Steel band survey based on GPS Observation at Boundary points','','c');

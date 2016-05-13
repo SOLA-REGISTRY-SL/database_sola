@@ -2,7 +2,7 @@
 ALTER TABLE cadastre.cadastre_object ADD COLUMN address character varying(1000);
 ALTER TABLE cadastre.cadastre_object ADD COLUMN land_type character varying(20);
 ALTER TABLE cadastre.cadastre_object ADD COLUMN parcel_area double precision;
-ALTER TABLE cadastre.cadastre_object ADD COLUMN licensed_surveyor_id character varying(20);
+ALTER TABLE cadastre.cadastre_object ADD COLUMN licensed_surveyor_id character varying(40);
 ALTER TABLE cadastre.cadastre_object ADD COLUMN east_neighbour character varying(500);
 ALTER TABLE cadastre.cadastre_object ADD COLUMN west_neighbour character varying(500);
 ALTER TABLE cadastre.cadastre_object ADD COLUMN south_neighbour character varying(500);
@@ -10,8 +10,8 @@ ALTER TABLE cadastre.cadastre_object ADD COLUMN north_neighbour character varyin
 ALTER TABLE cadastre.cadastre_object ADD COLUMN survey_method character varying(20);
 ALTER TABLE cadastre.cadastre_object ADD COLUMN survey_date date;
 ALTER TABLE cadastre.cadastre_object ADD COLUMN beacon_number character varying(30);
-ALTER TABLE cadastre.cadastre_object ADD COLUMN charting_officer_id character varying(20);
-ALTER TABLE cadastre.cadastre_object ADD COLUMN state_land_clearing_officer_id character varying(20);
+ALTER TABLE cadastre.cadastre_object ADD COLUMN charting_officer_id character varying(40);
+ALTER TABLE cadastre.cadastre_object ADD COLUMN state_land_clearing_officer_id character varying(40);
 ALTER TABLE cadastre.cadastre_object ADD COLUMN chiefdom_type character varying(20);
       
 ALTER TABLE cadastre.cadastre_object ADD CONSTRAINT cadastre_object_land_type_fk FOREIGN KEY (land_type) REFERENCES cadastre.land_type (code) ON UPDATE CASCADE ON DELETE RESTRICT;
@@ -41,7 +41,7 @@ ALTER TABLE cadastre.cadastre_object_historic ADD COLUMN owner_name character va
 ALTER TABLE cadastre.cadastre_object_historic ADD COLUMN address character varying(1000);
 ALTER TABLE cadastre.cadastre_object_historic ADD COLUMN land_type character varying(20);
 ALTER TABLE cadastre.cadastre_object_historic ADD COLUMN parcel_area double precision;
-ALTER TABLE cadastre.cadastre_object_historic ADD COLUMN licensed_surveyor_id character varying(20);
+ALTER TABLE cadastre.cadastre_object_historic ADD COLUMN licensed_surveyor_id character varying(40);
 ALTER TABLE cadastre.cadastre_object_historic ADD COLUMN east_neighbour character varying(500);
 ALTER TABLE cadastre.cadastre_object_historic ADD COLUMN west_neighbour character varying(500);
 ALTER TABLE cadastre.cadastre_object_historic ADD COLUMN south_neighbour character varying(500);
@@ -49,6 +49,6 @@ ALTER TABLE cadastre.cadastre_object_historic ADD COLUMN north_neighbour charact
 ALTER TABLE cadastre.cadastre_object_historic ADD COLUMN survey_method character varying(20);
 ALTER TABLE cadastre.cadastre_object_historic ADD COLUMN survey_date date;
 ALTER TABLE cadastre.cadastre_object_historic ADD COLUMN beacon_number character varying(30);
-ALTER TABLE cadastre.cadastre_object_historic ADD COLUMN charting_officer_id character varying(20);
-ALTER TABLE cadastre.cadastre_object_historic ADD COLUMN state_land_clearing_officer_id character varying(20);
+ALTER TABLE cadastre.cadastre_object_historic ADD COLUMN charting_officer_id character varying(40);
+ALTER TABLE cadastre.cadastre_object_historic ADD COLUMN state_land_clearing_officer_id character varying(40);
 ALTER TABLE cadastre.cadastre_object_historic ADD COLUMN chiefdom_type character varying(20);

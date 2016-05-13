@@ -634,6 +634,9 @@ ALTER TABLE surface_relation_type ENABLE TRIGGER ALL;
 
 ALTER TABLE surveying_method_type DISABLE TRIGGER ALL;
 
+INSERT INTO surveying_method_type (code, display_value, description, status) VALUES ('theodolite', 'Theodolite and Steel band survey', '', 'c');
+INSERT INTO surveying_method_type (code, display_value, description, status) VALUES ('gps', 'GPS Observation at Boundary points', '', 'c');
+INSERT INTO surveying_method_type (code, display_value, description, status) VALUES ('theodolite_gps', 'Theodolite and Steel band survey based on GPS Observation at Boundary points', '', 'c');
 
 
 ALTER TABLE surveying_method_type ENABLE TRIGGER ALL;
@@ -721,6 +724,7 @@ ALTER TABLE id_type DISABLE TRIGGER ALL;
 INSERT INTO id_type (code, display_value, status, description) VALUES ('nationalPassport', 'National Passport::::Паспорт::::جواز السفر الوطني::::Passeport National::::Pasaporte Nacional::::Passaporte Nacional::::国民护照', 'c', 'A passport issued by the country::::Паспорт, выданный в стране::::جواز السفر الصادر من بلد المواطن::::Un passeport délivré par le pays::::Un pasaporte publicado por el pa�s::::Passaporte emitido pelo país::::本国签发的护照');
 INSERT INTO id_type (code, display_value, status, description) VALUES ('otherPassport', 'Other Passport::::Другой паспорт::::جواز سفر آخر::::Autre passeport::::Otro pasaporte::::Outro Passaporte::::其他护照', 'c', 'A passport issued by another country::::Паспорт выданный другой страной::::جواز سفر صادر من بلد آخر::::Un passeport délivré par un autre pays::::Un pasaporte publicado por otro pa�::::Passaporte emitido por outro país::::他国签发的护照');
 INSERT INTO id_type (code, display_value, status, description) VALUES ('nationalID', 'National ID::::Внутренний ID::::بطاقة التعريف::::Carte Nationale d''Identité::::Identificaci�n Nacional::::Identidade Nacional::::国民身份', 'c', 'The main person ID that exists in the country::::Внутренняя ID карта гражданина внутри страны::::رقم البطاقة الشخصية::::Le document principal d''identité existant dans le pays::::La identificaci�n principal de la persona que existe en el pa�s::::Principal identificação pessoal que existe no país::::本国主要人员的身份');
+INSERT INTO id_type (code, display_value, status, description) VALUES ('NA', 'Not Available', 'c', 'Not Available at the moment of Inserting this record');
 
 
 ALTER TABLE id_type ENABLE TRIGGER ALL;
@@ -739,7 +743,6 @@ INSERT INTO party_role_type (code, display_value, status, description) VALUES ('
 INSERT INTO party_role_type (code, display_value, status, description) VALUES ('inheritor', 'Inheritor::::::::الوريث::::::::::::::::继承人', 'c', NULL);
 INSERT INTO party_role_type (code, display_value, status, description) VALUES ('landOfficer', 'Land Officer::::Землеустроитель::::موظف دائرة الاراضي::::Officier d''Etat / du Cadastre::::::::Cartório de Registros de Terras::::土地官员', 'c', 'Extension to LADM::::Расширение LADM::::ميزة إضافية للنظام::::Extension au LADM::::::::Extensão para LADM::::扩展为 LADM');
 INSERT INTO party_role_type (code, display_value, status, description) VALUES ('conveyor', 'Conveyor::::Перевозчик::::الموصل::::Convoyeur::::::::Transportadora::::传送带', 'x', '...::::::::...::::...::::::::...::::...');
-INSERT INTO party_role_type (code, display_value, status, description) VALUES ('certifiedSurveyor', 'Licenced Surveyor::::Лицензированный Геодезист::::مساح مرخص::::Géomètre Expert / Arpenteur licencié::::::::Agrimensor Licenciado::::具有资质的测量员', 'c', '...::::::::...::::...::::::::...::::...');
 INSERT INTO party_role_type (code, display_value, status, description) VALUES ('lodgingAgent', 'Lodging Agent::::Агент по подачи заявлений::::وكيل تسجيل::::Agent des Dépôts::::::::Agente da Hospedagem::::房产中介', 'c', 'Extension to LADM::::Расширение LADM::::ميزة إضافية للنظام::::Extension au LADM::::::::Extensão para LADM::::扩展为 LADM');
 INSERT INTO party_role_type (code, display_value, status, description) VALUES ('notifiablePerson', 'Notifiable Person::::::::الشخص الذي تم إشعاره::::::::::::::::申报人', 'c', NULL);
 INSERT INTO party_role_type (code, display_value, status, description) VALUES ('partner', 'Partner::::::::الشريك::::::::::::::::合作伙伴', 'c', NULL);
@@ -752,6 +755,9 @@ INSERT INTO party_role_type (code, display_value, status, description) VALUES ('
 INSERT INTO party_role_type (code, display_value, status, description) VALUES ('transferee', 'Transferee (to)::::Получатель::::منقول له::::Cessionnaire (à)::::::::Cessionário(para)::::…受让人', 'c', 'Extension to LADM::::Расширение LADM::::ميزة إضافية للنظام::::Extension au LADM::::::::Extensão para LADM::::扩展为 LADM');
 INSERT INTO party_role_type (code, display_value, status, description) VALUES ('transferor', 'Transferor (from)::::Цедент::::منقول منه::::Cédant (de)::::::::Transferido (de)::::转让人', 'c', 'Extension to LADM::::Расширение LADM::::ميزة إضافية للنظام::::Extension au LADM::::::::Extensão para LADM::::扩展为 LADM');
 INSERT INTO party_role_type (code, display_value, status, description) VALUES ('writer', 'Writer::::Оформитель документов::::كاتب::::Auteur::::::::Escritor::::作家', 'x', '...::::::::...::::...::::::::...::::...');
+INSERT INTO party_role_type (code, display_value, status, description) VALUES ('certifiedSurveyor', 'License Surveyor', 'c', 'A Certified License Surveyor of doing surveying of lands');
+INSERT INTO party_role_type (code, display_value, status, description) VALUES ('charting_officer', 'Charting Officer', 'c', 'A Certified Charting Officer');
+INSERT INTO party_role_type (code, display_value, status, description) VALUES ('stland_clr_officer', 'State Land Clearing Officer', 'c', 'This is a Certified State Land Clearing Officer');
 
 
 ALTER TABLE party_role_type ENABLE TRIGGER ALL;
