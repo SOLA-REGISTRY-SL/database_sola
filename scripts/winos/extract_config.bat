@@ -63,6 +63,7 @@ echo ### Dumping reference tables... >> %EXTRACT_LOG% 2>&1
 	-t source.availability_status_type -t source.presentation_form_type ^
 	-t source.spatial_source_type -t system.approle ^
 	-t system.br_severity_type -t system.br_technical_type ^
+	-t system.cordinate_system_type ^
 	-t system.br_validation_target_type -t system.language ^
 	-t transaction.reg_status_type -t transaction.transaction_status_type ^
 	-f "%config_path%reference_tables.sql" %db_name% >> %EXTRACT_LOG% 2>&1
