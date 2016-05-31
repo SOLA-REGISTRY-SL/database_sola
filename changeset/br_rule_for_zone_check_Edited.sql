@@ -12,7 +12,7 @@ INSERT INTO system.br(
 
 INSERT INTO system.br_definition(
             br_id, active_from, active_until, body)
-    VALUES ('new-parcel-out_of_zone', '2016-01-01', 'infinity', 'SELECT x = st_x(st_transform(st_centroid(geom), 32628)) as v1;  srid_found = (select srid from system.crs where x >= from_long and x < to_long );');
+    VALUES ('new-parcel-out_of_zone', '2016-01-01', 'infinity', 'SELECT x = st_x(st_transform(st_centroid(geom), 32628)) as v1 from system.crs where x >= 32628 and x<=32629');
 
 INSERT INTO system.br_validation(
             id, br_id, target_code, target_application_moment, target_service_moment, 
