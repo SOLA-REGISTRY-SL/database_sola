@@ -6467,7 +6467,7 @@ CREATE TABLE cadastre_object (
     historic_datetime timestamp without time zone,
     source_reference character varying(100),
     name_firstpart character varying(20) NOT NULL,
-    name_lastpart character varying(50) NOT NULL,
+    name_lastpart character varying(50),
     status_code character varying(20) DEFAULT 'pending'::character varying NOT NULL,
     geom_polygon public.geometry,
     transaction_id character varying(40) NOT NULL,
@@ -6494,6 +6494,15 @@ CREATE TABLE cadastre_object (
     charting_officer_id character varying(40),
     state_land_clearing_officer_id character varying(40),
     chiefdom_type character varying(20),
+    survey_type_code character varying(20),
+    ref_name_firstpart character varying(20),
+    ref_name_lastpart character varying(50),
+    survey_number character varying(50),
+    correspondence_file character varying(50),
+    computation_file character varying(50),
+    drawn_by character varying(250),
+    checked_by character varying(250),
+    checking_date date,
     CONSTRAINT enforce_dims_geom_polygon CHECK ((public.st_ndims(geom_polygon) = 2)),
     CONSTRAINT enforce_geotype_geom_polygon CHECK (((public.geometrytype(geom_polygon) = 'POLYGON'::text) OR (geom_polygon IS NULL))),
     CONSTRAINT enforce_srid_geom_polygon CHECK ((public.st_srid(geom_polygon) = ANY (ARRAY[32628, 32629]))),
@@ -6747,6 +6756,69 @@ COMMENT ON COLUMN cadastre_object.state_land_clearing_officer_id IS 'State land 
 --
 
 COMMENT ON COLUMN cadastre_object.chiefdom_type IS 'Chiefdom type code.';
+
+
+--
+-- Name: COLUMN cadastre_object.survey_type_code; Type: COMMENT; Schema: cadastre; Owner: postgres
+--
+
+COMMENT ON COLUMN cadastre_object.survey_type_code IS 'Survey type code';
+
+
+--
+-- Name: COLUMN cadastre_object.ref_name_firstpart; Type: COMMENT; Schema: cadastre; Owner: postgres
+--
+
+COMMENT ON COLUMN cadastre_object.ref_name_firstpart IS 'Referenced name first part';
+
+
+--
+-- Name: COLUMN cadastre_object.ref_name_lastpart; Type: COMMENT; Schema: cadastre; Owner: postgres
+--
+
+COMMENT ON COLUMN cadastre_object.ref_name_lastpart IS 'Referenced name last part';
+
+
+--
+-- Name: COLUMN cadastre_object.survey_number; Type: COMMENT; Schema: cadastre; Owner: postgres
+--
+
+COMMENT ON COLUMN cadastre_object.survey_number IS 'Survey number';
+
+
+--
+-- Name: COLUMN cadastre_object.correspondence_file; Type: COMMENT; Schema: cadastre; Owner: postgres
+--
+
+COMMENT ON COLUMN cadastre_object.correspondence_file IS 'Correspondence file name';
+
+
+--
+-- Name: COLUMN cadastre_object.computation_file; Type: COMMENT; Schema: cadastre; Owner: postgres
+--
+
+COMMENT ON COLUMN cadastre_object.computation_file IS 'Computation file name';
+
+
+--
+-- Name: COLUMN cadastre_object.drawn_by; Type: COMMENT; Schema: cadastre; Owner: postgres
+--
+
+COMMENT ON COLUMN cadastre_object.drawn_by IS 'Drawing officer name';
+
+
+--
+-- Name: COLUMN cadastre_object.checked_by; Type: COMMENT; Schema: cadastre; Owner: postgres
+--
+
+COMMENT ON COLUMN cadastre_object.checked_by IS 'Checking officer name';
+
+
+--
+-- Name: COLUMN cadastre_object.checking_date; Type: COMMENT; Schema: cadastre; Owner: postgres
+--
+
+COMMENT ON COLUMN cadastre_object.checking_date IS 'Checking date';
 
 
 --
@@ -8808,6 +8880,15 @@ CREATE TABLE cadastre_object_historic (
     charting_officer_id character varying(40),
     state_land_clearing_officer_id character varying(40),
     chiefdom_type character varying(20),
+    survey_type_code character varying(20),
+    ref_name_firstpart character varying(20),
+    ref_name_lastpart character varying(50),
+    survey_number character varying(50),
+    correspondence_file character varying(50),
+    computation_file character varying(50),
+    drawn_by character varying(250),
+    checked_by character varying(250),
+    checking_date date,
     CONSTRAINT enforce_dims_geom_polygon CHECK ((public.st_ndims(geom_polygon) = 2)),
     CONSTRAINT enforce_geotype_geom_polygon CHECK (((public.geometrytype(geom_polygon) = 'POLYGON'::text) OR (geom_polygon IS NULL))),
     CONSTRAINT enforce_srid_geom_polygon CHECK ((public.st_srid(geom_polygon) = ANY (ARRAY[32628, 32629]))),
@@ -10436,7 +10517,7 @@ COMMENT ON VIEW survey_control IS 'View for retrieving survey control features f
 --
 
 CREATE VIEW survey_plan_view AS
-    SELECT sp.id, sp.type_code, sp.building_unit_type_code, sp.approval_datetime, sp.historic_datetime, sp.source_reference, sp.name_firstpart, sp.name_lastpart, sp.status_code, sp.geom_polygon, sp.transaction_id, sp.land_use_code, sp.rowidentifier, sp.rowversion, sp.change_action, sp.change_user, sp.change_time, sp.classification_code, sp.redact_code, sp.owner_name, sp.address, sp.land_type, sp.parcel_area, sp.licensed_surveyor_id, sp.east_neighbour, sp.west_neighbour, sp.south_neighbour, sp.north_neighbour, sp.survey_method, sp.survey_date, sp.beacon_number, sp.charting_officer_id, sp.state_land_clearing_officer_id, pco.id AS pco_id, pco.ext_id AS co_ext_id, pco.type_code AS co_type_code, pco.name AS co_name, pco.last_name AS co_last_name, pco.fathers_name AS co_fathers_name, pco.fathers_last_name AS co_fathers_last_name, pco.alias AS co_alias, pco.gender_code AS co_gender_code, pco.address_id AS co_address, pco.id_type_code AS co_id_type_code, pco.id_number AS co_id_number, pco.email AS co_email, pco.mobile AS co_mobile, pco.phone AS co_phone, pco.fax AS co_fax, pco.preferred_communication_code AS co_preferred_communication_code, pco.birth_date AS co_birth_date, pco.classification_code AS co_classification_code, pco.redact_code AS co_redact_code, pslco.id AS pslco_id, pslco.ext_id AS slco_ext_id, pslco.type_code AS slco_type_code, pslco.name AS slco_name, pslco.last_name AS slco_last_name, pslco.fathers_name AS slco_fathers_name, pslco.fathers_last_name AS slco_fathers_last_name, pslco.alias AS slco_alias, pslco.gender_code AS slco_gender_code, pslco.address_id AS slco_address, pslco.id_type_code AS slco_id_type_code, pslco.id_number AS slco_id_number, pslco.email AS slco_email, pslco.mobile AS slco_mobile, pslco.phone AS slco_phone, pslco.fax AS slco_fax, pslco.preferred_communication_code AS slco_preferred_communication_code, pslco.birth_date AS slco_birth_date, pslco.classification_code AS slco_classification_code, pslco.redact_code AS slco_redact_code FROM ((cadastre_object sp JOIN party.party pco ON (((sp.charting_officer_id)::text = (pco.ext_id)::text))) JOIN party.party pslco ON (((sp.state_land_clearing_officer_id)::text = (pslco.ext_id)::text))) ORDER BY sp.id;
+    SELECT sp.id, sp.approval_datetime AS dsl_date, (((sp.name_lastpart)::text || '/'::text) || (sp.name_firstpart)::text) AS ls_nr, sp.owner_name, sp.address, sp.land_type, sp.parcel_area, sp.east_neighbour, sp.west_neighbour, sp.south_neighbour, sp.north_neighbour, sp.survey_method, sp.survey_date, sp.survey_type_code, (((sp.ref_name_firstpart)::text || '/'::text) || (sp.ref_name_firstpart)::text) AS ref_survey, sp.survey_number, sp.correspondence_file, sp.drawn_by, sp.checked_by, sp.checking_date, (((pls.name)::text || ' '::text) || (pls.last_name)::text) AS license_surveyor FROM (((cadastre_object sp JOIN party.party pls ON (((sp.licensed_surveyor_id)::text = (pls.id)::text))) JOIN party.party pco ON (((sp.charting_officer_id)::text = (pco.id)::text))) JOIN party.party pslco ON (((sp.state_land_clearing_officer_id)::text = (pslco.id)::text))) ORDER BY sp.id;
 
 
 ALTER TABLE cadastre.survey_plan_view OWNER TO postgres;
@@ -10584,6 +10665,56 @@ CREATE TABLE survey_point_historic (
 
 
 ALTER TABLE cadastre.survey_point_historic OWNER TO postgres;
+
+--
+-- Name: survey_type; Type: TABLE; Schema: cadastre; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE survey_type (
+    code character varying(20) NOT NULL,
+    display_value character varying(500) NOT NULL,
+    description character varying(1000),
+    status character(1) NOT NULL
+);
+
+
+ALTER TABLE cadastre.survey_type OWNER TO postgres;
+
+--
+-- Name: TABLE survey_type; Type: COMMENT; Schema: cadastre; Owner: postgres
+--
+
+COMMENT ON TABLE survey_type IS 'Code list of survey types. E.g. Sub-Division, Change of Name, Based on, etc. 
+Tags: FLOSS SOLA Extension, Reference Table';
+
+
+--
+-- Name: COLUMN survey_type.code; Type: COMMENT; Schema: cadastre; Owner: postgres
+--
+
+COMMENT ON COLUMN survey_type.code IS 'The code for the survey type.';
+
+
+--
+-- Name: COLUMN survey_type.display_value; Type: COMMENT; Schema: cadastre; Owner: postgres
+--
+
+COMMENT ON COLUMN survey_type.display_value IS 'Displayed value of the survey type.';
+
+
+--
+-- Name: COLUMN survey_type.description; Type: COMMENT; Schema: cadastre; Owner: postgres
+--
+
+COMMENT ON COLUMN survey_type.description IS 'Description of the survey type.';
+
+
+--
+-- Name: COLUMN survey_type.status; Type: COMMENT; Schema: cadastre; Owner: postgres
+--
+
+COMMENT ON COLUMN survey_type.status IS 'Status of the survey type';
+
 
 --
 -- Name: surveying_method_type; Type: TABLE; Schema: cadastre; Owner: postgres; Tablespace: 
@@ -15408,6 +15539,22 @@ ALTER TABLE ONLY survey_point
 
 
 --
+-- Name: survey_type_display_value_unique; Type: CONSTRAINT; Schema: cadastre; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY survey_type
+    ADD CONSTRAINT survey_type_display_value_unique UNIQUE (display_value);
+
+
+--
+-- Name: survey_type_pkey; Type: CONSTRAINT; Schema: cadastre; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY survey_type
+    ADD CONSTRAINT survey_type_pkey PRIMARY KEY (code);
+
+
+--
 -- Name: surveying_method_display_value_unique; Type: CONSTRAINT; Schema: cadastre; Owner: postgres; Tablespace: 
 --
 
@@ -19440,6 +19587,14 @@ ALTER TABLE ONLY cadastre_object
 
 ALTER TABLE ONLY cadastre_object
     ADD CONSTRAINT cadastre_object_status_code_fk63 FOREIGN KEY (status_code) REFERENCES transaction.reg_status_type(code) ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+--
+-- Name: cadastre_object_survey_type_fkey; Type: FK CONSTRAINT; Schema: cadastre; Owner: postgres
+--
+
+ALTER TABLE ONLY cadastre_object
+    ADD CONSTRAINT cadastre_object_survey_type_fkey FOREIGN KEY (survey_type_code) REFERENCES survey_type(code) ON UPDATE RESTRICT ON DELETE RESTRICT;
 
 
 --
