@@ -3141,6 +3141,32 @@ COMMENT ON FUNCTION generate_spatial_unit_group_name(geom_v public.geometry, hie
 
 
 --
+-- Name: get_label(character varying, character varying); Type: FUNCTION; Schema: cadastre; Owner: postgres
+--
+
+CREATE FUNCTION get_label(name_firstpart character varying, name_lastpart character varying) RETURNS character varying
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+  if(name_lastpart is null or name_lastpart = '') then
+    return name_firstpart;
+  else
+    return name_firstpart || '/' || name_lastpart;
+  end if;
+END;
+$$;
+
+
+ALTER FUNCTION cadastre.get_label(name_firstpart character varying, name_lastpart character varying) OWNER TO postgres;
+
+--
+-- Name: FUNCTION get_label(name_firstpart character varying, name_lastpart character varying); Type: COMMENT; Schema: cadastre; Owner: postgres
+--
+
+COMMENT ON FUNCTION get_label(name_firstpart character varying, name_lastpart character varying) IS 'Returns cadastre object label based on provided name first and last parts.';
+
+
+--
 -- Name: get_map_center_label(public.geometry); Type: FUNCTION; Schema: cadastre; Owner: postgres
 --
 
@@ -6503,6 +6529,7 @@ CREATE TABLE cadastre_object (
     drawn_by character varying(250),
     checked_by character varying(250),
     checking_date date,
+    dwg_off_no character varying(50),
     CONSTRAINT enforce_dims_geom_polygon CHECK ((public.st_ndims(geom_polygon) = 2)),
     CONSTRAINT enforce_geotype_geom_polygon CHECK (((public.geometrytype(geom_polygon) = 'POLYGON'::text) OR (geom_polygon IS NULL))),
     CONSTRAINT enforce_srid_geom_polygon CHECK ((public.st_srid(geom_polygon) = ANY (ARRAY[32628, 32629]))),
@@ -6819,6 +6846,13 @@ COMMENT ON COLUMN cadastre_object.checked_by IS 'Checking officer name';
 --
 
 COMMENT ON COLUMN cadastre_object.checking_date IS 'Checking date';
+
+
+--
+-- Name: COLUMN cadastre_object.dwg_off_no; Type: COMMENT; Schema: cadastre; Owner: postgres
+--
+
+COMMENT ON COLUMN cadastre_object.dwg_off_no IS 'Drawing number';
 
 
 --
@@ -8889,6 +8923,7 @@ CREATE TABLE cadastre_object_historic (
     drawn_by character varying(250),
     checked_by character varying(250),
     checking_date date,
+    dwg_off_no character varying(50),
     CONSTRAINT enforce_dims_geom_polygon CHECK ((public.st_ndims(geom_polygon) = 2)),
     CONSTRAINT enforce_geotype_geom_polygon CHECK (((public.geometrytype(geom_polygon) = 'POLYGON'::text) OR (geom_polygon IS NULL))),
     CONSTRAINT enforce_srid_geom_polygon CHECK ((public.st_srid(geom_polygon) = ANY (ARRAY[32628, 32629]))),
