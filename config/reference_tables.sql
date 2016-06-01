@@ -767,13 +767,13 @@ INSERT INTO party_role_type (code, display_value, status, description) VALUES ('
 INSERT INTO party_role_type (code, display_value, status, description) VALUES ('spouse', 'Spouse::::::::الزوج::::::::::::::::配偶', 'c', NULL);
 INSERT INTO party_role_type (code, display_value, status, description) VALUES ('employee', 'Employee::::Служащий::::الموظف::::Employé::::::::Empregado::::雇员', 'x', '...::::::::...::::...::::::::...::::...');
 INSERT INTO party_role_type (code, display_value, status, description) VALUES ('applicant', 'Applicant::::Заявитель::::مقدم الطلب::::Demandeur::::::::Requerente::::申请人', 'c', 'Extension to LADM::::Расширение LADM::::ميزة إضافية للنظام::::Extension au LADM::::::::Extensão para LADM::::扩展为 LADM');
+INSERT INTO party_role_type (code, display_value, status, description) VALUES ('surveyor', 'Surveyor::::Геодезист::::مساح::::Géomètre::::::::Agrimensor::::调查人员', 'x', '...::::::::...::::...::::::::...::::...');
 INSERT INTO party_role_type (code, display_value, status, description) VALUES ('transferee', 'Transferee (to)::::Получатель::::منقول له::::Cessionnaire (à)::::::::Cessionário(para)::::…受让人', 'c', 'Extension to LADM::::Расширение LADM::::ميزة إضافية للنظام::::Extension au LADM::::::::Extensão para LADM::::扩展为 LADM');
 INSERT INTO party_role_type (code, display_value, status, description) VALUES ('transferor', 'Transferor (from)::::Цедент::::منقول منه::::Cédant (de)::::::::Transferido (de)::::转让人', 'c', 'Extension to LADM::::Расширение LADM::::ميزة إضافية للنظام::::Extension au LADM::::::::Extensão para LADM::::扩展为 LADM');
 INSERT INTO party_role_type (code, display_value, status, description) VALUES ('writer', 'Writer::::Оформитель документов::::كاتب::::Auteur::::::::Escritor::::作家', 'x', '...::::::::...::::...::::::::...::::...');
 INSERT INTO party_role_type (code, display_value, status, description) VALUES ('certifiedSurveyor', 'License Surveyor', 'c', 'A Certified License Surveyor of doing surveying of lands');
 INSERT INTO party_role_type (code, display_value, status, description) VALUES ('charting_officer', 'Charting Officer', 'c', 'A Certified Charting Officer');
 INSERT INTO party_role_type (code, display_value, status, description) VALUES ('stland_clr_officer', 'State Land Clearing Officer', 'c', 'This is a Certified State Land Clearing Officer');
-INSERT INTO party_role_type (code, display_value, status, description) VALUES ('surveyor', 'Surveyor::::Геодезист::::مساح::::Géomètre::::::::Agrimensor::::调查人员', 'c', '...::::::::...::::...::::::::...::::...');
 
 
 ALTER TABLE party_role_type ENABLE TRIGGER ALL;
@@ -838,6 +838,7 @@ INSERT INTO administrative_source_type (code, display_value, status, description
 INSERT INTO administrative_source_type (code, display_value, status, description, is_for_registration) VALUES ('idVerification', 'Proof of Identity::::::::نموذج تعريف ويتضمن البطاقة الشخصية::::::::::::::::包含个人身份证明的表格', 'c', 'Extension to LADM::::Расширение LADM::::ميزة إضافية للنظام::::Extension au LADM::::Extension a LADM::::Extensão para LADM::::扩展为 LADM', false);
 INSERT INTO administrative_source_type (code, display_value, status, description, is_for_registration) VALUES ('agriNotaryStatement', 'Agricultural Notary Statement::::Нотариальное Сельскохозяйственное Заявление::::بيان زراعي من كاتب العدل::::Déclaration Agricole Notariée::::Declaraci�n Notario Agr�cola::::Declaração de Notário Agrícola::::农业公正申明', 'x', '...::::::::...::::...::::...::::...::::...', false);
 INSERT INTO administrative_source_type (code, display_value, status, description, is_for_registration) VALUES ('cadastralSurvey', 'Survey Plan', 'c', 'Extension to LADM::::Расширение LADM::::ميزة إضافية للنظام::::Extension au LADM::::Extension a LADM::::Extensão para LADM::::扩展为 LADM', false);
+INSERT INTO administrative_source_type (code, display_value, status, description, is_for_registration) VALUES ('fieldSketch', 'Sketch', 'c', 'sketch from the field', false);
 
 
 ALTER TABLE administrative_source_type ENABLE TRIGGER ALL;

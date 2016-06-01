@@ -60,6 +60,8 @@ INSERT INTO request_type_requires_source_type (source_type_code, request_type_co
 INSERT INTO request_type_requires_source_type (source_type_code, request_type_code) VALUES ('relationshipTitle', 'cancelRelationship');
 INSERT INTO request_type_requires_source_type (source_type_code, request_type_code) VALUES ('restrictionOrder', 'obscurationRequest');
 INSERT INTO request_type_requires_source_type (source_type_code, request_type_code) VALUES ('deed', 'subdivideProperty');
+INSERT INTO request_type_requires_source_type (source_type_code, request_type_code) VALUES ('cadastralSurvey', 'newParcel');
+INSERT INTO request_type_requires_source_type (source_type_code, request_type_code) VALUES ('fieldSketch', 'newParcel');
 
 
 ALTER TABLE request_type_requires_source_type ENABLE TRIGGER ALL;
@@ -76,7 +78,6 @@ INSERT INTO level (id, name, register_type_code, structure_code, type_code, rowi
 INSERT INTO level (id, name, register_type_code, structure_code, type_code, rowidentifier, rowversion, change_action, change_user, change_time, editable) VALUES ('bffd0bb2-99dd-11e3-a43e-17754b2def8e', 'Survey Control', 'all', 'point', 'geographicLocator', 'bffee072-99dd-11e3-b838-a3032aff2862', 1, 'i', 'test', '2014-02-20 16:19:03.908', false);
 INSERT INTO level (id, name, register_type_code, structure_code, type_code, rowidentifier, rowversion, change_action, change_user, change_time, editable) VALUES ('c06a4e0c-99dd-11e3-b4a8-df59099d962e', 'Roads', 'all', 'point', 'primaryRight', 'c06a9c2c-99dd-11e3-867c-3f6b8d26f6b4', 1, 'i', 'test', '2014-02-20 16:19:04.625', false);
 INSERT INTO level (id, name, register_type_code, structure_code, type_code, rowidentifier, rowversion, change_action, change_user, change_time, editable) VALUES ('c1532ad2-99dd-11e3-a445-237731ad01b0', 'Parcels', 'all', 'polygon', 'primaryRight', 'c15351e2-99dd-11e3-be93-6f678d1a08cd', 1, 'i', 'test', '2014-02-20 16:19:06.145', false);
-INSERT INTO level (id, name, register_type_code, structure_code, type_code, rowidentifier, rowversion, change_action, change_user, change_time, editable) VALUES ('road-centerline', 'Road centerline', 'all', 'unStructuredLine', 'geographicLocator', 'f099731a-cd80-11e3-8b0c-53bca1817824', 1, 'i', 'db:postgres', '2014-04-26 22:25:42.727', true);
 INSERT INTO level (id, name, register_type_code, structure_code, type_code, rowidentifier, rowversion, change_action, change_user, change_time, editable) VALUES ('c03162e0-99dd-11e3-a27b-2bfeef31a969', 'Place Names', 'all', 'point', 'geographicLocator', 'c03189f0-99dd-11e3-905e-8be6604148a7', 2, 'u', 'test', '2014-04-26 22:25:42.727', true);
 INSERT INTO level (id, name, register_type_code, structure_code, type_code, rowidentifier, rowversion, change_action, change_user, change_time, editable) VALUES ('house-num', 'House Number', 'all', 'point', 'geographicLocator', '4ae9b152-02f3-11e4-a6bb-db5f0510f653', 1, 'i', 'soladev', '2014-07-04 08:47:35.126', false);
 INSERT INTO level (id, name, register_type_code, structure_code, type_code, rowidentifier, rowversion, change_action, change_user, change_time, editable) VALUES ('5090813a-e767-11e5-8efe-679a04b0b2f3', 'Region', 'all', 'polygon', 'mixed', '50b08c5a-e767-11e5-8591-aba6f299e9e1', 1, 'i', 'test', '2016-03-11 09:57:42.394', false);
@@ -91,6 +92,7 @@ INSERT INTO level (id, name, register_type_code, structure_code, type_code, rowi
 INSERT INTO level (id, name, register_type_code, structure_code, type_code, rowidentifier, rowversion, change_action, change_user, change_time, editable) VALUES ('490b1f4a-e9e9-11e5-9f96-3fdda044bf77', 'Section', 'all', 'polygon', 'mixed', '490b465a-e9e9-11e5-a187-ff61fe13adaa', 1, 'i', 'test', '2016-03-14 14:33:06.669', false);
 INSERT INTO level (id, name, register_type_code, structure_code, type_code, rowidentifier, rowversion, change_action, change_user, change_time, editable) VALUES ('759a0da8-eacc-11e5-aeb3-ebd807524c63', 'OverlappingParcels', 'all', 'polygon', 'mixed', '759c5798-eacc-11e5-9c9d-0f83968fac27', 1, 'i', 'test', '2016-03-15 17:39:16.914', false);
 INSERT INTO level (id, name, register_type_code, structure_code, type_code, rowidentifier, rowversion, change_action, change_user, change_time, editable) VALUES ('e39cd310-11f7-11e6-a971-e31b5bfb0a72', 'Chiefdom', 'all', 'polygon', 'mixed', 'e39e59ba-11f7-11e6-9135-bf2c6f490115', 1, 'i', 'test', '2016-05-04 14:58:25.394', false);
+INSERT INTO level (id, name, register_type_code, structure_code, type_code, rowidentifier, rowversion, change_action, change_user, change_time, editable) VALUES ('road-centerline', 'Road and stream centerlines', 'all', 'unStructuredLine', 'geographicLocator', 'f099731a-cd80-11e3-8b0c-53bca1817824', 2, 'u', 'db:postgres', '2016-05-30 17:07:38.604', true);
 
 
 ALTER TABLE level ENABLE TRIGGER ALL;
