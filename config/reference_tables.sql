@@ -838,6 +838,7 @@ INSERT INTO administrative_source_type (code, display_value, status, description
 INSERT INTO administrative_source_type (code, display_value, status, description, is_for_registration) VALUES ('idVerification', 'Proof of Identity::::::::نموذج تعريف ويتضمن البطاقة الشخصية::::::::::::::::包含个人身份证明的表格', 'c', 'Extension to LADM::::Расширение LADM::::ميزة إضافية للنظام::::Extension au LADM::::Extension a LADM::::Extensão para LADM::::扩展为 LADM', false);
 INSERT INTO administrative_source_type (code, display_value, status, description, is_for_registration) VALUES ('agriNotaryStatement', 'Agricultural Notary Statement::::Нотариальное Сельскохозяйственное Заявление::::بيان زراعي من كاتب العدل::::Déclaration Agricole Notariée::::Declaraci�n Notario Agr�cola::::Declaração de Notário Agrícola::::农业公正申明', 'x', '...::::::::...::::...::::...::::...::::...', false);
 INSERT INTO administrative_source_type (code, display_value, status, description, is_for_registration) VALUES ('cadastralSurvey', 'Survey Plan', 'c', 'Extension to LADM::::Расширение LADM::::ميزة إضافية للنظام::::Extension au LADM::::Extension a LADM::::Extensão para LADM::::扩展为 LADM', false);
+INSERT INTO administrative_source_type (code, display_value, status, description, is_for_registration) VALUES ('fieldSketch', 'Sketch', 'c', 'sketch from the field', false);
 
 
 ALTER TABLE administrative_source_type ENABLE TRIGGER ALL;

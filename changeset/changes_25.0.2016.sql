@@ -50,8 +50,6 @@ ALTER TABLE cadastre.cadastre_object
 ALTER TABLE cadastre.cadastre_object
   ADD COLUMN checking_date date;
 ALTER TABLE cadastre.cadastre_object
-  ADD COLUMN dwg_off_no character varying(50);
-ALTER TABLE cadastre.cadastre_object
   ADD CONSTRAINT cadastre_object_survey_type_fkey FOREIGN KEY (survey_type_code) REFERENCES cadastre.survey_type (code) ON UPDATE RESTRICT ON DELETE RESTRICT;
 COMMENT ON COLUMN cadastre.cadastre_object.name_lastpart IS 'The remaining part of the name or reference assigned by the land administration agency to identify the cadastre object. E.g. survey plan number, map number, section reference, etc.';
 COMMENT ON COLUMN cadastre.cadastre_object.survey_type_code IS 'Survey type code';
@@ -63,11 +61,27 @@ COMMENT ON COLUMN cadastre.cadastre_object.computation_file IS 'Computation file
 COMMENT ON COLUMN cadastre.cadastre_object.drawn_by IS 'Drawing officer name';
 COMMENT ON COLUMN cadastre.cadastre_object.checked_by IS 'Checking officer name';
 COMMENT ON COLUMN cadastre.cadastre_object.checking_date IS 'Checking date';
-COMMENT ON COLUMN cadastre.cadastre_object.dwg_off_no IS 'Drawing number';
 COMMENT ON TABLE cadastre.cadastre_object
   IS 'Specialization of Spatial Unit that represents primary cadastral features such as parcels. Parcels captured in SOLA should have a spatial definition that illustrates the shape and geographic location of the parcel although this is not a mandatory requirement. Parcels without a spatial definition may be referred to as aspatial or textual parcels.
 Tags: FLOSS SOLA Extension, Change History';
 
-ALTER TABLE cadastre.cadastre_object_historic
-  ADD COLUMN dwg_off_no character varying(50);
 
+ALTER TABLE cadastre.cadastre_object_historic
+  ADD COLUMN survey_type_code character varying(20);
+ALTER TABLE cadastre.cadastre_object_historic
+  ADD COLUMN ref_name_firstpart character varying(20);
+ALTER TABLE cadastre.cadastre_object_historic
+  ADD COLUMN ref_name_lastpart character varying(50);
+ALTER TABLE cadastre.cadastre_object_historic
+  ADD COLUMN survey_number character varying(50);
+ALTER TABLE cadastre.cadastre_object_historic
+  ADD COLUMN correspondence_file character varying(50);
+ALTER TABLE cadastre.cadastre_object_historic
+  ADD COLUMN computation_file character varying(50);
+ALTER TABLE cadastre.cadastre_object_historic
+  ADD COLUMN drawn_by character varying(250);
+ALTER TABLE cadastre.cadastre_object_historic
+  ADD COLUMN checked_by character varying(250);
+ALTER TABLE cadastre.cadastre_object_historic
+  ADD COLUMN checking_date date;
+  
