@@ -39,7 +39,7 @@ update system.query set sql =
 'select id, cadastre.get_label(name_firstpart, name_lastpart) as label, st_asewkb(st_transform(geom_polygon, #{srid})) as the_geom  from cadastre.cadastre_object  where status_code= ''current'' and compare_strings(#{search_string}, name_firstpart || '' '' || coalesce(name_lastpart, '''')) limit 30'
 where name = 'map_search.cadastre_object_by_number';
 
-
+update system.query set sql = 
 'select distinct co.id,  ba_unit.name || '' > '' || cadastre.get_label(co.name_firstpart, co.name_lastpart) as label,  st_asewkb(st_transform(geom_polygon, #{srid})) as the_geom from cadastre.cadastre_object  co    inner join administrative.ba_unit_contains_spatial_unit bas on co.id = bas.spatial_unit_id     inner join administrative.ba_unit on ba_unit.id = bas.ba_unit_id  where (co.status_code= ''current'' or ba_unit.status_code= ''current'') and ba_unit.name is not null   and compare_strings(#{search_string}, ba_unit.name) limit 30'
 where name = 'map_search.cadastre_object_by_title';
 
