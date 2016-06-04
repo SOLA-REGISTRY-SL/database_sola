@@ -1,4 +1,4 @@
-DROP VIEW cadastre.survey_plan_view;
+﻿DROP VIEW cadastre.survey_plan_view;
 
 CREATE OR REPLACE VIEW cadastre.survey_plan_view AS 
 
@@ -28,6 +28,7 @@ CREATE OR REPLACE VIEW cadastre.survey_plan_view AS
    JOIN party.party pls ON sp.licensed_surveyor_id::text = pls.id::text
    JOIN party.party pco ON sp.charting_officer_id::text = pco.id::text
    JOIN party.party pslco ON sp.state_land_clearing_officer_id::text = pslco.id::text
+   where sp.land_type != 'state_land'
   ORDER BY sp.id;
 
 ALTER TABLE cadastre.survey_plan_view
