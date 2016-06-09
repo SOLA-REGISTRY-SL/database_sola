@@ -116,6 +116,7 @@ ALTER TABLE config_map_layer ENABLE TRIGGER ALL;
 
 ALTER TABLE config_map_layer_metadata DISABLE TRIGGER ALL;
 
+INSERT INTO config_map_layer_metadata (name_layer, name, value) VALUES ('roads', 'in-plan-production', 'true');
 
 
 ALTER TABLE config_map_layer_metadata ENABLE TRIGGER ALL;

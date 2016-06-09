@@ -1,4 +1,4 @@
-﻿--
+--
 -- PostgreSQL database dump
 --
 
@@ -3164,6 +3164,32 @@ ALTER FUNCTION cadastre.get_label(name_firstpart character varying, name_lastpar
 --
 
 COMMENT ON FUNCTION get_label(name_firstpart character varying, name_lastpart character varying) IS 'Returns cadastre object label based on provided name first and last parts.';
+
+
+--
+-- Name: get_label_with_owner(character varying, character varying, character varying); Type: FUNCTION; Schema: cadastre; Owner: postgres
+--
+
+CREATE FUNCTION get_label_with_owner(name_firstpart character varying, name_lastpart character varying, owner_name character varying) RETURNS character varying
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+  if(name_lastpart is null or name_lastpart = '') then
+    return name_firstpart || E'\n' || coalesce(owner_name, '');
+  else
+    return name_firstpart || '/' || name_lastpart || E'\n' || coalesce(owner_name, '');
+  end if;
+END;
+$$;
+
+
+ALTER FUNCTION cadastre.get_label_with_owner(name_firstpart character varying, name_lastpart character varying, owner_name character varying) OWNER TO postgres;
+
+--
+-- Name: FUNCTION get_label_with_owner(name_firstpart character varying, name_lastpart character varying, owner_name character varying); Type: COMMENT; Schema: cadastre; Owner: postgres
+--
+
+COMMENT ON FUNCTION get_label_with_owner(name_firstpart character varying, name_lastpart character varying, owner_name character varying) IS 'Returns cadastre object label based on provided owner name, name first and last parts.';
 
 
 --
@@ -10552,7 +10578,7 @@ COMMENT ON VIEW survey_control IS 'View for retrieving survey control features f
 --
 
 CREATE VIEW survey_plan_view AS
-    SELECT sp.id, sp.approval_datetime AS dsl_date, (((sp.name_lastpart)::text || '/'::text) || (sp.name_firstpart)::text) AS ls_nr, sp.owner_name, sp.address, sp.land_type, sp.parcel_area, sp.east_neighbour, sp.west_neighbour, sp.south_neighbour, sp.north_neighbour, sp.survey_method, sp.survey_date, sp.survey_type_code, (((sp.ref_name_firstpart)::text || '/'::text) || (sp.ref_name_firstpart)::text) AS ref_survey, sp.survey_number, sp.correspondence_file, sp.drawn_by, sp.checked_by, sp.checking_date, (((pls.name)::text || ' '::text) || (pls.last_name)::text) AS license_surveyor FROM (((cadastre_object sp JOIN party.party pls ON (((sp.licensed_surveyor_id)::text = (pls.id)::text))) JOIN party.party pco ON (((sp.charting_officer_id)::text = (pco.id)::text))) JOIN party.party pslco ON (((sp.state_land_clearing_officer_id)::text = (pslco.id)::text))) WHERE sp.land_type::text <> 'state_land'::text ORDER BY sp.id;
+    SELECT sp.id, sp.approval_datetime AS dsl_date, (((sp.name_lastpart)::text || '/'::text) || (sp.name_firstpart)::text) AS ls_nr, sp.owner_name, sp.address, sp.land_type, sp.parcel_area, sp.east_neighbour, sp.west_neighbour, sp.south_neighbour, sp.north_neighbour, sp.survey_method, sp.survey_date, sp.survey_type_code, (((sp.ref_name_firstpart)::text || '/'::text) || (sp.ref_name_firstpart)::text) AS ref_survey, sp.survey_number, sp.correspondence_file, sp.drawn_by, sp.checked_by, sp.checking_date, (((pls.name)::text || ' '::text) || (pls.last_name)::text) AS license_surveyor FROM (((cadastre_object sp JOIN party.party pls ON (((sp.licensed_surveyor_id)::text = (pls.id)::text))) JOIN party.party pco ON (((sp.charting_officer_id)::text = (pco.id)::text))) JOIN party.party pslco ON (((sp.state_land_clearing_officer_id)::text = (pslco.id)::text))) WHERE ((sp.land_type)::text <> 'state_land'::text) ORDER BY sp.id;
 
 
 ALTER TABLE cadastre.survey_plan_view OWNER TO postgres;
