@@ -1,4 +1,6 @@
+
 --- DELETE THE ALREADY INPUTED APPROLE_APPGROUP
+
 DELETE FROM system.approle_appgroup WHERE appgroup_id = 'admin-group-id';
 DELETE FROM system.approle_appgroup WHERE appgroup_id = 'oarg-group-id';
 DELETE FROM system.approle_appgroup WHERE appgroup_id = 'charting-group-id';
