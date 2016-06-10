@@ -9,6 +9,7 @@ DELETE FROM system.approle_appgroup WHERE appgroup_id = 'director-group-id';
 DELETE FROM system.approle_appgroup WHERE appgroup_id = 'finance-group-id';
 DELETE FROM system.approle_appgroup WHERE appgroup_id = 'snr-mgmt-group-id';
 DELETE FROM system.approle_appgroup WHERE appgroup_id = 'gis-group-id';
+DELETE FROM system.approle_appgroup WHERE appgroup_id = 'clearance-group-id';
 
  
 --- DELETE THE ALREADY INPUTED APPGROUP
@@ -21,7 +22,7 @@ DELETE FROM system.appgroup WHERE id = 'director-group-id';
 DELETE FROM system.appgroup WHERE id = 'finance-group-id';
 DELETE FROM system.appgroup WHERE id = 'snr-mgmt-group-id';
 DELETE FROM system.appgroup WHERE id = 'gis-group-id';
-
+DELETE FROM system.appgroup WHERE id = 'clearance-group-id';
 
 
 --- INSERTING THE APPGROUP
@@ -35,6 +36,7 @@ INSERT INTO system.appgroup (id, name, description) Values('director-group-id','
 INSERT INTO system.appgroup (id, name, description) Values('finance-group-id','Finance','This group is meant to used for finance-group-id');
 INSERT INTO system.appgroup (id, name, description) Values('snr-mgmt-group-id','Senior Management','This group is meant to used for users who only view the system and do not really have rights to make modifications');
 INSERT INTO system.appgroup (id, name, description) Values('gis-group-id','GIS','This group is meant to used for the gis-group-id department who oversee the system and do not make modifications');
+INSERT INTO system.appgroup (id, name, description) Values('clearance-group-id','Clearance State','This group is meant to used for the clearance-group-id department who complete the service if no state land');
 
 
  --- INSERTING THE APPROLE LINKED WITH THE APPGROUP
@@ -267,6 +269,7 @@ INSERT INTO system.approle_appgroup (approle_code,appgroup_id) values('ChangePas
 INSERT INTO system.approle_appgroup (approle_code,appgroup_id) values('DashbrdViewAssign','finance-group-id');
 INSERT INTO system.approle_appgroup (approle_code,appgroup_id) values('DashbrdViewUnassign','finance-group-id');
 INSERT INTO system.approle_appgroup (approle_code,appgroup_id) values('documentCopy','finance-group-id');
+INSERT INTO system.approle_appgroup (approle_code,appgroup_id) values('SourceSearch','finance-group-id');
 INSERT INTO system.approle_appgroup (approle_code,appgroup_id) values('ManageSecurity','finance-group-id');
 INSERT INTO system.approle_appgroup (approle_code,appgroup_id) values('ManageSettings','finance-group-id');
 INSERT INTO system.approle_appgroup (approle_code,appgroup_id) values('NoPasswordExpiry','finance-group-id');
@@ -322,4 +325,21 @@ INSERT INTO system.approle_appgroup (approle_code,appgroup_id) values('ViewMap',
 
 
 
-
+--- APPROLE SETTING FOR - clearance-group-id
+INSERT INTO system.approle_appgroup (approle_code,appgroup_id) values('ApplnAssignSelf','clearance-group-id');
+INSERT INTO system.approle_appgroup (approle_code,appgroup_id) values('ApplnEdit','clearance-group-id');
+INSERT INTO system.approle_appgroup (approle_code,appgroup_id) values('ApplnStatus','clearance-group-id');
+INSERT INTO system.approle_appgroup (approle_code,appgroup_id) values('ApplnUnassignSelf','clearance-group-id');
+INSERT INTO system.approle_appgroup (approle_code,appgroup_id) values('ApplnValidate','clearance-group-id');
+INSERT INTO system.approle_appgroup (approle_code,appgroup_id) values('ApplnView','clearance-group-id');
+INSERT INTO system.approle_appgroup (approle_code,appgroup_id) values('ChangePassword','clearance-group-id');
+INSERT INTO system.approle_appgroup (approle_code,appgroup_id) values('DashbrdViewAssign','clearance-group-id');
+INSERT INTO system.approle_appgroup (approle_code,appgroup_id) values('DashbrdViewUnassign','clearance-group-id');
+INSERT INTO system.approle_appgroup (approle_code,appgroup_id) values('documentCopy','clearance-group-id');
+INSERT INTO system.approle_appgroup (approle_code,appgroup_id) values('ManageSecurity','clearance-group-id');
+INSERT INTO system.approle_appgroup (approle_code,appgroup_id) values('ManageSettings','clearance-group-id');
+INSERT INTO system.approle_appgroup (approle_code,appgroup_id) values('NoPasswordExpiry','clearance-group-id');
+INSERT INTO system.approle_appgroup (approle_code,appgroup_id) values('serviceEnquiry','clearance-group-id');
+INSERT INTO system.approle_appgroup (approle_code,appgroup_id) values('SourceSearch','clearance-group-id');
+INSERT INTO system.approle_appgroup (approle_code,appgroup_id) values('CompleteService','clearance-group-id');
+INSERT INTO system.approle_appgroup (approle_code,appgroup_id) values('RevertService','clearance-group-id');
