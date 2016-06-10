@@ -274,9 +274,9 @@ ALTER TABLE consolidation_config ENABLE TRIGGER ALL;
 
 ALTER TABLE crs DISABLE TRIGGER ALL;
 
-INSERT INTO crs (srid, from_long, to_long, item_order) VALUES (32629, 0, 171805.08555444199, 1);
-INSERT INTO crs (srid, from_long, to_long, item_order) VALUES (32628, 0, 171805.08555444199, 2);
 
+INSERT INTO crs (srid, from_long, to_long, item_order) VALUES (32628, 0, 171805.08555444199, 1);
+INSERT INTO crs (srid, from_long, to_long, item_order) VALUES (32629, 0, 171805.08555444199, 2);
 
 ALTER TABLE crs ENABLE TRIGGER ALL;
 
