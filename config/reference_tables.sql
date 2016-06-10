@@ -839,6 +839,7 @@ INSERT INTO administrative_source_type (code, display_value, status, description
 INSERT INTO administrative_source_type (code, display_value, status, description, is_for_registration) VALUES ('agriNotaryStatement', 'Agricultural Notary Statement::::Нотариальное Сельскохозяйственное Заявление::::بيان زراعي من كاتب العدل::::Déclaration Agricole Notariée::::Declaraci�n Notario Agr�cola::::Declaração de Notário Agrícola::::农业公正申明', 'x', '...::::::::...::::...::::...::::...::::...', false);
 INSERT INTO administrative_source_type (code, display_value, status, description, is_for_registration) VALUES ('cadastralSurvey', 'Survey Plan', 'c', 'Extension to LADM::::Расширение LADM::::ميزة إضافية للنظام::::Extension au LADM::::Extension a LADM::::Extensão para LADM::::扩展为 LADM', false);
 INSERT INTO administrative_source_type (code, display_value, status, description, is_for_registration) VALUES ('fieldSketch', 'Sketch', 'c', 'sketch from the field', false);
+INSERT INTO administrative_source_type (code, display_value, status, description, is_for_registration) VALUES ('returnSPReport', 'OARG Survey Plan Return Report', 'c', 'list of survey plan for OARG', false);
 
 
 ALTER TABLE administrative_source_type ENABLE TRIGGER ALL;
