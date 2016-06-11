@@ -109,6 +109,7 @@ INSERT INTO br (id, display_name, technical_type_code, feedback, description, te
 INSERT INTO br (id, display_name, technical_type_code, feedback, description, technical_description) VALUES ('application-verifies-identification', 'application-verifies-identification', 'sql', 'Personal identification verification should be attached to the application.::::Персональный идентификационный документ должен быть прикреплен к заявлению.::::يجب ارفاق وثائق التعريف الشخصية مع الطلب::::La vérification de l''identité personnelle doit être attachée à la demande.::::::::::::Verificação de identificação pessoal deve ser anexada ao pedido.::::::::个人身份证明应附加到申请中。', NULL, '#{id}(application.application.id) is requested');
 INSERT INTO br (id, display_name, technical_type_code, feedback, description, technical_description) VALUES ('application-on-approve-check-public-display', 'application-on-approve-check-public-display', 'sql', 'The publication period must be completed.::::Период публикации должен быть завершен.::::يجب استكمال فترة النشر::::La période de publication doit être exécutée.::::::::::::O período de publicação deve ser concluído.::::::::出版日期必须完整。', NULL, 'Checks the completion of the public display period for all instances of systematic registration service related to the application');
 INSERT INTO br (id, display_name, technical_type_code, feedback, description, technical_description) VALUES ('application-br2-check-title-documents-not-old', 'application-br2-check-title-documents-not-old', 'sql', 'The scanned image of the title should be less than one week old.::::Отсканированная копия права собственности должна быть сделана менее недели назад.::::عمر صورة السند الممسوح يجب ان تكون اقل من أسبوع::::L''image scannée du titre ne doit pas être antérieur à une semaine.::::::::::::A imagem digitalizada do título deve ser inferior a uma semana.::::::::产权图像必须是一周之内扫描的。', NULL, 'Checks recorded date (recordation) against date at time of validation. Current allowable date difference is one week.');
+INSERT INTO br (id, display_name, technical_type_code, feedback, description, technical_description) VALUES ('app_on_approve_check_SP', 'app_on_approve_check_SP', 'sql', 'there must be the SP attached to approve the application', NULL, '#{id}(application) is requested');
 INSERT INTO br (id, display_name, technical_type_code, feedback, description, technical_description) VALUES ('service-title-terminated', 'service-title-terminated', 'sql', 'For the service ''req_type'' the title must be terminated (after all rights recorded on the title are transferred or cancelled).::::Для услуги ''req_type''  недвижимость должна быть ликвидирована (после того как все зарегистрированные права переданы или отменены).::::لخدمة من نوع     ''req_type'' , سند  الملكية يجب انهاؤه (بعد نقل الحقوق او الغاؤها (::::Pour le service ''req_type'', le titre doit être résilié (après que tous les droits enregistrés sur le titre soient transférés ou annulés).::::::::::::Para o serviço ''req_type'' o título deve ser terminado (depois que todos os direitos registrados no título são transferidos ou cancelados)::::::::对于服务 “请求_类型”产权必须终止 (在所有关于产权的记录被转移或被取消之后）。', NULL, '#{id}(application.service.id) is requested');
 INSERT INTO br (id, display_name, technical_type_code, feedback, description, technical_description) VALUES ('app-current-caveat-and-no-remove-or-vary', 'app-current-caveat-and-no-remove-or-vary', 'sql', 'The identified property has a current or pending caveat registered on the title. The application must include a cancel or waiver/vary caveat service for registration to proceed.::::Выбранная недвижимость имеет арест. Заявление должно включать услугу снятия ареста для того чтобы продолжить регистрацию.::::الملكية المحددة عليها قيود . يجب الغاء القيود او التنازل عنها قبل امكانية الاستمرار::::Une caveat en cours ou en attente est enregistré sur le titre de la propriété identifiée. Il est nécessaire de procéder à un service d''annulation ou de renonciation/variation du caveat avant de procéder à l''enregistrement de la demande.::::::::::::A propriedade identificada tem um embargo atual ou pendente registrado no título. O pedido deve incluir o cancelamento ou renúncia/variação do embargo para que o registro possa prosseguir.::::::::明确的财产具有与所登记产权相关的当前或待定的附加权利。申请必须包括取消或豁免/变更附加说明以使登记继续。', NULL, '#{id}(application.application.id) is requested. It checks if there is a caveat (pending or current) registered
  on the title and if the application does not have any service of type remove or vary caveat');
@@ -1067,6 +1068,26 @@ INSERT INTO br_definition (br_id, active_from, active_until, body) VALUES ('appl
 				END AS vl FROM newFreeholdApp');
 INSERT INTO br_definition (br_id, active_from, active_until, body) VALUES ('new-parcel-created', '2016-01-01', 'infinity', 'select count(*) = 1 as vl from cadastre.cadastre_object where transaction_id= #{id}');
 INSERT INTO br_definition (br_id, active_from, active_until, body) VALUES ('new-parcel-lastpart-assigned', '2016-01-01', 'infinity', 'select sum(case when name_firstpart = ''tmp'' then 1 else 0 end)<1 as vl from cadastre.cadastre_object where transaction_id= #{id}');
+INSERT INTO br_definition (br_id, active_from, active_until, body) VALUES ('app_on_approve_check_SP', '2016-01-01', 'infinity', '
+SELECT (
+(Select count (*)
+FROM application.application aa, application.service s, 
+source.source ss, application.application_uses_source aus 
+WHERE s.application_id::text = aa.id::text 
+AND s.request_type_code::text = ''newParcel''::text AND s.status_code::text = ''completed''::text 
+and aus.application_id = aa.id and aus.source_id = ss.id and ss.type_code = ''cadastralSurvey'' 
+and aa.id = #{id})
+-
+(Select count (*)
+FROM application.application aa, application.service s, 
+source.source ss, application.application_uses_source aus 
+WHERE s.application_id::text = aa.id::text 
+AND s.request_type_code::text = ''newParcel''::text AND s.status_code::text = ''completed''::text 
+and aus.application_id = aa.id and aus.source_id = ss.id 
+and aa.id = #{id}
+)
+>= 0) AS vl 
+;');
 
 
 ALTER TABLE br_definition ENABLE TRIGGER ALL;
@@ -1168,6 +1189,8 @@ INSERT INTO br_validation (id, br_id, target_code, target_application_moment, ta
 INSERT INTO br_validation (id, br_id, target_code, target_application_moment, target_service_moment, target_reg_moment, target_request_type_code, target_rrr_type_code, severity_code, order_of_execution) VALUES ('bf692df2-99dd-11e3-88af-bf24a927350a', 'target-parcels-present', 'cadastre_object', NULL, NULL, 'pending', 'cadastreChange', NULL, 'warning', 450);
 INSERT INTO br_validation (id, br_id, target_code, target_application_moment, target_service_moment, target_reg_moment, target_request_type_code, target_rrr_type_code, severity_code, order_of_execution) VALUES ('bf6a3f6c-99dd-11e3-9a09-8f3026fcfa46', 'target-parcels-present', 'cadastre_object', NULL, NULL, 'current', 'cadastreChange', NULL, 'warning', 440);
 INSERT INTO br_validation (id, br_id, target_code, target_application_moment, target_service_moment, target_reg_moment, target_request_type_code, target_rrr_type_code, severity_code, order_of_execution) VALUES ('0a02707a-154d-11e6-ad9c-33b8bd37074a', 'new-parcel-lastpart-assigned', 'cadastre_object', NULL, NULL, 'pending', 'newParcel', NULL, 'critical', 100);
+INSERT INTO br_validation (id, br_id, target_code, target_application_moment, target_service_moment, target_reg_moment, target_request_type_code, target_rrr_type_code, severity_code, order_of_execution) VALUES ('b825f988-2f3d-11e6-8c75-8fa41ff3f44f', 'app_on_approve_check_SP', 'application', 'approve', NULL, NULL, NULL, NULL, 'critical', 722);
+INSERT INTO br_validation (id, br_id, target_code, target_application_moment, target_service_moment, target_reg_moment, target_request_type_code, target_rrr_type_code, severity_code, order_of_execution) VALUES ('b82647a8-2f3d-11e6-a7c5-bf868f7f3e7c', 'app_on_approve_check_SP', 'application', 'validate', NULL, NULL, NULL, NULL, 'critical', 723);
 
 
 ALTER TABLE br_validation ENABLE TRIGGER ALL;

@@ -117,6 +117,7 @@ ALTER TABLE config_map_layer ENABLE TRIGGER ALL;
 ALTER TABLE config_map_layer_metadata DISABLE TRIGGER ALL;
 
 INSERT INTO config_map_layer_metadata (name_layer, name, value) VALUES ('roads', 'in-plan-production', 'true');
+INSERT INTO config_map_layer_metadata (name_layer, name, value) VALUES ('road-centerlines', 'in-plan-production', 'true');
 
 
 ALTER TABLE config_map_layer_metadata ENABLE TRIGGER ALL;
@@ -274,8 +275,8 @@ ALTER TABLE consolidation_config ENABLE TRIGGER ALL;
 
 ALTER TABLE crs DISABLE TRIGGER ALL;
 
-INSERT INTO crs (srid, from_long, to_long, item_order) VALUES (32629, 0, 171805.08555444199, 1);
-INSERT INTO crs (srid, from_long, to_long, item_order) VALUES (32628, 0, 171805.08555444199, 2);
+INSERT INTO crs (srid, from_long, to_long, item_order) VALUES (32628, 0, 171805.08555444199, 1);
+INSERT INTO crs (srid, from_long, to_long, item_order) VALUES (32629, 0, 171805.08555444199, 2);
 
 
 ALTER TABLE crs ENABLE TRIGGER ALL;
@@ -424,6 +425,7 @@ INSERT INTO version (version_num) VALUES ('1504b');
 INSERT INTO version (version_num) VALUES ('1505a');
 INSERT INTO version (version_num) VALUES ('1505b');
 INSERT INTO version (version_num) VALUES ('1505d');
+INSERT INTO version (version_num) VALUES ('1606c');
 
 
 ALTER TABLE version ENABLE TRIGGER ALL;

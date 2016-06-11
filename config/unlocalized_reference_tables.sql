@@ -60,7 +60,6 @@ INSERT INTO request_type_requires_source_type (source_type_code, request_type_co
 INSERT INTO request_type_requires_source_type (source_type_code, request_type_code) VALUES ('relationshipTitle', 'cancelRelationship');
 INSERT INTO request_type_requires_source_type (source_type_code, request_type_code) VALUES ('restrictionOrder', 'obscurationRequest');
 INSERT INTO request_type_requires_source_type (source_type_code, request_type_code) VALUES ('deed', 'subdivideProperty');
-INSERT INTO request_type_requires_source_type (source_type_code, request_type_code) VALUES ('cadastralSurvey', 'newParcel');
 INSERT INTO request_type_requires_source_type (source_type_code, request_type_code) VALUES ('fieldSketch', 'newParcel');
 
 

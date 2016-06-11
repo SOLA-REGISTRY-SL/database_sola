@@ -3259,6 +3259,17 @@ COMMENT ON FUNCTION get_new_cadastre_object_identifier_last_part(geom public.geo
 
 
 --
+-- Name: setsrid(public.geometry, integer); Type: FUNCTION; Schema: cadastre; Owner: postgres
+--
+
+CREATE FUNCTION setsrid(public.geometry, integer) RETURNS public.geometry
+    LANGUAGE sql IMMUTABLE STRICT
+    AS $_$SELECT ST_SetSrid($1, $2)$_$;
+
+
+ALTER FUNCTION cadastre.setsrid(public.geometry, integer) OWNER TO postgres;
+
+--
 -- Name: snap_geometry_to_geometry(public.geometry, public.geometry, double precision, boolean); Type: FUNCTION; Schema: cadastre; Owner: postgres
 --
 
@@ -3383,6 +3394,17 @@ ALTER FUNCTION cadastre.snap_geometry_to_geometry(INOUT geom_to_snap public.geom
 
 COMMENT ON FUNCTION snap_geometry_to_geometry(INOUT geom_to_snap public.geometry, INOUT target_geom public.geometry, snap_distance double precision, change_target_if_needed boolean, OUT snapped boolean, OUT target_is_changed boolean) IS 'Snaps one geometry to the other adding points if required. Not used by SOLA.';
 
+
+--
+-- Name: st_makebox3d(public.geometry, public.geometry); Type: FUNCTION; Schema: cadastre; Owner: postgres
+--
+
+CREATE FUNCTION st_makebox3d(public.geometry, public.geometry) RETURNS public.box3d
+    LANGUAGE sql IMMUTABLE STRICT
+    AS $_$SELECT ST_3DMakeBox($1, $2)$_$;
+
+
+ALTER FUNCTION cadastre.st_makebox3d(public.geometry, public.geometry) OWNER TO postgres;
 
 SET search_path = party, pg_catalog;
 
