@@ -11,3 +11,7 @@ INSERT INTO system.approle(code, display_value, status, description)
 
 INSERT INTO system.approle_appgroup(approle_code, appgroup_id)
     VALUES ('existingParcel', 'super-group-id');
+
+
+    INSERT INTO system.approle_appgroup (approle_code,appgroup_id) values('existingParcel','charting-group-id');
+    

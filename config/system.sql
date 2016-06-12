@@ -57,13 +57,6 @@ INSERT INTO query (name, sql, description) VALUES ('map_search.locality', 'SELEC
   AND compare_strings(#{search_string}, a.description)
   AND co.geom_polygon IS NOT NULL
   ORDER BY a.description', NULL);
-INSERT INTO query (name, sql, description) VALUES ('SpatialResult.getOverlappingParcels', 'SELECT co.id, co.name_firstpart as label,  st_asewkb(co.geom_polygon) as the_geom  
-from cadastre.cadastre_object co, cadastre.cadastre_object co_int 
-where co.type_code= ''parcel''  and co_int.type_code= ''parcel'' 
-  and co.id > co_int.id
-  and ST_Intersects(co.geom_polygon, st_buffer(co_int.geom_polygon, -0.03))
-  and ST_Intersects(co.geom_polygon, ST_SetSRID(ST_MakeBox3D(ST_Point(#{minx}, #{miny}),ST_Point(#{maxx}, #{maxy})), #{srid}))
-  and ST_Intersects(co_int.geom_polygon, ST_SetSRID(ST_MakeBox3D(ST_Point(#{minx}, #{miny}),ST_Point(#{maxx}, #{maxy})), #{srid}))', 'The spatial query that retrieves Overlapping');
 INSERT INTO query (name, sql, description) VALUES ('SpatialResult.getChiefdom', 'select id, label, st_asewkb(ST_Transform(geom,#{srid})) as the_geom from cadastre.chiefdom 
     where ST_Intersects(ST_Transform(geom,#{srid}), ST_SetSRID(ST_MakeBox3D(ST_Point(#{minx}, #{miny}),ST_Point(#{maxx}, #{maxy})), #{srid})) and st_area(geom)> power(5 * #{pixel_res}, 2)', 'The spatial query that retrieves chiefdom');
 INSERT INTO query (name, sql, description) VALUES ('SpatialResult.getRegion', 'select id, label, st_asewkb(ST_Transform(geom,#{srid})) as the_geom from cadastre.reg 
@@ -78,6 +71,14 @@ INSERT INTO query (name, sql, description) VALUES ('map_search.cadastre_object_b
 INSERT INTO query (name, sql, description) VALUES ('SpatialResult.getParcels', 'select co.id, cadastre.get_label(co.name_firstpart, co.name_lastpart) as label,  st_asewkb(st_transform(co.geom_polygon, #{srid})) as the_geom from cadastre.cadastre_object co where type_code= ''parcel'' and status_code= ''current'' and ST_Intersects(st_transform(co.geom_polygon, #{srid}), ST_SetSRID(ST_3DMakeBox(ST_Point(#{minx}, #{miny}),ST_Point(#{maxx}, #{maxy})), #{srid})) and st_area(co.geom_polygon)> power(5 * #{pixel_res}, 2)', NULL);
 INSERT INTO query (name, sql, description) VALUES ('SpatialResult.getParcelsHistoricWithCurrentBA', 'select co.id, cadastre.get_label(co.name_firstpart, co.name_lastpart) as label,  st_asewkb(st_transform(co.geom_polygon, #{srid})) as the_geom from cadastre.cadastre_object co inner join administrative.ba_unit_contains_spatial_unit ba_co on co.id = ba_co.spatial_unit_id   inner join administrative.ba_unit ba_unit on ba_unit.id= ba_co.ba_unit_id where co.type_code=''parcel'' and co.status_code= ''historic'' and ba_unit.status_code = ''current'' and ST_Intersects(st_transform(co.geom_polygon, #{srid}), ST_SetSRID(ST_3DMakeBox(ST_Point(#{minx}, #{miny}),ST_Point(#{maxx}, #{maxy})), #{srid}))', NULL);
 INSERT INTO query (name, sql, description) VALUES ('SpatialResult.getParcelsPending', 'select co.id, cadastre.get_label(co.name_firstpart, co.name_lastpart) as label,  st_asewkb(st_transform(co.geom_polygon, #{srid})) as the_geom  from cadastre.cadastre_object co  where type_code= ''parcel'' and status_code= ''pending''   and ST_Intersects(st_transform(co.geom_polygon, #{srid}), ST_SetSRID(ST_3DMakeBox(ST_Point(#{minx}, #{miny}),ST_Point(#{maxx}, #{maxy})), #{srid})) union select co.id, cadastre.get_label(co.name_firstpart, co.name_lastpart) as label,  st_asewkb(co_t.geom_polygon) as the_geom  from cadastre.cadastre_object co inner join cadastre.cadastre_object_target co_t on co.id = co_t.cadastre_object_id and co_t.geom_polygon is not null where ST_Intersects(co_t.geom_polygon, ST_SetSRID(ST_3DMakeBox(ST_Point(#{minx}, #{miny}),ST_Point(#{maxx}, #{maxy})), #{srid}))       and co_t.transaction_id in (select id from transaction.transaction where status_code not in (''approved'')) ', NULL);
+INSERT INTO query (name, sql, description) VALUES ('SpatialResult.getOverlappingParcels', 'SELECT co.id, co.name_firstpart as label,  st_asewkb(co.geom_polygon) as the_geom  
+from cadastre.cadastre_object co, cadastre.cadastre_object co_int 
+where co.type_code= ''parcel''  and co_int.type_code= ''parcel'' 
+  and co.id > co_int.id
+  and ST_Intersects(co.geom_polygon, st_buffer(co_int.geom_polygon, -0.03))
+  and ST_Intersects(co.geom_polygon, ST_SetSRID(ST_MakeBox3D(ST_Point(#{minx}, #{miny}),ST_Point(#{maxx}, #{maxy})), #{srid}))
+  and ST_Intersects(co_int.geom_polygon, ST_SetSRID(ST_MakeBox3D(ST_Point(#{minx}, #{miny}),ST_Point(#{maxx}, #{maxy})), #{srid}))', 'The spatial query that retrieves Overlapping');
+INSERT INTO query (name, sql, description) VALUES ('map_search.cadastre_object_pending', 'select id, cadastre.get_label(name_firstpart, name_lastpart) as label, st_asewkb(st_transform(geom_polygon, #{srid})) as the_geom  from cadastre.cadastre_object  where status_code= ''pending'' and compare_strings(#{search_string}, name_firstpart || '' '' || coalesce(name_lastpart, '''')) limit 30', NULL);
 
 
 ALTER TABLE query ENABLE TRIGGER ALL;
@@ -101,11 +102,11 @@ INSERT INTO config_map_layer (name, title, type_code, active, visible_in_start, 
 INSERT INTO config_map_layer (name, title, type_code, active, visible_in_start, item_order, style, url, wms_layers, wms_version, wms_format, wms_data_source, pojo_structure, pojo_query_name, pojo_query_name_for_select, shape_location, security_user, security_password, added_from_bulk_operation, use_in_public_display, use_for_ot) VALUES ('sug_hierarchy', 'Hierarchy', 'pojo', false, false, 9, 'sug-hierarchy.xml', NULL, NULL, NULL, NULL, NULL, 'theGeom:Polygon,label:"",filter_category', 'SpatialResult.getHierarchy', NULL, NULL, NULL, NULL, false, true, false);
 INSERT INTO config_map_layer (name, title, type_code, active, visible_in_start, item_order, style, url, wms_layers, wms_version, wms_format, wms_data_source, pojo_structure, pojo_query_name, pojo_query_name_for_select, shape_location, security_user, security_password, added_from_bulk_operation, use_in_public_display, use_for_ot) VALUES ('orthophoto', 'Orthophoto', 'wms', false, false, 10, NULL, 'http://localhost:8085/geoserver/sola/wms', 'sierraleone:sierraleone', '1.1.1', 'image/jpeg', NULL, NULL, NULL, NULL, NULL, NULL, NULL, false, false, false);
 INSERT INTO config_map_layer (name, title, type_code, active, visible_in_start, item_order, style, url, wms_layers, wms_version, wms_format, wms_data_source, pojo_structure, pojo_query_name, pojo_query_name_for_select, shape_location, security_user, security_password, added_from_bulk_operation, use_in_public_display, use_for_ot) VALUES ('sug_reg', 'Region', 'pojo', true, true, 90, 'reg.xml', NULL, NULL, NULL, NULL, NULL, 'theGeom:Polygon,label:""', 'SpatialResult.getRegion', NULL, NULL, NULL, NULL, false, false, false);
-INSERT INTO config_map_layer (name, title, type_code, active, visible_in_start, item_order, style, url, wms_layers, wms_version, wms_format, wms_data_source, pojo_structure, pojo_query_name, pojo_query_name_for_select, shape_location, security_user, security_password, added_from_bulk_operation, use_in_public_display, use_for_ot) VALUES ('overlappingparcels', 'OverlappingParcels', 'pojo', true, false, 81, 'overlappingparcels.xml', NULL, NULL, NULL, NULL, NULL, 'theGeom:Polygon,label:""', 'SpatialResult.getOverlappingParcels', NULL, NULL, NULL, NULL, false, false, false);
 INSERT INTO config_map_layer (name, title, type_code, active, visible_in_start, item_order, style, url, wms_layers, wms_version, wms_format, wms_data_source, pojo_structure, pojo_query_name, pojo_query_name_for_select, shape_location, security_user, security_password, added_from_bulk_operation, use_in_public_display, use_for_ot) VALUES ('parcels-historic-current-ba', 'Historic parcels with current titles', 'pojo', false, false, 20, 'parcel_historic_current_ba.xml', NULL, NULL, NULL, NULL, NULL, 'theGeom:Polygon,label:""', 'SpatialResult.getParcelsHistoricWithCurrentBA', 'dynamic.informationtool.get_parcel_historic_current_ba', NULL, NULL, NULL, false, false, false);
 INSERT INTO config_map_layer (name, title, type_code, active, visible_in_start, item_order, style, url, wms_layers, wms_version, wms_format, wms_data_source, pojo_structure, pojo_query_name, pojo_query_name_for_select, shape_location, security_user, security_password, added_from_bulk_operation, use_in_public_display, use_for_ot) VALUES ('sug_chiefdom', 'Chiefdom', 'pojo', true, true, 91, 'chiefdom.xml', NULL, NULL, NULL, NULL, NULL, 'theGeom:Polygon,label:""', 'SpatialResult.getChiefdom', NULL, NULL, NULL, NULL, false, false, false);
 INSERT INTO config_map_layer (name, title, type_code, active, visible_in_start, item_order, style, url, wms_layers, wms_version, wms_format, wms_data_source, pojo_structure, pojo_query_name, pojo_query_name_for_select, shape_location, security_user, security_password, added_from_bulk_operation, use_in_public_display, use_for_ot) VALUES ('sug_dist', 'District', 'pojo', true, true, 90, 'dist.xml', NULL, NULL, NULL, NULL, NULL, 'theGeom:Polygon,label:""', 'SpatialResult.getDistrict', NULL, NULL, NULL, NULL, false, false, false);
 INSERT INTO config_map_layer (name, title, type_code, active, visible_in_start, item_order, style, url, wms_layers, wms_version, wms_format, wms_data_source, pojo_structure, pojo_query_name, pojo_query_name_for_select, shape_location, security_user, security_password, added_from_bulk_operation, use_in_public_display, use_for_ot) VALUES ('road-centerlines', 'Road and stream centerlines', 'pojo', true, true, 45, 'road_centerline.xml', NULL, NULL, NULL, NULL, NULL, 'theGeom:MultiLineString,label:""', 'SpatialResult.getRoadCenterlines', NULL, NULL, NULL, NULL, false, false, false);
+INSERT INTO config_map_layer (name, title, type_code, active, visible_in_start, item_order, style, url, wms_layers, wms_version, wms_format, wms_data_source, pojo_structure, pojo_query_name, pojo_query_name_for_select, shape_location, security_user, security_password, added_from_bulk_operation, use_in_public_display, use_for_ot) VALUES ('overlappingparcels', 'OverlappingParcels', 'pojo', true, false, 81, 'overlappingparcels.xml', NULL, NULL, NULL, NULL, NULL, 'theGeom:Polygon,label:""', 'SpatialResult.getOverlappingParcels', NULL, NULL, NULL, NULL, false, false, false);
 
 
 ALTER TABLE config_map_layer ENABLE TRIGGER ALL;
@@ -118,6 +119,7 @@ ALTER TABLE config_map_layer_metadata DISABLE TRIGGER ALL;
 
 INSERT INTO config_map_layer_metadata (name_layer, name, value) VALUES ('roads', 'in-plan-production', 'true');
 INSERT INTO config_map_layer_metadata (name_layer, name, value) VALUES ('road-centerlines', 'in-plan-production', 'true');
+INSERT INTO config_map_layer_metadata (name_layer, name, value) VALUES ('place-names', 'in-plan-production', 'true');
 
 
 ALTER TABLE config_map_layer_metadata ENABLE TRIGGER ALL;
@@ -287,11 +289,12 @@ ALTER TABLE crs ENABLE TRIGGER ALL;
 
 ALTER TABLE map_search_option DISABLE TRIGGER ALL;
 
-INSERT INTO map_search_option (code, title, query_name, active, min_search_str_len, zoom_in_buffer, description) VALUES ('LOCALITY', 'Locality', 'map_search.locality', true, 3, 100.00, NULL);
-INSERT INTO map_search_option (code, title, query_name, active, min_search_str_len, zoom_in_buffer, description) VALUES ('BAUNIT', 'Property number', 'map_search.cadastre_object_by_baunit', true, 3, 50.00, NULL);
-INSERT INTO map_search_option (code, title, query_name, active, min_search_str_len, zoom_in_buffer, description) VALUES ('OWNER_OF_BAUNIT', 'Property owner', 'map_search.cadastre_object_by_baunit_owner', false, 3, 50.00, NULL);
 INSERT INTO map_search_option (code, title, query_name, active, min_search_str_len, zoom_in_buffer, description) VALUES ('NUMBER', 'Parcel', 'map_search.cadastre_object_by_number', true, 3, 50.00, NULL);
-INSERT INTO map_search_option (code, title, query_name, active, min_search_str_len, zoom_in_buffer, description) VALUES ('TITLE', 'Title', 'map_search.cadastre_object_by_title', true, 3, 50.00, NULL);
+INSERT INTO map_search_option (code, title, query_name, active, min_search_str_len, zoom_in_buffer, description) VALUES ('BAUNIT', 'Property number', 'map_search.cadastre_object_by_baunit', false, 3, 50.00, NULL);
+INSERT INTO map_search_option (code, title, query_name, active, min_search_str_len, zoom_in_buffer, description) VALUES ('LOCALITY', 'Locality', 'map_search.locality', false, 3, 100.00, NULL);
+INSERT INTO map_search_option (code, title, query_name, active, min_search_str_len, zoom_in_buffer, description) VALUES ('TITLE', 'Title', 'map_search.cadastre_object_by_title', false, 3, 50.00, NULL);
+INSERT INTO map_search_option (code, title, query_name, active, min_search_str_len, zoom_in_buffer, description) VALUES ('OWNER_OF_BAUNIT', 'Property owner', 'map_search.cadastre_object_by_baunit_owner', false, 3, 50.00, NULL);
+INSERT INTO map_search_option (code, title, query_name, active, min_search_str_len, zoom_in_buffer, description) VALUES ('PENDING', 'Pending Parcel', 'map_search.cadastre_object_pending', true, 3, 50.00, NULL);
 
 
 ALTER TABLE map_search_option ENABLE TRIGGER ALL;
@@ -426,6 +429,7 @@ INSERT INTO version (version_num) VALUES ('1505a');
 INSERT INTO version (version_num) VALUES ('1505b');
 INSERT INTO version (version_num) VALUES ('1505d');
 INSERT INTO version (version_num) VALUES ('1606c');
+INSERT INTO version (version_num) VALUES ('1606d');
 
 
 ALTER TABLE version ENABLE TRIGGER ALL;

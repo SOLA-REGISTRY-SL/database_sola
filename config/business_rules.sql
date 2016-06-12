@@ -142,6 +142,8 @@ INSERT INTO br (id, display_name, technical_type_code, feedback, description, te
 INSERT INTO br (id, display_name, technical_type_code, feedback, description, technical_description) VALUES ('delete-relation-notification', 'delete-relation-notification', 'sql', 'Delete notification for the services of the application', NULL, '#{id}(application_id) is requested');
 INSERT INTO br (id, display_name, technical_type_code, feedback, description, technical_description) VALUES ('new-parcel-created', 'new-parcel-created', 'sql', 'Parcel plygon must be created. Only 1 polygon is allowed', NULL, '#{id}(transaction_id) is requested');
 INSERT INTO br (id, display_name, technical_type_code, feedback, description, technical_description) VALUES ('new-parcel-lastpart-assigned', 'new-parcel-lastpart-assigned', 'sql', 'Parcel first part and last part identifiers must be assigned according to the survey plan details.', NULL, '#{id}(transaction_id) is requested');
+INSERT INTO br (id, display_name, technical_type_code, feedback, description, technical_description) VALUES ('new-survey-objects-do-not-overlap', 'new-survey-objects-do-not-overlap', 'sql', 'The new parcel polygons must not overlap::::Новые участки не должны пересекаться.::::مضلعات القطعة الجديدة يجب ان لا تتداخل::::Les polygones des nouvelles parcelles ne doivent pas se superposer.::::::::::::Os polígonos das novas parcelas não devem se sobrepor.::::::::新宗地多边形不能重叠。', NULL, '#{id}(transaction_id) is requested. Check the union of new co has the same area as the sum of all areas of new co-s, which means the new co-s don''t overlap');
+INSERT INTO br (id, display_name, technical_type_code, feedback, description, technical_description) VALUES ('existing-survey-objects-do-not-overlap', 'existing-survey-objects-do-not-overlap', 'sql', 'The existing parcel polygons must not overlap::::Новые участки не должны пересекаться.::::مضلعات القطعة الجديدة يجب ان لا تتداخل::::Les polygones des nouvelles parcelles ne doivent pas se superposer.::::::::::::Os polígonos das novas parcelas não devem se sobrepor.::::::::新宗地多边形不能重叠。', NULL, '#{id}(transaction_id) is requested. Check the union of existing co has the same area as the sum of all areas of existing co-s, which means the existing co-s don''t overlap');
 
 
 ALTER TABLE br ENABLE TRIGGER ALL;
@@ -1088,6 +1090,19 @@ and aa.id = #{id}
 )
 >= 0) AS vl 
 ;');
+INSERT INTO br_definition (br_id, active_from, active_until, body) VALUES ('new-survey-objects-do-not-overlap', '2014-02-20', 'infinity', 'WITH tolerance AS (SELECT CAST(ABS(LOG((CAST (vl AS NUMERIC)^2))) AS INT) AS area FROM system.setting where name = ''map-tolerance'' LIMIT 1)
+SELECT COALESCE(ROUND(CAST (ST_AREA(ST_UNION(co.geom_polygon))AS NUMERIC), (SELECT area FROM tolerance)) = 
+		ROUND(CAST(SUM(ST_AREA(co.geom_polygon))AS NUMERIC), (SELECT area FROM tolerance)), 
+		TRUE) AS vl
+FROM cadastre.cadastre_object co 
+');
+INSERT INTO br_definition (br_id, active_from, active_until, body) VALUES ('existing-survey-objects-do-not-overlap', '2014-02-20', 'infinity', 'WITH tolerance AS (SELECT CAST(ABS(LOG((CAST (vl AS NUMERIC)^2))) AS INT) AS area FROM system.setting where name = ''map-tolerance'' LIMIT 1)
+
+SELECT COALESCE(ROUND(CAST (ST_AREA(ST_UNION(co.geom_polygon))AS NUMERIC), (SELECT area FROM tolerance)) = 
+		ROUND(CAST(SUM(ST_AREA(co.geom_polygon))AS NUMERIC), (SELECT area FROM tolerance)), 
+		TRUE) AS vl
+FROM cadastre.cadastre_object co 
+');
 
 
 ALTER TABLE br_definition ENABLE TRIGGER ALL;
@@ -1155,8 +1170,6 @@ INSERT INTO br_validation (id, br_id, target_code, target_application_moment, ta
 INSERT INTO br_validation (id, br_id, target_code, target_application_moment, target_service_moment, target_reg_moment, target_request_type_code, target_rrr_type_code, severity_code, order_of_execution) VALUES ('bf530d92-99dd-11e3-8ac9-5fe3ebe62fec', 'cadastre-object-check-name', 'cadastre_object', NULL, NULL, 'pending', 'cadastreChange', NULL, 'medium', 660);
 INSERT INTO br_validation (id, br_id, target_code, target_application_moment, target_service_moment, target_reg_moment, target_request_type_code, target_rrr_type_code, severity_code, order_of_execution) VALUES ('bf5ecd8a-99dd-11e3-897f-83b0d2f7ca79', 'cadastre-redefinition-union-old-new-the-same', 'cadastre_object', NULL, NULL, 'current', 'redefineCadastre', NULL, 'warning', 400);
 INSERT INTO br_validation (id, br_id, target_code, target_application_moment, target_service_moment, target_reg_moment, target_request_type_code, target_rrr_type_code, severity_code, order_of_execution) VALUES ('bf5f42c4-99dd-11e3-adf1-c35e9d107011', 'cadastre-redefinition-union-old-new-the-same', 'cadastre_object', NULL, NULL, 'pending', 'redefineCadastre', NULL, 'warning', 420);
-INSERT INTO br_validation (id, br_id, target_code, target_application_moment, target_service_moment, target_reg_moment, target_request_type_code, target_rrr_type_code, severity_code, order_of_execution) VALUES ('bf605434-99dd-11e3-94b0-db8d0a31a5eb', 'new-cadastre-objects-do-not-overlap', 'cadastre_object', NULL, NULL, 'pending', 'cadastreChange', NULL, 'warning', 60);
-INSERT INTO br_validation (id, br_id, target_code, target_application_moment, target_service_moment, target_reg_moment, target_request_type_code, target_rrr_type_code, severity_code, order_of_execution) VALUES ('bf60f074-99dd-11e3-b103-3f68ada0b2ea', 'new-cadastre-objects-do-not-overlap', 'cadastre_object', NULL, NULL, 'current', 'cadastreChange', NULL, 'medium', 480);
 INSERT INTO br_validation (id, br_id, target_code, target_application_moment, target_service_moment, target_reg_moment, target_request_type_code, target_rrr_type_code, severity_code, order_of_execution) VALUES ('bf6228fe-99dd-11e3-8222-fb2038631753', 'new-cadastre-objects-present', 'cadastre_object', NULL, NULL, 'pending', 'cadastreChange', NULL, 'warning', 370);
 INSERT INTO br_validation (id, br_id, target_code, target_application_moment, target_service_moment, target_reg_moment, target_request_type_code, target_rrr_type_code, severity_code, order_of_execution) VALUES ('bf629e2e-99dd-11e3-9f6d-1bce9d19f1b0', 'new-cadastre-objects-present', 'cadastre_object', NULL, NULL, 'current', 'cadastreChange', NULL, 'critical', 50);
 INSERT INTO br_validation (id, br_id, target_code, target_application_moment, target_service_moment, target_reg_moment, target_request_type_code, target_rrr_type_code, severity_code, order_of_execution) VALUES ('bf65ab78-99dd-11e3-8578-97b6e4e3f10c', 'target-parcels-check-isapolygon', 'cadastre_object', NULL, NULL, 'pending', 'cadastreChange', NULL, 'critical', 90);
@@ -1191,6 +1204,12 @@ INSERT INTO br_validation (id, br_id, target_code, target_application_moment, ta
 INSERT INTO br_validation (id, br_id, target_code, target_application_moment, target_service_moment, target_reg_moment, target_request_type_code, target_rrr_type_code, severity_code, order_of_execution) VALUES ('0a02707a-154d-11e6-ad9c-33b8bd37074a', 'new-parcel-lastpart-assigned', 'cadastre_object', NULL, NULL, 'pending', 'newParcel', NULL, 'critical', 100);
 INSERT INTO br_validation (id, br_id, target_code, target_application_moment, target_service_moment, target_reg_moment, target_request_type_code, target_rrr_type_code, severity_code, order_of_execution) VALUES ('b825f988-2f3d-11e6-8c75-8fa41ff3f44f', 'app_on_approve_check_SP', 'application', 'approve', NULL, NULL, NULL, NULL, 'critical', 722);
 INSERT INTO br_validation (id, br_id, target_code, target_application_moment, target_service_moment, target_reg_moment, target_request_type_code, target_rrr_type_code, severity_code, order_of_execution) VALUES ('b82647a8-2f3d-11e6-a7c5-bf868f7f3e7c', 'app_on_approve_check_SP', 'application', 'validate', NULL, NULL, NULL, NULL, 'critical', 723);
+INSERT INTO br_validation (id, br_id, target_code, target_application_moment, target_service_moment, target_reg_moment, target_request_type_code, target_rrr_type_code, severity_code, order_of_execution) VALUES ('bf605434-99dd-11e3-94b0-db8d0a31a5eb', 'new-cadastre-objects-do-not-overlap', 'cadastre_object', NULL, NULL, 'pending', 'cadastreChange', NULL, 'warning', 60);
+INSERT INTO br_validation (id, br_id, target_code, target_application_moment, target_service_moment, target_reg_moment, target_request_type_code, target_rrr_type_code, severity_code, order_of_execution) VALUES ('bf60f074-99dd-11e3-b103-3f68ada0b2ea', 'new-cadastre-objects-do-not-overlap', 'cadastre_object', NULL, NULL, 'current', 'cadastreChange', NULL, 'medium', 480);
+INSERT INTO br_validation (id, br_id, target_code, target_application_moment, target_service_moment, target_reg_moment, target_request_type_code, target_rrr_type_code, severity_code, order_of_execution) VALUES ('349ab8d2-3097-11e6-b7f1-dbe42251fe30', 'new-survey-objects-do-not-overlap', 'cadastre_object', NULL, NULL, 'current', 'newParcel', NULL, 'medium', 801);
+INSERT INTO br_validation (id, br_id, target_code, target_application_moment, target_service_moment, target_reg_moment, target_request_type_code, target_rrr_type_code, severity_code, order_of_execution) VALUES ('49111252-3097-11e6-9879-cb1d38a73d56', 'existing-survey-objects-do-not-overlap', 'cadastre_object', NULL, NULL, 'current', 'existingParcel', NULL, 'medium', 803);
+INSERT INTO br_validation (id, br_id, target_code, target_application_moment, target_service_moment, target_reg_moment, target_request_type_code, target_rrr_type_code, severity_code, order_of_execution) VALUES ('346e78b2-3097-11e6-ba70-e32d28d78723', 'new-survey-objects-do-not-overlap', 'cadastre_object', NULL, NULL, 'pending', 'newParcel', NULL, 'critical', 800);
+INSERT INTO br_validation (id, br_id, target_code, target_application_moment, target_service_moment, target_reg_moment, target_request_type_code, target_rrr_type_code, severity_code, order_of_execution) VALUES ('ce839a1c-30ac-11e6-b710-97cc305a6d7b', 'existing-survey-objects-do-not-overlap', 'service', NULL, 'complete', NULL, 'existingParcel', NULL, 'critical', 802);
 
 
 ALTER TABLE br_validation ENABLE TRIGGER ALL;
