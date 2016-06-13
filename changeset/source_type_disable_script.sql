@@ -14,3 +14,5 @@ UPDATE source.administrative_source_type SET status = 'x' WHERE code = 'proclama
 UPDATE source.administrative_source_type SET status = 'x' WHERE code = 'requisition';
 UPDATE source.administrative_source_type SET status = 'x' WHERE code = 'title';
 UPDATE source.administrative_source_type SET status = 'x' WHERE code = 'will';
+
+UPDATE source.administrative_source_type SET status = 'c',  display_value = 'Receipt', description = 'Receipt confirming payment for Service' WHERE code = 'taxPayment';
