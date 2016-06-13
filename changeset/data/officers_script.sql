@@ -1,4 +1,4 @@
-----------------------------------------------------------------------------------------------------------
+﻿----------------------------------------------------------------------------------------------------------
 --INSERTING LICENSED SUVEYOR
 ----------------------------------------------------------------------------------------------------------
 -- DR. KOSONIKE KOSO-THOMAS
@@ -987,7 +987,8 @@ INSERT INTO party.party(id, ext_id, type_code, name, last_name, fathers_name, fa
 			Values('060520161131-66', 'na', 'naturalPerson', 'TAMBA M.', 'JONES', 'na', 'na', 
             'na', 'male', '060520161166', 'NA', 'na', 'na', 
             'na', 'na', 'na', 'phone', '2999-01-01', 
-            'na', 'na'); INSERT INTO party.party_role (party_id, type_code) values('060520161131-66', 'charting_officer');
+            'na', 'na'); 
+            INSERT INTO party.party_role (party_id, type_code) values('060520161131-66', 'charting_officer');
 ---------------------------------------------------------------------------------------------------------------
 
 

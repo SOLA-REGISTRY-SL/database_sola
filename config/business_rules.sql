@@ -1070,26 +1070,6 @@ INSERT INTO br_definition (br_id, active_from, active_until, body) VALUES ('appl
 				END AS vl FROM newFreeholdApp');
 INSERT INTO br_definition (br_id, active_from, active_until, body) VALUES ('new-parcel-created', '2016-01-01', 'infinity', 'select count(*) = 1 as vl from cadastre.cadastre_object where transaction_id= #{id}');
 INSERT INTO br_definition (br_id, active_from, active_until, body) VALUES ('new-parcel-lastpart-assigned', '2016-01-01', 'infinity', 'select sum(case when name_firstpart = ''tmp'' then 1 else 0 end)<1 as vl from cadastre.cadastre_object where transaction_id= #{id}');
-INSERT INTO br_definition (br_id, active_from, active_until, body) VALUES ('app_on_approve_check_SP', '2016-01-01', 'infinity', '
-SELECT (
-(Select count (*)
-FROM application.application aa, application.service s, 
-source.source ss, application.application_uses_source aus 
-WHERE s.application_id::text = aa.id::text 
-AND s.request_type_code::text = ''newParcel''::text AND s.status_code::text = ''completed''::text 
-and aus.application_id = aa.id and aus.source_id = ss.id and ss.type_code = ''cadastralSurvey'' 
-and aa.id = #{id})
--
-(Select count (*)
-FROM application.application aa, application.service s, 
-source.source ss, application.application_uses_source aus 
-WHERE s.application_id::text = aa.id::text 
-AND s.request_type_code::text = ''newParcel''::text AND s.status_code::text = ''completed''::text 
-and aus.application_id = aa.id and aus.source_id = ss.id 
-and aa.id = #{id}
-)
->= 0) AS vl 
-;');
 INSERT INTO br_definition (br_id, active_from, active_until, body) VALUES ('new-survey-objects-do-not-overlap', '2014-02-20', 'infinity', 'WITH tolerance AS (SELECT CAST(ABS(LOG((CAST (vl AS NUMERIC)^2))) AS INT) AS area FROM system.setting where name = ''map-tolerance'' LIMIT 1)
 SELECT COALESCE(ROUND(CAST (ST_AREA(ST_UNION(co.geom_polygon))AS NUMERIC), (SELECT area FROM tolerance)) = 
 		ROUND(CAST(SUM(ST_AREA(co.geom_polygon))AS NUMERIC), (SELECT area FROM tolerance)), 
@@ -1103,6 +1083,24 @@ SELECT COALESCE(ROUND(CAST (ST_AREA(ST_UNION(co.geom_polygon))AS NUMERIC), (SELE
 		TRUE) AS vl
 FROM cadastre.cadastre_object co 
 ');
+INSERT INTO br_definition (br_id, active_from, active_until, body) VALUES ('app_on_approve_check_SP', '2016-01-01', 'infinity', '
+SELECT (
+(Select count (*)
+FROM application.application aa, application.service s, 
+source.source ss, application.application_uses_source aus 
+WHERE s.application_id::text = aa.id::text 
+AND s.request_type_code::text = ''newParcel''::text AND s.status_code::text = ''completed''::text 
+and aus.application_id = aa.id and aus.source_id = ss.id and ss.type_code = ''cadastralSurvey'' 
+and aa.id = #{id})
+-
+(Select count (*)
+FROM application.application aa, application.service s 
+WHERE s.application_id::text = aa.id::text 
+AND s.request_type_code::text = ''newParcel''::text AND s.status_code::text = ''completed''::text 
+and aa.id = #{id}
+)
+>= 0) AS vl 
+;');
 
 
 ALTER TABLE br_definition ENABLE TRIGGER ALL;
