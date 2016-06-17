@@ -62,6 +62,7 @@ INSERT INTO request_type_requires_source_type (source_type_code, request_type_co
 INSERT INTO request_type_requires_source_type (source_type_code, request_type_code) VALUES ('deed', 'subdivideProperty');
 INSERT INTO request_type_requires_source_type (source_type_code, request_type_code) VALUES ('fieldSketch', 'newParcel');
 INSERT INTO request_type_requires_source_type (source_type_code, request_type_code) VALUES ('cadastralSurvey', 'existingParcel');
+INSERT INTO request_type_requires_source_type (source_type_code, request_type_code) VALUES ('taxPayment', 'newParcel');
 
 
 ALTER TABLE request_type_requires_source_type ENABLE TRIGGER ALL;
