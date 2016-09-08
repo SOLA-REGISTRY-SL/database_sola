@@ -1,0 +1,8 @@
+﻿--SCRIPT to add new document  to the administration source types
+----------------------------------------------------------------------------
+
+INSERT INTO administrative_source_type (code, display_value, status, description, is_for_registration) VALUES ('initialapplication', 'Initial Application Letter', 'c', 'Initial Application Letter/document to Minister for state Lands', true);
+INSERT INTO administrative_source_type (code, display_value, status, description, is_for_registration) VALUES ('siteinspectionrpt', 'Site inspection report', 'c', 'Site inspection report for state Lands', true);
+INSERT INTO administrative_source_type (code, display_value, status, description, is_for_registration) VALUES ('approvalofferletter', 'Approval and issuance of Offer Letter', 'c', 'Approval by the Hon. Minister and issuance of Offer Letter for state Lands', true);
+INSERT INTO administrative_source_type (code, display_value, status, description, is_for_registration) VALUES ('payinitialrent', ' Initial rent Payment document/Receipt', 'c', 'Payment of initial rents for State Lands', true);
+
