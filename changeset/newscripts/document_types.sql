@@ -9,4 +9,8 @@ INSERT INTO administrative_source_type (code, display_value, status, description
 ---Private Land Document type-----
 INSERT INTO administrative_source_type (code, display_value, status, description, is_for_registration) VALUES ('surveybill', 'Payment of Survey Bill', 'c', 'Payment of survey bill for private land', true);
 INSERT INTO administrative_source_type (code, display_value, status, description, is_for_registration) VALUES ('stastelandclearance', ' State Land Clearance', 'c', 'Submission of state land clearance for private land', true);
+INSERT INTO administrative_source_type (code, display_value, status, description, is_for_registration) VALUES ('masterplan', ' Master Plan for sub devision Land', 'c', 'Mater Plan if the new land is a sub division from a master plot', true);
+INSERT INTO administrative_source_type (code, display_value, status, description, is_for_registration) VALUES ('letterofindemiti', 'Letter of Indemity for Private Land', 'c', 'Submission of state land clearance for private land', true);
+INSERT INTO administrative_source_type (code, display_value, status, description, is_for_registration) VALUES ('affidavis', ' Affidavit for private land', 'c', 'Affidavit for private land', true);
+
 
