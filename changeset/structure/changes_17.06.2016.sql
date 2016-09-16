@@ -11,6 +11,3 @@ where code = 'cadastralMap';
 
 update source.administrative_source_type  set display_value='Survey DataSheet'
 where code = 'fieldSketch';
-
-
-
