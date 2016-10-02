@@ -6578,6 +6578,7 @@ CREATE TABLE cadastre_object (
     checked_by character varying(250),
     checking_date date,
     dwg_off_no character varying(50),
+    state_land_clearance boolean DEFAULT false,
     CONSTRAINT enforce_dims_geom_polygon CHECK ((public.st_ndims(geom_polygon) = 2)),
     CONSTRAINT enforce_geotype_geom_polygon CHECK (((public.geometrytype(geom_polygon) = 'POLYGON'::text) OR (geom_polygon IS NULL))),
     CONSTRAINT enforce_srid_geom_polygon CHECK ((public.st_srid(geom_polygon) = ANY (ARRAY[32628, 32629]))),
@@ -6901,6 +6902,13 @@ COMMENT ON COLUMN cadastre_object.checking_date IS 'Checking date';
 --
 
 COMMENT ON COLUMN cadastre_object.dwg_off_no IS 'Drawing number';
+
+
+--
+-- Name: COLUMN cadastre_object.state_land_clearance; Type: COMMENT; Schema: cadastre; Owner: postgres
+--
+
+COMMENT ON COLUMN cadastre_object.state_land_clearance IS 'Flag indicating that State land clearance received. True - received, False - not received.';
 
 
 --
@@ -8972,6 +8980,7 @@ CREATE TABLE cadastre_object_historic (
     checked_by character varying(250),
     checking_date date,
     dwg_off_no character varying(50),
+    state_land_clearance boolean,
     CONSTRAINT enforce_dims_geom_polygon CHECK ((public.st_ndims(geom_polygon) = 2)),
     CONSTRAINT enforce_geotype_geom_polygon CHECK (((public.geometrytype(geom_polygon) = 'POLYGON'::text) OR (geom_polygon IS NULL))),
     CONSTRAINT enforce_srid_geom_polygon CHECK ((public.st_srid(geom_polygon) = ANY (ARRAY[32628, 32629]))),

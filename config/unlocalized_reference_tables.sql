@@ -63,6 +63,20 @@ INSERT INTO request_type_requires_source_type (source_type_code, request_type_co
 INSERT INTO request_type_requires_source_type (source_type_code, request_type_code) VALUES ('fieldSketch', 'newParcel');
 INSERT INTO request_type_requires_source_type (source_type_code, request_type_code) VALUES ('cadastralSurvey', 'existingParcel');
 INSERT INTO request_type_requires_source_type (source_type_code, request_type_code) VALUES ('taxPayment', 'newParcel');
+INSERT INTO request_type_requires_source_type (source_type_code, request_type_code) VALUES ('fieldSketch', 'newParcelSL');
+INSERT INTO request_type_requires_source_type (source_type_code, request_type_code) VALUES ('cadastralSurvey', 'existingParcelSL');
+INSERT INTO request_type_requires_source_type (source_type_code, request_type_code) VALUES ('initialapplication', 'existingParcelSL');
+INSERT INTO request_type_requires_source_type (source_type_code, request_type_code) VALUES ('siteinspectionrpt', 'existingParcelSL');
+INSERT INTO request_type_requires_source_type (source_type_code, request_type_code) VALUES ('approvalofferletter', 'existingParcelSL');
+INSERT INTO request_type_requires_source_type (source_type_code, request_type_code) VALUES ('payinitialrent', 'existingParcelSL');
+INSERT INTO request_type_requires_source_type (source_type_code, request_type_code) VALUES ('initialapplication', 'newParcelSL');
+INSERT INTO request_type_requires_source_type (source_type_code, request_type_code) VALUES ('siteinspectionrpt', 'newParcelSL');
+INSERT INTO request_type_requires_source_type (source_type_code, request_type_code) VALUES ('approvalofferletter', 'newParcelSL');
+INSERT INTO request_type_requires_source_type (source_type_code, request_type_code) VALUES ('payinitialrent', 'newParcelSL');
+INSERT INTO request_type_requires_source_type (source_type_code, request_type_code) VALUES ('taxPayment', 'existingParcelSL');
+INSERT INTO request_type_requires_source_type (source_type_code, request_type_code) VALUES ('taxPayment', 'existingParcel');
+INSERT INTO request_type_requires_source_type (source_type_code, request_type_code) VALUES ('surveybill', 'newParcel');
+INSERT INTO request_type_requires_source_type (source_type_code, request_type_code) VALUES ('stastelandclearance', 'newParcel');
 
 
 ALTER TABLE request_type_requires_source_type ENABLE TRIGGER ALL;
