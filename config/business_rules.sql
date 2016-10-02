@@ -146,9 +146,9 @@ INSERT INTO br (id, display_name, technical_type_code, feedback, description, te
 INSERT INTO br (id, display_name, technical_type_code, feedback, description, technical_description) VALUES ('survey-plan-cleared-by-state-land', 'survey-plan-cleared-by-state-land', 'sql', 'State Land clearance must be received', '', 'User with StateLandClearance role must provide clearance to the survey plan.');
 INSERT INTO br (id, display_name, technical_type_code, feedback, description, technical_description) VALUES ('new-parcel-SL-created', 'new-parcel-SL-created', 'sql', 'Parcel plygon must be created. Only 1 polygon is allowed', NULL, '#{id}(transaction_id) is requested');
 INSERT INTO br (id, display_name, technical_type_code, feedback, description, technical_description) VALUES ('new-parcel-SL-lastpart-assigned', 'new-parcel-SL-lastpart-assigned', 'sql', 'Parcel first part and last part identifiers must be assigned according to the survey plan SL details.', NULL, '#{id}(transaction_id) is requested');
-INSERT INTO br (id, display_name, technical_type_code, feedback, description, technical_description) VALUES ('app_on_approve_check_SP', 'app_on_approve_check_SP', 'sql', 'there must be the SP attached to approve the application', NULL, '#{id}(application) is requested');
 INSERT INTO br (id, display_name, technical_type_code, feedback, description, technical_description) VALUES ('new-survey-SL-objects-do-not-overlap', 'new-survey-SL-objects-do-not-overlap', 'sql', 'The new parcel polygons must not overlap::::Новые участки не должны пересекаться.::::مضلعات القطعة الجديدة يجب ان لا تتداخل::::Les polygones des nouvelles parcelles ne doivent pas se superposer.::::::::::::Os polígonos das novas parcelas não devem se sobrepor.::::::::新宗地多边形不能重叠。', NULL, '#{id}(transaction_id) is requested. Check the union of new co has the same area as the sum of all areas of new co-s, which means the new co-s don''t overlap');
 INSERT INTO br (id, display_name, technical_type_code, feedback, description, technical_description) VALUES ('existing-survey-SL-objects-do-not-overlap', 'existing-survey-SL-objects-do-not-overlap', 'sql', 'The existing parcel polygons must not overlap::::Новые участки не должны пересекаться.::::مضلعات القطعة الجديدة يجب ان لا تتداخل::::Les polygones des nouvelles parcelles ne doivent pas se superposer.::::::::::::Os polígonos das novas parcelas não devem se sobrepor.::::::::新宗地多边形不能重叠。', NULL, '#{id}(transaction_id) is requested. Check the union of existing co has the same area as the sum of all areas of existing co-s, which means the existing co-s don''t overlap');
+INSERT INTO br (id, display_name, technical_type_code, feedback, description, technical_description) VALUES ('app_on_approve_check_SP', 'app_on_approve_check_SP', 'sql', 'there must be the SP attached to approve the application', NULL, '#{id}(application) is requested');
 
 
 ALTER TABLE br ENABLE TRIGGER ALL;
@@ -1100,6 +1100,13 @@ SELECT COALESCE(ROUND(CAST (ST_AREA(ST_UNION(co.geom_polygon))AS NUMERIC), (SELE
 FROM cadastre.cadastre_object co 
 ');
 INSERT INTO br_definition (br_id, active_from, active_until, body) VALUES ('new-parcel-SL-lastpart-assigned', '2016-01-01', 'infinity', 'select sum(case when name_firstpart = ''tmp'' then 1 else 0 end)<1 as vl from cadastre.cadastre_object where transaction_id= #{id}');
+INSERT INTO br_definition (br_id, active_from, active_until, body) VALUES ('existing-survey-SL-objects-do-not-overlap', '2014-02-20', 'infinity', 'WITH tolerance AS (SELECT CAST(ABS(LOG((CAST (vl AS NUMERIC)^2))) AS INT) AS area FROM system.setting where name = ''map-tolerance'' LIMIT 1)
+
+SELECT COALESCE(ROUND(CAST (ST_AREA(ST_UNION(co.geom_polygon))AS NUMERIC), (SELECT area FROM tolerance)) = 
+		ROUND(CAST(SUM(ST_AREA(co.geom_polygon))AS NUMERIC), (SELECT area FROM tolerance)), 
+		TRUE) AS vl
+FROM cadastre.cadastre_object co 
+');
 INSERT INTO br_definition (br_id, active_from, active_until, body) VALUES ('app_on_approve_check_SP', '2016-01-01', 'infinity', '
 SELECT (
 (Select count (*)
@@ -1111,22 +1118,13 @@ and aus.application_id = aa.id and aus.source_id = ss.id and ss.type_code = ''ca
 and aa.id = #{id})
 -
 (Select count (*)
-FROM application.application aa, application.service s, 
-source.source ss, application.application_uses_source aus 
+FROM application.application aa, application.service s 
 WHERE s.application_id::text = aa.id::text 
 AND (s.request_type_code::text = ''newParcel''::text OR s.request_type_code::text = ''newParcelSL''::text) AND s.status_code::text = ''completed''::text 
-and aus.application_id = aa.id and aus.source_id = ss.id 
 and aa.id = #{id}
 )
 >= 0) AS vl 
 ;');
-INSERT INTO br_definition (br_id, active_from, active_until, body) VALUES ('existing-survey-SL-objects-do-not-overlap', '2014-02-20', 'infinity', 'WITH tolerance AS (SELECT CAST(ABS(LOG((CAST (vl AS NUMERIC)^2))) AS INT) AS area FROM system.setting where name = ''map-tolerance'' LIMIT 1)
-
-SELECT COALESCE(ROUND(CAST (ST_AREA(ST_UNION(co.geom_polygon))AS NUMERIC), (SELECT area FROM tolerance)) = 
-		ROUND(CAST(SUM(ST_AREA(co.geom_polygon))AS NUMERIC), (SELECT area FROM tolerance)), 
-		TRUE) AS vl
-FROM cadastre.cadastre_object co 
-');
 
 
 ALTER TABLE br_definition ENABLE TRIGGER ALL;
@@ -1236,8 +1234,6 @@ INSERT INTO br_validation (id, br_id, target_code, target_application_moment, ta
 INSERT INTO br_validation (id, br_id, target_code, target_application_moment, target_service_moment, target_reg_moment, target_request_type_code, target_rrr_type_code, severity_code, order_of_execution) VALUES ('3130d53c-7e6c-11e6-888d-73fe2b863262', 'survey-plan-cleared-by-state-land', 'service', NULL, 'complete', NULL, 'newParcel', NULL, 'critical', 100);
 INSERT INTO br_validation (id, br_id, target_code, target_application_moment, target_service_moment, target_reg_moment, target_request_type_code, target_rrr_type_code, severity_code, order_of_execution) VALUES ('31d68f5e-7e6c-11e6-91ae-fb1110a6a0a1', 'survey-plan-cleared-by-state-land', 'service', NULL, 'complete', NULL, 'existingParcel', NULL, 'critical', 110);
 INSERT INTO br_validation (id, br_id, target_code, target_application_moment, target_service_moment, target_reg_moment, target_request_type_code, target_rrr_type_code, severity_code, order_of_execution) VALUES ('d1ebe952-87be-11e6-870c-37195c08412c', 'new-parcel-SL-lastpart-assigned', 'cadastre_object', NULL, NULL, 'pending', 'newParcelSL', NULL, 'critical', 100);
-INSERT INTO br_validation (id, br_id, target_code, target_application_moment, target_service_moment, target_reg_moment, target_request_type_code, target_rrr_type_code, severity_code, order_of_execution) VALUES ('5bf96732-87bf-11e6-872b-371128580774', 'app_on_approve_check_SP', 'application', 'approve', NULL, NULL, NULL, NULL, 'critical', 722);
-INSERT INTO br_validation (id, br_id, target_code, target_application_moment, target_service_moment, target_reg_moment, target_request_type_code, target_rrr_type_code, severity_code, order_of_execution) VALUES ('5c0d3d52-87bf-11e6-9e35-838711ec8df5', 'app_on_approve_check_SP', 'application', 'validate', NULL, NULL, NULL, NULL, 'critical', 723);
 INSERT INTO br_validation (id, br_id, target_code, target_application_moment, target_service_moment, target_reg_moment, target_request_type_code, target_rrr_type_code, severity_code, order_of_execution) VALUES ('c3584df2-87c0-11e6-8f57-9f05f439210c', 'new-survey-SL-objects-do-not-overlap', 'cadastre_object', NULL, NULL, 'pending', 'newParcelSL', NULL, 'warning', 802);
 INSERT INTO br_validation (id, br_id, target_code, target_application_moment, target_service_moment, target_reg_moment, target_request_type_code, target_rrr_type_code, severity_code, order_of_execution) VALUES ('c359d492-87c0-11e6-9ff3-a32ffa44e691', 'new-survey-SL-objects-do-not-overlap', 'cadastre_object', NULL, NULL, 'current', 'newParcelSL', NULL, 'medium', 803);
 INSERT INTO br_validation (id, br_id, target_code, target_application_moment, target_service_moment, target_reg_moment, target_request_type_code, target_rrr_type_code, severity_code, order_of_execution) VALUES ('a67357b2-87c1-11e6-a4d5-233394f3dce1', 'existing-survey-objects-do-not-overlap', 'cadastre_object', NULL, NULL, 'pending', 'existingParcel', NULL, 'warning', 800);

@@ -213,11 +213,9 @@ and aus.application_id = aa.id and aus.source_id = ss.id and ss.type_code = ''ca
 and aa.id = #{id})
 -
 (Select count (*)
-FROM application.application aa, application.service s, 
-source.source ss, application.application_uses_source aus 
+FROM application.application aa, application.service s 
 WHERE s.application_id::text = aa.id::text 
 AND (s.request_type_code::text = ''newParcel''::text OR s.request_type_code::text = ''newParcelSL''::text) AND s.status_code::text = ''completed''::text 
-and aus.application_id = aa.id and aus.source_id = ss.id 
 and aa.id = #{id}
 )
 >= 0) AS vl 

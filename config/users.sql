@@ -493,11 +493,13 @@ INSERT INTO approle_appgroup (approle_code, appgroup_id, rowidentifier, rowversi
 INSERT INTO approle_appgroup (approle_code, appgroup_id, rowidentifier, rowversion, change_action, change_user, change_time) VALUES ('existingParcel', 'charting-group-id', '7dddd030-300e-11e6-b1e9-b78ff8a7e3c2', 1, 'i', 'db:postgres', '2016-06-11 21:55:48.074');
 INSERT INTO approle_appgroup (approle_code, appgroup_id, rowidentifier, rowversion, change_action, change_user, change_time) VALUES ('StateLandClearance', 'clearance-group-id', '30a5f6ce-7e6c-11e6-9895-bf2253ca6140', 1, 'i', 'db:postgres', '2016-09-19 15:22:59.982');
 INSERT INTO approle_appgroup (approle_code, appgroup_id, rowidentifier, rowversion, change_action, change_user, change_time) VALUES ('existingParcel', 'admin-group-id', 'f79cbb6d-50f0-4560-b0fd-9bb467e22797', 1, 'i', 'test', '2016-09-20 09:56:20.38');
+INSERT INTO approle_appgroup (approle_code, appgroup_id, rowidentifier, rowversion, change_action, change_user, change_time) VALUES ('StateLandClearance', 'admin-group-id', '43b9c605-e7c5-40c9-8cf1-04ed8fb90199', 1, 'i', 'test', '2016-09-20 09:56:20.38');
 INSERT INTO approle_appgroup (approle_code, appgroup_id, rowidentifier, rowversion, change_action, change_user, change_time) VALUES ('newParcelSL', 'super-group-id', '8d701450-87ba-11e6-83d7-0bd9618bda1e', 1, 'i', 'db:postgres', '2016-10-01 11:36:37.437');
 INSERT INTO approle_appgroup (approle_code, appgroup_id, rowidentifier, rowversion, change_action, change_user, change_time) VALUES ('newParcelSL', 'ff94bfad-7079-41ea-bf4b-6962e36cad1f', '8dbc5ff4-87ba-11e6-9eab-f7ead804aebd', 1, 'i', 'db:postgres', '2016-10-01 11:36:37.437');
 INSERT INTO approle_appgroup (approle_code, appgroup_id, rowidentifier, rowversion, change_action, change_user, change_time) VALUES ('existingParcelSL', 'super-group-id', 'ee152cbe-87ba-11e6-9149-270d9a1d39af', 1, 'i', 'db:postgres', '2016-10-01 11:39:20.941');
 INSERT INTO approle_appgroup (approle_code, appgroup_id, rowidentifier, rowversion, change_action, change_user, change_time) VALUES ('existingParcelSL', 'ff94bfad-7079-41ea-bf4b-6962e36cad1f', 'f10e9a86-87ba-11e6-b811-b3d2f6d01308', 1, 'i', 'db:postgres', '2016-10-01 11:39:25.931');
 INSERT INTO approle_appgroup (approle_code, appgroup_id, rowidentifier, rowversion, change_action, change_user, change_time) VALUES ('existingParcelSL', 'charting-group-id', '107cf372-87c0-11e6-b00b-5377d885f68b', 1, 'i', 'db:postgres', '2016-10-01 12:16:06.147');
+INSERT INTO approle_appgroup (approle_code, appgroup_id, rowidentifier, rowversion, change_action, change_user, change_time) VALUES ('ViewMap', 'clearance-group-id', '45710d55-5370-4378-9587-0e0446e01c42', 1, 'i', 'test', '2016-10-02 23:20:44.851');
 
 
 ALTER TABLE approle_appgroup ENABLE TRIGGER ALL;
@@ -510,7 +512,6 @@ ALTER TABLE appuser DISABLE TRIGGER ALL;
 
 INSERT INTO appuser (id, username, first_name, last_name, email, mobile_number, activation_code, passwd, active, description, rowidentifier, rowversion, change_action, change_user, change_time, activation_expiration) VALUES ('test-id', 'test', 'Test', 'The BOSS', 'test@simple.com', '001', NULL, '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08', true, NULL, 'be17a2c6-99dd-11e3-ba2b-af4cac70daca', 2, 'u', 'test', '2016-06-10 12:47:33.113', NULL);
 
-
 ALTER TABLE appuser ENABLE TRIGGER ALL;
 
 --
@@ -519,7 +520,8 @@ ALTER TABLE appuser ENABLE TRIGGER ALL;
 
 ALTER TABLE appuser_appgroup DISABLE TRIGGER ALL;
 
-INSERT INTO appuser_appgroup (appuser_id, appgroup_id, rowidentifier, rowversion, change_action, change_user, change_time) VALUES ('test-id', 'super-group-id', 'be56cf8c-99dd-11e3-ac27-0343410f6672', 1, 'i', 'db:postgres', '2014-02-20 16:19:01.139');
+INSERT INTO appuser_appgroup (appuser_id, appgroup_id, rowidentifier, rowversion, change_action, change_user, change_time) VALUES ('test-id', 'clearance-group-id', '083bae4a-b36b-4daa-988f-a6ae798de5fd', 1, 'i', 'test', '2016-10-02 22:34:32.498');
+INSERT INTO appuser_appgroup (appuser_id, appgroup_id, rowidentifier, rowversion, change_action, change_user, change_time) VALUES ('bc366383-971f-4afe-b167-addca257c248', 'super-group-id', 'ff0d47cb-c9c1-462b-95c6-e55ba679ad47', 1, 'i', 'test', '2016-10-02 22:36:35.508');
 
 
 ALTER TABLE appuser_appgroup ENABLE TRIGGER ALL;
