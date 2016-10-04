@@ -1,7 +1,7 @@
 --
 -- PostgreSQL database dump
 --
-
+   
 SET statement_timeout = 0;
 SET client_encoding = 'UTF8';
 SET standard_conforming_strings = on;
@@ -520,9 +520,7 @@ ALTER TABLE appuser ENABLE TRIGGER ALL;
 
 ALTER TABLE appuser_appgroup DISABLE TRIGGER ALL;
 
-INSERT INTO appuser_appgroup (appuser_id, appgroup_id, rowidentifier, rowversion, change_action, change_user, change_time) VALUES ('test-id', 'clearance-group-id', '083bae4a-b36b-4daa-988f-a6ae798de5fd', 1, 'i', 'test', '2016-10-02 22:34:32.498');
-INSERT INTO appuser_appgroup (appuser_id, appgroup_id, rowidentifier, rowversion, change_action, change_user, change_time) VALUES ('bc366383-971f-4afe-b167-addca257c248', 'super-group-id', 'ff0d47cb-c9c1-462b-95c6-e55ba679ad47', 1, 'i', 'test', '2016-10-02 22:36:35.508');
-
+INSERT INTO appuser_appgroup (appuser_id, appgroup_id, rowidentifier, rowversion, change_action, change_user, change_time) VALUES ('test-id', 'super-group-id', 'be56cf8c-99dd-11e3-ac27-0343410f6672', 1, 'i', 'db:postgres', '2014-02-20 16:19:01.139');
 
 ALTER TABLE appuser_appgroup ENABLE TRIGGER ALL;
 
