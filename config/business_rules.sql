@@ -2,11 +2,16 @@
 -- PostgreSQL database dump
 --
 
+-- Dumped from database version 9.5.3
+-- Dumped by pg_dump version 9.5.3
+
 SET statement_timeout = 0;
+SET lock_timeout = 0;
 SET client_encoding = 'UTF8';
 SET standard_conforming_strings = on;
 SET check_function_bodies = false;
 SET client_min_messages = warning;
+SET row_security = off;
 
 SET search_path = system, pg_catalog;
 
@@ -149,6 +154,11 @@ INSERT INTO br (id, display_name, technical_type_code, feedback, description, te
 INSERT INTO br (id, display_name, technical_type_code, feedback, description, technical_description) VALUES ('new-survey-SL-objects-do-not-overlap', 'new-survey-SL-objects-do-not-overlap', 'sql', 'The new parcel polygons must not overlap::::Новые участки не должны пересекаться.::::مضلعات القطعة الجديدة يجب ان لا تتداخل::::Les polygones des nouvelles parcelles ne doivent pas se superposer.::::::::::::Os polígonos das novas parcelas não devem se sobrepor.::::::::新宗地多边形不能重叠。', NULL, '#{id}(transaction_id) is requested. Check the union of new co has the same area as the sum of all areas of new co-s, which means the new co-s don''t overlap');
 INSERT INTO br (id, display_name, technical_type_code, feedback, description, technical_description) VALUES ('existing-survey-SL-objects-do-not-overlap', 'existing-survey-SL-objects-do-not-overlap', 'sql', 'The existing parcel polygons must not overlap::::Новые участки не должны пересекаться.::::مضلعات القطعة الجديدة يجب ان لا تتداخل::::Les polygones des nouvelles parcelles ne doivent pas se superposer.::::::::::::Os polígonos das novas parcelas não devem se sobrepor.::::::::新宗地多边形不能重叠。', NULL, '#{id}(transaction_id) is requested. Check the union of existing co has the same area as the sum of all areas of existing co-s, which means the existing co-s don''t overlap');
 INSERT INTO br (id, display_name, technical_type_code, feedback, description, technical_description) VALUES ('app_on_approve_check_SP', 'app_on_approve_check_SP', 'sql', 'there must be the SP attached to approve the application', NULL, '#{id}(application) is requested');
+INSERT INTO br (id, display_name, technical_type_code, feedback, description, technical_description) VALUES ('survey-plan-master-plan-provided', 'survey-plan-master-plan-provided', 'sql', 'Master Survey Plan document together with attachment must be provided when subdividing master plot', '', 'Master survey plan must be attached to the application.');
+INSERT INTO br (id, display_name, technical_type_code, feedback, description, technical_description) VALUES ('survey-plan-affidavits-required', 'survey-plan-affidavits-required', 'sql', 'Affidavits document together with attachment must be provided for the first survey', '', 'Affidavits has to be attached to the application.');
+INSERT INTO br (id, display_name, technical_type_code, feedback, description, technical_description) VALUES ('survey-plan-indemnity-required', 'survey-plan-indemnity-required', 'sql', 'Letter of indemnity document together with attachment must be provided for the first survey', '', 'Letter of indemnity has to be attached to the application.');
+INSERT INTO br (id, display_name, technical_type_code, feedback, description, technical_description) VALUES ('survey-plan-cleared-by-environment', 'survey-plan-cleared-by-environment', 'sql', 'Environment clearance must be received', '', 'User with EnvironmentClearance role must provide clearance to the survey plan.');
+INSERT INTO br (id, display_name, technical_type_code, feedback, description, technical_description) VALUES ('survey-plan-cleared-by-planning', 'survey-plan-cleared-by-planing', 'sql', 'Planning clearance must be received', '', 'User with PlanningClearance role must provide clearance to the survey plan.');
 
 
 ALTER TABLE br ENABLE TRIGGER ALL;
@@ -1125,6 +1135,41 @@ and aa.id = #{id}
 )
 >= 0) AS vl 
 ;');
+INSERT INTO br_definition (br_id, active_from, active_until, body) VALUES ('survey-plan-master-plan-provided', '2000-01-01', 'infinity', 'SELECT count(1) > 0 as vl 
+	FROM cadastre.cadastre_object
+	WHERE (transaction_id in (select id from transaction.transaction where from_service_id = #{id}) and status_code = ''pending'' and land_type = ''private_land'')
+		and ((survey_type_code <> ''subdivision'' or survey_type_code is null) or 
+			(select count(1) 
+			 from application.application_uses_source apps inner join source.source s on apps.source_id = s.id
+			 where apps.application_id in (select application_id from application.service where id = #{id}) and s.type_code = ''masterplan'' and s.ext_archive_id is not null) > 0
+		    )
+	LIMIT 1');
+INSERT INTO br_definition (br_id, active_from, active_until, body) VALUES ('survey-plan-affidavits-required', '2000-01-01', 'infinity', 'SELECT count(1) > 0 as vl 
+	FROM cadastre.cadastre_object
+	WHERE (transaction_id in (select id from transaction.transaction where from_service_id = #{id}) and status_code = ''pending'' and land_type = ''private_land'')
+		and (survey_type_code is not null or 
+			(select count(1) 
+			 from application.application_uses_source apps inner join source.source s on apps.source_id = s.id
+			 where apps.application_id in (select application_id from application.service where id = #{id}) and s.type_code = ''affidavis'' and s.ext_archive_id is not null) > 0
+		    )
+	LIMIT 1');
+INSERT INTO br_definition (br_id, active_from, active_until, body) VALUES ('survey-plan-indemnity-required', '2000-01-01', 'infinity', 'SELECT count(1) > 0 as vl 
+	FROM cadastre.cadastre_object
+	WHERE (transaction_id in (select id from transaction.transaction where from_service_id = #{id}) and status_code = ''pending'' and land_type = ''private_land'')
+		and (survey_type_code is not null or 
+			(select count(1) 
+			 from application.application_uses_source apps inner join source.source s on apps.source_id = s.id
+			 where apps.application_id in (select application_id from application.service where id = #{id}) and s.type_code = ''letterofindemiti'' and s.ext_archive_id is not null) > 0
+		    )
+	LIMIT 1');
+INSERT INTO br_definition (br_id, active_from, active_until, body) VALUES ('survey-plan-cleared-by-environment', '2000-01-01', 'infinity', 'SELECT environment_clearance as vl 
+	FROM cadastre.cadastre_object
+	WHERE transaction_id in (select id from transaction.transaction where from_service_id = #{id}) and status_code = ''pending'' and land_type = ''private_land''
+	LIMIT 1');
+INSERT INTO br_definition (br_id, active_from, active_until, body) VALUES ('survey-plan-cleared-by-planning', '2000-01-01', 'infinity', 'SELECT planning_clearance as vl 
+	FROM cadastre.cadastre_object
+	WHERE transaction_id in (select id from transaction.transaction where from_service_id = #{id}) and status_code = ''pending'' and land_type = ''private_land''
+	LIMIT 1');
 
 
 ALTER TABLE br_definition ENABLE TRIGGER ALL;
@@ -1239,6 +1284,13 @@ INSERT INTO br_validation (id, br_id, target_code, target_application_moment, ta
 INSERT INTO br_validation (id, br_id, target_code, target_application_moment, target_service_moment, target_reg_moment, target_request_type_code, target_rrr_type_code, severity_code, order_of_execution) VALUES ('a67357b2-87c1-11e6-a4d5-233394f3dce1', 'existing-survey-objects-do-not-overlap', 'cadastre_object', NULL, NULL, 'pending', 'existingParcel', NULL, 'warning', 800);
 INSERT INTO br_validation (id, br_id, target_code, target_application_moment, target_service_moment, target_reg_moment, target_request_type_code, target_rrr_type_code, severity_code, order_of_execution) VALUES ('bf081132-87c1-11e6-88d8-6fa44e67f5e6', 'existing-survey-SL-objects-do-not-overlap', 'cadastre_object', NULL, NULL, 'pending', 'existingParcelSL', NULL, 'warning', 800);
 INSERT INTO br_validation (id, br_id, target_code, target_application_moment, target_service_moment, target_reg_moment, target_request_type_code, target_rrr_type_code, severity_code, order_of_execution) VALUES ('c1f6ccb2-87c1-11e6-a349-f7303fcffbc6', 'existing-survey-SL-objects-do-not-overlap', 'cadastre_object', NULL, NULL, 'current', 'existingParcelSL', NULL, 'medium', 801);
+INSERT INTO br_validation (id, br_id, target_code, target_application_moment, target_service_moment, target_reg_moment, target_request_type_code, target_rrr_type_code, severity_code, order_of_execution) VALUES ('aecd14b4-8a57-11e6-9573-e77652b7ed92', 'survey-plan-master-plan-provided', 'service', NULL, 'complete', NULL, 'newParcel', NULL, 'critical', 110);
+INSERT INTO br_validation (id, br_id, target_code, target_application_moment, target_service_moment, target_reg_moment, target_request_type_code, target_rrr_type_code, severity_code, order_of_execution) VALUES ('71efedae-8a58-11e6-9574-9f3f06ac98e8', 'survey-plan-affidavits-required', 'service', NULL, 'complete', NULL, 'newParcel', NULL, 'critical', 120);
+INSERT INTO br_validation (id, br_id, target_code, target_application_moment, target_service_moment, target_reg_moment, target_request_type_code, target_rrr_type_code, severity_code, order_of_execution) VALUES ('71f015fe-8a58-11e6-9575-ebdc541a37da', 'survey-plan-indemnity-required', 'service', NULL, 'complete', NULL, 'newParcel', NULL, 'critical', 130);
+INSERT INTO br_validation (id, br_id, target_code, target_application_moment, target_service_moment, target_reg_moment, target_request_type_code, target_rrr_type_code, severity_code, order_of_execution) VALUES ('59997c7e-8aef-11e6-9580-337f2fb2bc07', 'survey-plan-cleared-by-environment', 'service', NULL, 'complete', NULL, 'newParcel', NULL, 'critical', 160);
+INSERT INTO br_validation (id, br_id, target_code, target_application_moment, target_service_moment, target_reg_moment, target_request_type_code, target_rrr_type_code, severity_code, order_of_execution) VALUES ('5999a398-8aef-11e6-9581-833caed4e373', 'survey-plan-cleared-by-environment', 'service', NULL, 'complete', NULL, 'existingParcel', NULL, 'critical', 170);
+INSERT INTO br_validation (id, br_id, target_code, target_application_moment, target_service_moment, target_reg_moment, target_request_type_code, target_rrr_type_code, severity_code, order_of_execution) VALUES ('58430b7e-8b03-11e6-9588-a7a19242be7f', 'survey-plan-cleared-by-planning', 'service', NULL, 'complete', NULL, 'newParcel', NULL, 'critical', 140);
+INSERT INTO br_validation (id, br_id, target_code, target_application_moment, target_service_moment, target_reg_moment, target_request_type_code, target_rrr_type_code, severity_code, order_of_execution) VALUES ('58430b7f-8b03-11e6-9589-d3ad9105776f', 'survey-plan-cleared-by-planning', 'service', NULL, 'complete', NULL, 'existingParcel', NULL, 'critical', 150);
 
 
 ALTER TABLE br_validation ENABLE TRIGGER ALL;

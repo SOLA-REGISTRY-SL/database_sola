@@ -2,11 +2,16 @@
 -- PostgreSQL database dump
 --
 
+-- Dumped from database version 9.5.3
+-- Dumped by pg_dump version 9.5.3
+
 SET statement_timeout = 0;
+SET lock_timeout = 0;
 SET client_encoding = 'UTF8';
 SET standard_conforming_strings = on;
 SET check_function_bodies = false;
 SET client_min_messages = warning;
+SET row_security = off;
 
 SET search_path = system, pg_catalog;
 
@@ -431,6 +436,7 @@ INSERT INTO version (version_num) VALUES ('1505d');
 INSERT INTO version (version_num) VALUES ('1606c');
 INSERT INTO version (version_num) VALUES ('1606d');
 INSERT INTO version (version_num) VALUES ('1609a');
+INSERT INTO version (version_num) VALUES ('1610a');
 
 
 ALTER TABLE version ENABLE TRIGGER ALL;
