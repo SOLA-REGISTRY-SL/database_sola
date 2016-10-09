@@ -76,7 +76,7 @@ digraph "largeRelationshipsDiagram" {
       <TR><TD PORT="change_time" COLSPAN="3" BGCOLOR="#c0c0c0" ALIGN="LEFT">change_time</TD></TR>
       <TR><TD PORT="classification_code" COLSPAN="3" ALIGN="LEFT">classification_code</TD></TR>
       <TR><TD PORT="redact_code" COLSPAN="3" ALIGN="LEFT">redact_code</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 3</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">10 &gt;</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 3</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">11 &gt;</TD></TR>
     </TABLE>>
     URL="tables/ba_unit.html"
     tooltip="ba_unit"
@@ -211,47 +211,38 @@ digraph "largeRelationshipsDiagram" {
       <TR><TD PORT="change_time" COLSPAN="3" ALIGN="LEFT">change_time</TD></TR>
       <TR><TD PORT="classification_code" COLSPAN="3" ALIGN="LEFT">classification_code</TD></TR>
       <TR><TD PORT="redact_code" COLSPAN="3" ALIGN="LEFT">redact_code</TD></TR>
+      <TR><TD PORT="owner_name" COLSPAN="3" ALIGN="LEFT">owner_name</TD></TR>
+      <TR><TD PORT="address" COLSPAN="3" ALIGN="LEFT">address</TD></TR>
+      <TR><TD PORT="land_type" COLSPAN="3" ALIGN="LEFT">land_type</TD></TR>
+      <TR><TD PORT="parcel_area" COLSPAN="3" ALIGN="LEFT">parcel_area</TD></TR>
+      <TR><TD PORT="licensed_surveyor_id" COLSPAN="3" ALIGN="LEFT">licensed_surveyor_id</TD></TR>
+      <TR><TD PORT="east_neighbour" COLSPAN="3" ALIGN="LEFT">east_neighbour</TD></TR>
+      <TR><TD PORT="west_neighbour" COLSPAN="3" ALIGN="LEFT">west_neighbour</TD></TR>
+      <TR><TD PORT="south_neighbour" COLSPAN="3" ALIGN="LEFT">south_neighbour</TD></TR>
+      <TR><TD PORT="north_neighbour" COLSPAN="3" ALIGN="LEFT">north_neighbour</TD></TR>
+      <TR><TD PORT="survey_method" COLSPAN="3" ALIGN="LEFT">survey_method</TD></TR>
+      <TR><TD PORT="survey_date" COLSPAN="3" ALIGN="LEFT">survey_date</TD></TR>
+      <TR><TD PORT="beacon_number" COLSPAN="3" ALIGN="LEFT">beacon_number</TD></TR>
+      <TR><TD PORT="charting_officer_id" COLSPAN="3" ALIGN="LEFT">charting_officer_id</TD></TR>
+      <TR><TD PORT="state_land_clearing_officer_id" COLSPAN="3" ALIGN="LEFT">state_land_clearing_officer_id</TD></TR>
+      <TR><TD PORT="chiefdom_type" COLSPAN="3" ALIGN="LEFT">chiefdom_type</TD></TR>
+      <TR><TD PORT="survey_type_code" COLSPAN="3" ALIGN="LEFT">survey_type_code</TD></TR>
+      <TR><TD PORT="ref_name_firstpart" COLSPAN="3" ALIGN="LEFT">ref_name_firstpart</TD></TR>
+      <TR><TD PORT="ref_name_lastpart" COLSPAN="3" ALIGN="LEFT">ref_name_lastpart</TD></TR>
+      <TR><TD PORT="survey_number" COLSPAN="3" ALIGN="LEFT">survey_number</TD></TR>
+      <TR><TD PORT="correspondence_file" COLSPAN="3" ALIGN="LEFT">correspondence_file</TD></TR>
+      <TR><TD PORT="computation_file" COLSPAN="3" ALIGN="LEFT">computation_file</TD></TR>
+      <TR><TD PORT="drawn_by" COLSPAN="3" ALIGN="LEFT">drawn_by</TD></TR>
+      <TR><TD PORT="checked_by" COLSPAN="3" ALIGN="LEFT">checked_by</TD></TR>
+      <TR><TD PORT="checking_date" COLSPAN="3" ALIGN="LEFT">checking_date</TD></TR>
+      <TR><TD PORT="dwg_off_no" COLSPAN="3" ALIGN="LEFT">dwg_off_no</TD></TR>
+      <TR><TD PORT="state_land_clearance" COLSPAN="3" ALIGN="LEFT">state_land_clearance</TD></TR>
+      <TR><TD PORT="planning_clearance" COLSPAN="3" ALIGN="LEFT">planning_clearance</TD></TR>
+      <TR><TD PORT="environment_clearance" COLSPAN="3" ALIGN="LEFT">environment_clearance</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">1 &gt;</TD></TR>
     </TABLE>>
     URL="tables/../../cadastre/tables/cadastre_object.html"
     tooltip="cadastre.cadastre_object"
-  ];
-  "opentenure.claim" [
-    label=<
-    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">opentenure.claim</TD></TR>
-      <TR><TD PORT="id" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">id</TD></TR>
-      <TR><TD PORT="nr" COLSPAN="3" ALIGN="LEFT">nr</TD></TR>
-      <TR><TD PORT="lodgement_date" COLSPAN="3" ALIGN="LEFT">lodgement_date</TD></TR>
-      <TR><TD PORT="challenge_expiry_date" COLSPAN="3" ALIGN="LEFT">challenge_expiry_date</TD></TR>
-      <TR><TD PORT="decision_date" COLSPAN="3" ALIGN="LEFT">decision_date</TD></TR>
-      <TR><TD PORT="description" COLSPAN="3" ALIGN="LEFT">description</TD></TR>
-      <TR><TD PORT="challenged_claim_id" COLSPAN="3" ALIGN="LEFT">challenged_claim_id</TD></TR>
-      <TR><TD PORT="claimant_id" COLSPAN="3" ALIGN="LEFT">claimant_id</TD></TR>
-      <TR><TD PORT="mapped_geometry" COLSPAN="3" ALIGN="LEFT">mapped_geometry</TD></TR>
-      <TR><TD PORT="gps_geometry" COLSPAN="3" ALIGN="LEFT">gps_geometry</TD></TR>
-      <TR><TD PORT="status_code" COLSPAN="3" ALIGN="LEFT">status_code</TD></TR>
-      <TR><TD PORT="recorder_name" COLSPAN="3" ALIGN="LEFT">recorder_name</TD></TR>
-      <TR><TD PORT="rowidentifier" COLSPAN="3" ALIGN="LEFT">rowidentifier</TD></TR>
-      <TR><TD PORT="rowversion" COLSPAN="3" ALIGN="LEFT">rowversion</TD></TR>
-      <TR><TD PORT="change_action" COLSPAN="3" ALIGN="LEFT">change_action</TD></TR>
-      <TR><TD PORT="change_user" COLSPAN="3" ALIGN="LEFT">change_user</TD></TR>
-      <TR><TD PORT="change_time" COLSPAN="3" ALIGN="LEFT">change_time</TD></TR>
-      <TR><TD PORT="type_code" COLSPAN="3" ALIGN="LEFT">type_code</TD></TR>
-      <TR><TD PORT="start_date" COLSPAN="3" ALIGN="LEFT">start_date</TD></TR>
-      <TR><TD PORT="land_use_code" COLSPAN="3" ALIGN="LEFT">land_use_code</TD></TR>
-      <TR><TD PORT="notes" COLSPAN="3" ALIGN="LEFT">notes</TD></TR>
-      <TR><TD PORT="north_adjacency" COLSPAN="3" ALIGN="LEFT">north_adjacency</TD></TR>
-      <TR><TD PORT="south_adjacency" COLSPAN="3" ALIGN="LEFT">south_adjacency</TD></TR>
-      <TR><TD PORT="east_adjacency" COLSPAN="3" ALIGN="LEFT">east_adjacency</TD></TR>
-      <TR><TD PORT="west_adjacency" COLSPAN="3" ALIGN="LEFT">west_adjacency</TD></TR>
-      <TR><TD PORT="assignee_name" COLSPAN="3" ALIGN="LEFT">assignee_name</TD></TR>
-      <TR><TD PORT="rejection_reason_code" COLSPAN="3" ALIGN="LEFT">rejection_reason_code</TD></TR>
-      <TR><TD PORT="claim_area" COLSPAN="3" ALIGN="LEFT">claim_area</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
-    </TABLE>>
-    URL="tables/../../opentenure/tables/claim.html"
-    tooltip="opentenure.claim"
   ];
   "condition_for_rrr" [
     label=<
@@ -356,6 +347,24 @@ digraph "largeRelationshipsDiagram" {
     URL="tables/notation.html"
     tooltip="notation"
   ];
+  "application.notify_property" [
+    label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">application.notify_property</TD></TR>
+      <TR><TD PORT="notify_id" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">notify_id</TD></TR>
+      <TR><TD PORT="ba_unit_id" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">ba_unit_id</TD></TR>
+      <TR><TD PORT="rowidentifier" COLSPAN="3" ALIGN="LEFT">rowidentifier</TD></TR>
+      <TR><TD PORT="rowversion" COLSPAN="3" ALIGN="LEFT">rowversion</TD></TR>
+      <TR><TD PORT="change_action" COLSPAN="3" ALIGN="LEFT">change_action</TD></TR>
+      <TR><TD PORT="change_user" COLSPAN="3" ALIGN="LEFT">change_user</TD></TR>
+      <TR><TD PORT="change_time" COLSPAN="3" ALIGN="LEFT">change_time</TD></TR>
+      <TR><TD PORT="cancel_service_id" COLSPAN="3" ALIGN="LEFT">cancel_service_id</TD></TR>
+      <TR><TD PORT="status" COLSPAN="3" ALIGN="LEFT">status</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
+    </TABLE>>
+    URL="tables/../../application/tables/notify_property.html"
+    tooltip="application.notify_property"
+  ];
   "party.party" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
@@ -437,8 +446,9 @@ digraph "largeRelationshipsDiagram" {
       <TR><TD PORT="notation_template" COLSPAN="3" ALIGN="LEFT">notation_template</TD></TR>
       <TR><TD PORT="rrr_type_code" COLSPAN="3" ALIGN="LEFT">rrr_type_code</TD></TR>
       <TR><TD PORT="type_action_code" COLSPAN="3" ALIGN="LEFT">type_action_code</TD></TR>
-      <TR><TD PORT="display_group_name" COLSPAN="3" ALIGN="LEFT">display_group_name</TD></TR>
       <TR><TD PORT="service_panel_code" COLSPAN="3" ALIGN="LEFT">service_panel_code</TD></TR>
+      <TR><TD PORT="display_group_code" COLSPAN="3" ALIGN="LEFT">display_group_code</TD></TR>
+      <TR><TD PORT="display_order" COLSPAN="3" ALIGN="LEFT">display_order</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
     </TABLE>>
     URL="tables/../../application/tables/request_type.html"
@@ -536,7 +546,7 @@ digraph "largeRelationshipsDiagram" {
       <TR><TD PORT="description" COLSPAN="3" ALIGN="LEFT">description</TD></TR>
       <TR><TD PORT="status" COLSPAN="3" ALIGN="LEFT">status</TD></TR>
       <TR><TD PORT="rrr_panel_code" COLSPAN="3" BGCOLOR="#f4f7da" ALIGN="LEFT">rrr_panel_code</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 2</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">4 &gt;</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 2</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">3 &gt;</TD></TR>
     </TABLE>>
     URL="tables/rrr_type.html"
     tooltip="rrr_type"
@@ -665,7 +675,6 @@ digraph "largeRelationshipsDiagram" {
   "ba_unit_target":"ba_unit_id":w -> "ba_unit":"id":e [arrowhead=none dir=back arrowtail=crowodot];
   "ba_unit_target":"transaction_id":w -> "transaction.transaction":"id":e [arrowhead=none dir=back arrowtail=crowodot];
   "system.br_validation":"target_rrr_type_code":w -> "rrr_type":"code":e [arrowhead=none dir=back arrowtail=crowodot];
-  "opentenure.claim":"type_code":w -> "rrr_type":"code":e [arrowhead=none dir=back arrowtail=crowodot];
   "condition_for_rrr":"condition_code":w -> "condition_type":"code":e [arrowhead=none dir=back arrowtail=crowodot];
   "condition_for_rrr":"rrr_id":w -> "rrr":"id":e [arrowhead=none dir=back arrowtail=crowodot];
   "mortgage_isbased_in_rrr":"mortgage_id":w -> "rrr":"id":e [arrowhead=none dir=back arrowtail=crowodot];
@@ -674,6 +683,7 @@ digraph "largeRelationshipsDiagram" {
   "notation":"rrr_id":w -> "rrr":"id":e [arrowhead=none dir=back arrowtail=crowodot];
   "notation":"status_code":w -> "transaction.reg_status_type":"code":e [arrowhead=none dir=back arrowtail=crowodot];
   "notation":"transaction_id":w -> "transaction.transaction":"id":e [arrowhead=none dir=back arrowtail=crowodot];
+  "application.notify_property":"ba_unit_id":w -> "ba_unit":"id":e [arrowhead=none dir=back arrowtail=crowodot];
   "party_for_rrr":"party_id":w -> "party.party":"id":e [arrowhead=none dir=back arrowtail=crowodot];
   "party_for_rrr":"rrr_id":w -> "rrr":"id":e [arrowhead=none dir=back arrowtail=crowodot];
   "party_for_rrr":"rrr_id":w -> "rrr_share":"rrr_id":e [arrowhead=none dir=back arrowtail=crowodot];

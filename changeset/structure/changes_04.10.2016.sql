@@ -86,6 +86,8 @@ INSERT INTO system.approle (code, display_value, status, description) VALUES ('M
 INSERT INTO system.approle (code, display_value, status, description) VALUES ('PlanningClearance', 'Planing Clearance', 'c', 'Role used to give planing clearance for private land survey plan before approval.');
 INSERT INTO system.approle (code, display_value, status, description) VALUES ('EvironmentClearance', 'Environment Clearance', 'c', 'Role used to give environment clearance for private land survey plan before approval.');
 
+INSERT INTO system.approle_appgroup (approle_code,appgroup_id) values('ViewMap','clearance-group-id');
+
 --- APPROLE SETTING FOR - planning-group-id
 INSERT INTO system.approle_appgroup (approle_code,appgroup_id) values('ApplnAssignSelf','planning-group-id');
 INSERT INTO system.approle_appgroup (approle_code,appgroup_id) values('ApplnEdit','planning-group-id');
