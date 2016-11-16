@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 9.4.4
+-- Dumped from database version 9.5.3
 -- Dumped by pg_dump version 9.5.3
 
 SET statement_timeout = 0;
@@ -437,6 +437,7 @@ INSERT INTO version (version_num) VALUES ('1606c');
 INSERT INTO version (version_num) VALUES ('1606d');
 INSERT INTO version (version_num) VALUES ('1609a');
 INSERT INTO version (version_num) VALUES ('1610a');
+INSERT INTO version (version_num) VALUES ('1611a');
 
 
 ALTER TABLE version ENABLE TRIGGER ALL;

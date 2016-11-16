@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 9.4.4
+-- Dumped from database version 9.5.3
 -- Dumped by pg_dump version 9.5.3
 
 SET statement_timeout = 0;
@@ -645,8 +645,8 @@ ALTER TABLE survey_type DISABLE TRIGGER ALL;
 INSERT INTO survey_type (code, display_value, description, status) VALUES ('subdivision', 'Sub-Division', '', 'c');
 INSERT INTO survey_type (code, display_value, description, status) VALUES ('name_change', 'Change of Name', '', 'c');
 INSERT INTO survey_type (code, display_value, description, status) VALUES ('based_on', 'Based on', '', 'c');
-INSERT INTO survey_type (code, display_value, description, status) VALUES ('resurvey_amend', 'Re-survey amendment', '', 'c');
 INSERT INTO survey_type (code, display_value, description, status) VALUES ('resurvey_ext', 'Re-survey extension', '', 'c');
+INSERT INTO survey_type (code, display_value, description, status) VALUES ('resurvey_amend', 'Re-survey and amendment', '', 'c');
 
 
 ALTER TABLE survey_type ENABLE TRIGGER ALL;
